@@ -884,9 +884,54 @@ async function readTextPrefix({ filePath, rel, maxBytes, findings, purpose }) {
   return buffer ? buffer.toString("utf8") : "";
 }
 
+function truncationFindingForPurpose(purpose) {
+  if (purpose === "secret-scan") {
+    return {
+      code: "secret.truncated",
+      severity: "critical",
+      message: "Secret scan input exceeded inspected prefix."
+    };
+  }
+  if (purpose === "dangerous-capability") {
+    return {
+      code: "dangerous.truncated",
+      severity: "high",
+      message: "Dangerous capability input exceeded inspected prefix."
+    };
+  }
+  if (purpose.startsWith("script-")) {
+    return {
+      code: "script.truncated",
+      severity: "high",
+      message: "Script or workflow input exceeded inspected prefix."
+    };
+  }
+  return null;
+}
+
 async function readBufferPrefix({ filePath, rel, maxBytes, findings, purpose }) {
   let handle;
   try {
+    const stat = await fs.stat(filePath);
+    const truncationFinding = truncationFindingForPurpose(purpose);
+    // IMPORTANT: high-risk external intake reads must fail closed when bounded prefix inspection is incomplete.
+    if (truncationFinding && stat.size > maxBytes) {
+      findings.push(
+        createFinding({
+          code: truncationFinding.code,
+          severity: truncationFinding.severity,
+          message: truncationFinding.message,
+          path: rel,
+          blocking: true,
+          details: {
+            purpose,
+            bytes: stat.size,
+            maxBytes
+          }
+        })
+      );
+    }
+
     handle = await fs.open(filePath, "r");
     const buffer = Buffer.alloc(maxBytes);
     const result = await handle.read(buffer, 0, maxBytes, 0);

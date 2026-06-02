@@ -76,42 +76,45 @@ still fail with an HTTP 401 or 403 error.
 |---|---|
 | **Severity** | Medium |
 | **Module** | `@agentique.io/validator` — External Intake Scanner |
-| **File** | `packages/validator/src/intake/scanner.mjs` (lines 16–18, 364–405, 421–457) |
-| **Status** | Open — known design trade-off |
+| **File** | `packages/validator/src/intake/scanner.mjs` |
+| **Status** | Addressed — high-risk truncated prefix reads now fail closed |
 
 ### Description
 
 `readTextPrefix` reads a bounded prefix of each file for secret scanning
 (64 KB), dangerous capability detection (32 KB), and script inventory (32 KB).
-Content placed beyond these thresholds is never inspected.
+Content placed beyond these thresholds cannot be inspected by the prefix-based
+rules.
 
 An adversary who is aware of these limits can place secrets or dangerous
-commands after the 64 KB mark and evade detection entirely.
+commands after the 64 KB mark and attempt to evade prefix-only detection.
 
-### Recommended Fix
+### Repository Guard
 
-For secret scanning, switch to a streaming read approach that processes
-the file in fixed-size chunks:
+High-risk scanner purposes now check file size before bounded prefix reads. If
+the file is larger than the inspection limit, the report emits a blocking
+finding and still reads the visible prefix for any additional findings:
 
 ```javascript
-async function scanSecretsStreaming(filePath, rel, findings) {
-  const stream = createReadStream(filePath, { encoding: "utf8", highWaterMark: 64 * 1024 });
-  let chunkIndex = 0;
-  let lineOffset = 0;
-
-  for await (const chunk of stream) {
-    // Apply SECRET_RULES against each chunk.
-    // Track line offsets across chunk boundaries.
-    scanChunkForSecrets(chunk, rel, findings, lineOffset);
-    lineOffset += countNewlines(chunk);
-    chunkIndex += 1;
-  }
+if (truncationFinding && stat.size > maxBytes) {
+  findings.push(
+    createFinding({
+      code: truncationFinding.code,
+      severity: truncationFinding.severity,
+      message: truncationFinding.message,
+      path: rel,
+      blocking: true,
+      details: { purpose, bytes: stat.size, maxBytes }
+    })
+  );
 }
 ```
 
-For dangerous capability detection, the 32 KB prefix is generally acceptable
-because CI configuration, shell scripts, and package manifests are almost
-always under that limit. Document this assumption explicitly in a code comment.
+The guard emits `secret.truncated`, `dangerous.truncated`, or
+`script.truncated` depending on the high-risk read purpose. This is a
+fail-closed policy, not a full streaming classifier. A future enhancement can
+replace the blocking uncertainty finding with streaming classification if the
+false-positive cost for large benign text files becomes unacceptable.
 
 ---
 

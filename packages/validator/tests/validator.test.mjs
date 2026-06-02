@@ -860,6 +860,43 @@ test("external intake redacts secrets and emits stable fingerprints", async () =
   );
 });
 
+test("external intake blocks secret scans that exceed the inspected prefix", async () => {
+  const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "agentique-intake-late-secret-"));
+  await fs.writeFile(path.join(tempDir, "LICENSE"), "MIT License\n\nPermission is hereby granted.\n", "utf8");
+  await fs.writeFile(path.join(tempDir, "late-secret.txt"), `${"a".repeat(64 * 1024 + 8)}\napi_key="${"z".repeat(16)}"\n`, "utf8");
+
+  const report = await scanExternalIntake({ sourceDir: tempDir });
+
+  assert.equal(report.decision, "blocked");
+  assertFindings(report, ["secret.truncated"]);
+  assert.equal(JSON.stringify(report).includes(tempDir), false);
+});
+
+test("external intake blocks dangerous capability scans that exceed the inspected prefix", async () => {
+  const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "agentique-intake-late-danger-"));
+  await fs.writeFile(path.join(tempDir, "LICENSE"), "MIT License\n\nPermission is hereby granted.\n", "utf8");
+  await fs.writeFile(path.join(tempDir, "README.md"), `${"safe notes\n".repeat(3500)}\nrm -rf \"$HOME/.cache/example\"\n`, "utf8");
+
+  const report = await scanExternalIntake({ sourceDir: tempDir });
+
+  assert.equal(report.decision, "blocked");
+  assertFindings(report, ["dangerous.truncated"]);
+  assert.equal(JSON.stringify(report).includes(tempDir), false);
+});
+
+test("external intake blocks workflow script scans that exceed the inspected prefix", async () => {
+  const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "agentique-intake-late-workflow-"));
+  await fs.mkdir(path.join(tempDir, ".github", "workflows"), { recursive: true });
+  await fs.writeFile(path.join(tempDir, "LICENSE"), "MIT License\n\nPermission is hereby granted.\n", "utf8");
+  await fs.writeFile(path.join(tempDir, ".github", "workflows", "late.yml"), `${" ".repeat(32 * 1024 + 8)}\n- run: npm test\n`, "utf8");
+
+  const report = await scanExternalIntake({ sourceDir: tempDir });
+
+  assert.equal(report.decision, "blocked");
+  assertFindings(report, ["script.truncated"]);
+  assert.equal(JSON.stringify(report).includes(tempDir), false);
+});
+
 test("external intake CLI supports json output and usage errors", async () => {
   const cliPath = path.join(repoDir, "src", "cli.mjs");
   const packageWithLicense = await copyFixture("valid-package");
