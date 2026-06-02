@@ -82,6 +82,29 @@ test("rejects trusted publish workflows with automatic triggers or disabled prov
   assert.match(findings, /publishes packages/);
 });
 
+test("rejects trusted publish workflows without explicit provenance", async () => {
+  const repoRoot = await createWorkflowRepo({
+    "publish-packages.yml": trustedPublishWorkflow().replaceAll(" --provenance", "")
+  });
+
+  const findings = collectWorkflowPostureFindings(repoRoot).join("\n");
+
+  assert.match(findings, /trusted publish workflow must pass explicit provenance/);
+  assert.match(findings, /publishes packages/);
+});
+
+test("rejects trusted publish workflows that require token fallback", async () => {
+  const repoRoot = await createWorkflowRepo({
+    "publish-packages.yml": `${trustedPublishWorkflow()}\n      env:\n        NODE_AUTH_TOKEN: \${{ secrets.NPM_TOKEN }}\n`
+  });
+
+  const findings = collectWorkflowPostureFindings(repoRoot).join("\n");
+
+  assert.match(findings, /repository secrets/);
+  assert.match(findings, /trusted publish workflow must not reference repository secrets/);
+  assert.match(findings, /publishes packages/);
+});
+
 test("rejects lifecycle-enabled npm installs in pull request workflows", async () => {
   const repoRoot = await createWorkflowRepo({
     "release-check.yml": [
@@ -214,7 +237,7 @@ function trustedPublishWorkflow() {
     "    runs-on: ubuntu-latest",
     "    steps:",
     "      - run: npm ci --ignore-scripts",
-    "      - run: npm publish --access public"
+    "      - run: npm publish --access public --provenance"
   ].join("\n");
 }
 

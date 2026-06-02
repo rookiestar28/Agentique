@@ -54,10 +54,10 @@ jobs:
       - name: Publish packages with trusted publishing
         run: |
           cd schemas
-          npm publish --access public
+          npm publish --access public --provenance
           cd ../packages/validator
-          npm publish --access public
+          npm publish --access public --provenance
           cd ../action
-          npm publish --access public
+          npm publish --access public --provenance
           cd ../readback
-          npm publish --access public
+          npm publish --access public --provenance
