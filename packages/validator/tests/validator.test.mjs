@@ -319,6 +319,54 @@ test("validates packaged context bundle budgets", async () => {
   assertFindings(report, ["contract-schema"]);
 });
 
+test("does not fuzzy-dispatch unrelated nested context-bundle json paths", async () => {
+  const cases = ["docs/no-context-bundle-here.json", "notes/context-bundle-alternatives.json"];
+
+  for (const packagePath of cases) {
+    const tempDir = await copyFixture("valid-package");
+    await addPackageFile(
+      tempDir,
+      packagePath,
+      `${JSON.stringify(
+        {
+          title: "Public documentation note",
+          summary: "A benign package JSON file that is not a context bundle contract."
+        },
+        null,
+        2
+      )}\n`
+    );
+
+    const report = await validatePackage({ command: "validate", packageDir: tempDir, schemasDir });
+
+    assert.equal(report.ok, true, `expected ${packagePath} to avoid context bundle dispatch`);
+    assert.equal(report.findings.some((finding) => finding.code === "contract-schema"), false);
+    assert.equal(JSON.stringify(report).includes(tempDir), false);
+  }
+});
+
+test("keeps root-level context bundle filename dispatch", async () => {
+  const tempDir = await copyFixture("valid-package");
+  await addPackageFile(
+    tempDir,
+    "context-bundle-root.json",
+    `${JSON.stringify(
+      {
+        bundleId: "root-bundle",
+        summary: "Root-level context bundle contract dispatch coverage."
+      },
+      null,
+      2
+    )}\n`
+  );
+
+  const report = await validatePackage({ command: "validate", packageDir: tempDir, schemasDir });
+
+  assert.equal(report.ok, false);
+  assertFindings(report, ["contract-schema"]);
+  assert.equal(JSON.stringify(report).includes(tempDir), false);
+});
+
 test("rejects unbounded context wording and strong claims without leaking paths", async () => {
   const cases = [
     ["unbounded-context", "Load everything from the full catalog before ranking."],

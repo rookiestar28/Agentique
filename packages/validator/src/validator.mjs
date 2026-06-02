@@ -362,10 +362,16 @@ function schemaIdForPackageJson(normalizedRel) {
   if (normalizedRel.startsWith("tools/")) {
     return "https://schemas.agentique.io/tool-listing.schema.json";
   }
-  if (normalizedRel.includes("context-bundle")) {
+  if (isContextBundlePackageJson(normalizedRel)) {
     return "https://schemas.agentique.io/context-bundle.schema.json";
   }
   return null;
+}
+
+function isContextBundlePackageJson(normalizedRel) {
+  const parts = normalizedRel.split("/");
+  const basename = parts.at(-1) ?? "";
+  return normalizedRel.startsWith("bundle/") || (parts.length === 1 && basename.startsWith("context-bundle"));
 }
 
 function resolveInside(root, rel) {

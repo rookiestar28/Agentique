@@ -124,22 +124,21 @@ false-positive cost for large benign text files becomes unacceptable.
 |---|---|
 | **Severity** | Low |
 | **Module** | `@agentique.io/validator` |
-| **File** | `packages/validator/src/validator.mjs` (lines 299–308) |
-| **Status** | Open |
+| **File** | `packages/validator/src/validator.mjs` |
+| **Status** | Addressed — context bundle dispatch now uses explicit path conventions |
 
 ### Description
 
-`schemaIdForPackageJson` uses `normalizedRel.includes("context-bundle")` to
-decide whether a JSON file should be validated against the context-bundle
-schema. This substring match is overly broad: any file whose path accidentally
-contains `context-bundle` — such as `docs/no-context-bundle-here.json` or
-`notes/context-bundle-alternatives.json` — will be incorrectly subjected to
+`schemaIdForPackageJson` previously used `normalizedRel.includes("context-bundle")`
+to decide whether a JSON file should be validated against the context-bundle
+schema. That substring match was overly broad: any file whose path accidentally
+contained `context-bundle` — such as `docs/no-context-bundle-here.json` or
+`notes/context-bundle-alternatives.json` — could be incorrectly subjected to
 context-bundle schema validation, producing spurious findings.
 
-### Recommended Fix
+### Repository Guard
 
-Replace the substring check with a directory-prefix or filename-convention
-match:
+Package JSON contract dispatch now uses explicit conventions:
 
 ```javascript
 function schemaIdForPackageJson(normalizedRel) {
@@ -147,19 +146,23 @@ function schemaIdForPackageJson(normalizedRel) {
   if (normalizedRel.startsWith("tools/")) {
     return "https://schemas.agentique.io/tool-listing.schema.json";
   }
-  // Match files inside a bundle/ directory or files named *context-bundle*.json
-  // at the package root level only.
-  const basename = normalizedRel.split("/").pop();
-  if (normalizedRel.startsWith("bundle/") || basename.startsWith("context-bundle")) {
+  if (isContextBundlePackageJson(normalizedRel)) {
     return "https://schemas.agentique.io/context-bundle.schema.json";
   }
   return null;
 }
+
+function isContextBundlePackageJson(normalizedRel) {
+  const parts = normalizedRel.split("/");
+  const basename = parts.at(-1) ?? "";
+  return normalizedRel.startsWith("bundle/") || (parts.length === 1 && basename.startsWith("context-bundle"));
+}
 ```
 
-Alternatively, introduce a `"$schema"` or `"contractType"` field inside the
-JSON files themselves and use that as the dispatch key instead of relying on
-filesystem path conventions.
+Unrelated nested paths that merely contain `context-bundle` no longer dispatch
+as context bundle contracts. Existing `tools/*.json`, `bundle/*.json`, and
+root-level `context-bundle*.json` conventions remain covered by validator
+tests.
 
 ---
 
