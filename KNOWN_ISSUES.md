@@ -212,29 +212,31 @@ Or split `.env` into a separate rule with its own anchoring:
 |---|---|
 | **Severity** | Low |
 | **Module** | `@agentique.io/validator` |
-| **File** | `packages/validator/src/validator.mjs` (lines 111–131, 208–231) |
-| **Status** | Open — known design trade-off |
+| **File** | `packages/validator/src/validator.mjs`; `packages/validator/tests/validator.test.mjs` |
+| **Status** | Addressed for package validation — oversized manifest and package files now fail closed; external intake truncation is tracked separately |
 
 ### Description
 
-In the package validation flow (`validatePackage`), both `inspectPackageFile`
-and the inventory hash computation call `fs.readFile` to load the entire file
-contents into memory. There is no upper size gate before the read.
+In the original package validation flow (`validatePackage`), both
+`inspectPackageFile` and the inventory hash computation called `fs.readFile` to
+load the entire file contents into memory. There was no upper size gate before
+the read.
 
-If a starter package or user-supplied package contains a very large file
-(hundreds of megabytes), the Node.js process will exhaust its heap memory and
+If a starter package or user-supplied package contained a very large file
+(hundreds of megabytes), the Node.js process could exhaust its heap memory and
 crash with an out-of-memory error.
 
-Note: this does **not** affect the External Intake Scanner, which already uses
-bounded `readBufferPrefix` reads for all inspection passes and enforces a
-`maxBytes` repository-level gate.
+### Repository Guard
 
-### Recommended Fix
+Package validation now applies explicit byte limits before reading manifest or
+package file contents. Oversized inputs produce relative-path findings and make
+the package invalid. Package file hashes are computed through a read stream for
+inventory and hash comparison.
 
-Add an explicit per-file size check before reading:
+The relevant pattern is:
 
 ```javascript
-const MAX_PACKAGE_FILE_BYTES = 10 * 1024 * 1024; // 10 MB
+const MAX_PACKAGE_FILE_BYTES = 1024 * 1024;
 
 async function inspectPackageFile({ packageDir, rel, expectedHash, findings, ajv }) {
   const filePath = resolveInside(packageDir, rel);
@@ -249,11 +251,11 @@ async function inspectPackageFile({ packageDir, rel, expectedHash, findings, ajv
     return;
   }
 
-  // ... existing read and hash logic
+  // Existing text/schema inspection only runs after this gate.
 }
 ```
 
-For hash computation on large files, switch to streaming:
+Hash computation uses streaming:
 
 ```javascript
 import { createReadStream } from "node:fs";
@@ -268,6 +270,9 @@ function hashFileStream(filePath) {
   });
 }
 ```
+
+External intake still has separate prefix/truncation behavior and is tracked as
+its own issue.
 
 ---
 

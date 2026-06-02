@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { promises as fs } from "node:fs";
+import { createReadStream, promises as fs } from "node:fs";
 import path from "node:path";
 import Ajv from "ajv/dist/2020.js";
 import addFormats from "ajv-formats";
@@ -27,6 +27,10 @@ const blockedExtensions = new Set([
   ".ps1",
   ".sh"
 ]);
+
+// IMPORTANT: keep these gates before package text/JSON reads; they bound memory use for untrusted package inputs.
+const MAX_VALIDATOR_JSON_BYTES = 1024 * 1024;
+const MAX_PACKAGE_FILE_BYTES = 1024 * 1024;
 
 const sensitivePathSegments = new Set(["private", ".env", ".git", ".cache", "node_modules"]);
 
@@ -119,11 +123,12 @@ export async function validatePackage(options) {
     const filePath = resolveInside(packageDir, rel);
     if (!filePath) continue;
     try {
-      const bytes = await fs.readFile(filePath);
+      const stat = await fs.stat(filePath);
+      const digest = await hashFileSha256(filePath);
       inventory.push({
         path: rel,
-        sha256: createHash("sha256").update(bytes).digest("hex"),
-        bytes: bytes.length
+        sha256: digest,
+        bytes: stat.size
       });
     } catch {
       // Missing files are already reported by inspectPackageFile.
@@ -178,8 +183,19 @@ async function readRequiredJson(filePath) {
 }
 
 async function readJsonFile(filePath, findings, location) {
+  const raw = await readTextFileWithinLimit({
+    filePath,
+    findings,
+    location,
+    maxBytes: MAX_VALIDATOR_JSON_BYTES,
+    oversizedCode: "json-too-large",
+    readErrorCode: "json-read"
+  });
+  if (raw === null) {
+    return null;
+  }
+
   try {
-    const raw = await fs.readFile(filePath, "utf8");
     return JSON.parse(raw);
   } catch (error) {
     findings.push(finding("json-read", `Unable to read valid JSON: ${error.code ?? "parse_error"}`, location));
@@ -212,22 +228,67 @@ async function inspectPackageFile({ packageDir, rel, expectedHash, findings, ajv
     return;
   }
 
-  let bytes;
+  let stat;
   try {
-    bytes = await fs.readFile(filePath);
+    stat = await fs.stat(filePath);
   } catch {
     findings.push(finding("missing-file", "Package file listed in manifest is missing.", rel));
     return;
   }
 
-  const actualHash = `sha256:${createHash("sha256").update(bytes).digest("hex")}`;
+  if (stat.size > MAX_PACKAGE_FILE_BYTES) {
+    findings.push(finding("file-too-large", `Package file exceeds ${MAX_PACKAGE_FILE_BYTES} byte limit.`, rel));
+    return;
+  }
+
+  let actualHash;
+  try {
+    actualHash = `sha256:${await hashFileSha256(filePath)}`;
+  } catch {
+    findings.push(finding("hash-read", "Unable to hash package file.", rel));
+    return;
+  }
+
   if (expectedHash && expectedHash !== actualHash) {
     findings.push(finding("hash-mismatch", "Package file hash does not match manifest.", rel));
   }
 
-  const text = bytes.toString("utf8");
+  const text = await fs.readFile(filePath, "utf8");
   scanText(text, rel, findings);
   inspectStructuredPackageFile({ rel, text, findings, ajv });
+}
+
+async function readTextFileWithinLimit({ filePath, findings, location, maxBytes, oversizedCode, readErrorCode }) {
+  let stat;
+  try {
+    stat = await fs.stat(filePath);
+  } catch (error) {
+    findings.push(finding(readErrorCode, `Unable to read valid JSON: ${error.code ?? "read_error"}`, location));
+    return null;
+  }
+
+  if (stat.size > maxBytes) {
+    findings.push(finding(oversizedCode, `File exceeds ${maxBytes} byte limit.`, location));
+    return null;
+  }
+
+  try {
+    return await fs.readFile(filePath, "utf8");
+  } catch (error) {
+    findings.push(finding(readErrorCode, `Unable to read valid JSON: ${error.code ?? "read_error"}`, location));
+    return null;
+  }
+}
+
+async function hashFileSha256(filePath) {
+  const hash = createHash("sha256");
+  await new Promise((resolve, reject) => {
+    const stream = createReadStream(filePath);
+    stream.on("data", (chunk) => hash.update(chunk));
+    stream.on("error", reject);
+    stream.on("end", resolve);
+  });
+  return hash.digest("hex");
 }
 
 function validateManifestContracts(manifest, findings) {

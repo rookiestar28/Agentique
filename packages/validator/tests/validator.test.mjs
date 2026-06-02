@@ -46,6 +46,31 @@ test("accepts a valid static package and emits inventory hashes", async () => {
   assert.equal(report.findings.length, 0);
 });
 
+test("rejects oversized manifest files before parsing them", async () => {
+  const tempDir = await copyFixture("valid-package");
+  const manifest = await readManifest(tempDir);
+  await fs.writeFile(path.join(tempDir, "manifest.json"), `${JSON.stringify(manifest, null, 2)}\n${" ".repeat(1024 * 1024 + 1)}`, "utf8");
+
+  const report = await validatePackage({ command: "validate", packageDir: tempDir, schemasDir });
+
+  assert.equal(report.ok, false);
+  assertFindings(report, ["json-too-large"]);
+  assert.equal(JSON.stringify(report).includes(tempDir), false);
+});
+
+test("rejects oversized package files without reading them into the report", async () => {
+  const tempDir = await copyFixture("valid-package");
+  const oversizedContent = `${"A".repeat(1024 * 1024 + 1)}\n`;
+  await replaceNotes(tempDir, oversizedContent);
+
+  const report = await validatePackage({ command: "validate", packageDir: tempDir, schemasDir });
+
+  assert.equal(report.ok, false);
+  assertFindings(report, ["file-too-large"]);
+  assert.equal(JSON.stringify(report).includes(oversizedContent.slice(0, 120)), false);
+  assert.equal(JSON.stringify(report).includes(tempDir), false);
+});
+
 test("validates schema fixture catalog for every public schema", async () => {
   const ajv = new Ajv({ allErrors: true, strict: true });
   addFormats(ajv);
