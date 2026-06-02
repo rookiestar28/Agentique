@@ -75,6 +75,17 @@ const secretLikePatterns = [
   { id: "credential-url", pattern: /\b[a-z][a-z0-9+.-]*:\/\/[^/\s"'<>:]+:[^@\s"'<>]+@[^\s"'<>]+/i }
 ];
 
+const safeSecretExamplePatterns = [
+  {
+    id: "database-url",
+    pattern: /^(?:postgres(?:ql)?|mysql|mongodb(?:\+srv)?|redis):\/\/(?:<user>|user|root|default):(?:<password>|password)@(?:localhost|127\.0\.0\.1)(?::\d+)?(?:\/[A-Za-z0-9._/-]*)?$/i
+  },
+  {
+    id: "credential-url",
+    pattern: /^https?:\/\/(?:<user>|user):(?:<password>|password)@example\.(?:com|org|net)(?:\/[^\s"'<>]*)?$/i
+  }
+];
+
 export async function validatePackage(options) {
   const command = options.command ?? "validate";
   const packageDir = path.resolve(options.packageDir);
@@ -404,10 +415,23 @@ function scanText(text, location, findings) {
     }
   }
   for (const rule of secretLikePatterns) {
-    if (rule.pattern.test(text)) {
+    const unsafeMatch = [...matchPattern(text, rule.pattern)].find((match) => !isSafeSecretExample(rule.id, match[0]));
+    if (unsafeMatch) {
       findings.push(finding(rule.id, "Secret-like value detected and redacted.", location));
     }
   }
+}
+
+function* matchPattern(text, pattern) {
+  const flags = pattern.flags.includes("g") ? pattern.flags : `${pattern.flags}g`;
+  const globalPattern = new RegExp(pattern.source, flags);
+  yield* text.matchAll(globalPattern);
+}
+
+function isSafeSecretExample(ruleId, matchText) {
+  return safeSecretExamplePatterns.some(
+    (safe) => (safe.id === ruleId || (ruleId === "credential-url" && safe.id === "database-url")) && safe.pattern.test(matchText)
+  );
 }
 
 function createReport({ ok, command, packageDir, manifest, inventory, findings }) {

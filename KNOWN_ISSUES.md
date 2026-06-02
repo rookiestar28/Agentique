@@ -172,13 +172,13 @@ tests.
 |---|---|
 | **Severity** | Low |
 | **Module** | `@agentique.io/validator` — External Intake Scanner |
-| **File** | `packages/validator/src/intake/scanner.mjs` (lines 48–50) |
-| **Status** | Open |
+| **File** | `packages/validator/src/intake/scanner.mjs` |
+| **Status** | Addressed — `.env` detection now uses a dedicated path-aware rule |
 
 ### Description
 
-The `credential-environment-access` dangerous capability rule includes `.env`
-as a match target:
+The `credential-environment-access` dangerous capability rule previously
+included `.env` as a match target:
 
 ```javascript
 pattern: /\b(?:process\.env|os\.environ|getenv\(|GITHUB_TOKEN|AWS_SECRET_ACCESS_KEY|npm_token|pypi_token|\.env)\b/i
@@ -196,19 +196,22 @@ inconsistent:
 - `" .env"` — may not match depending on the regex engine's treatment of
   `\b` before a non-word character.
 
-### Recommended Fix
+### Repository Guard
 
-Use a lookbehind or a non-word-boundary anchor for the `.env` alternative:
-
-```javascript
-pattern: /(?:\b(?:process\.env|os\.environ|getenv\(|GITHUB_TOKEN|AWS_SECRET_ACCESS_KEY|npm_token|pypi_token)|(?:^|[\s/\\])\.env)\b/i
-```
-
-Or split `.env` into a separate rule with its own anchoring:
+`.env` detection is now split into a dedicated path-aware dangerous capability
+rule:
 
 ```javascript
-{ category: "dotenv-file", pattern: /(?:^|[\s/\\])\.env(?:\b|$)/i }
+{
+  category: "dotenv-file-reference",
+  pattern: /(?:^|[\s"'=:\/\\])\.env(?:\.[A-Za-z0-9_-]+)?(?:\b|$)/i
+}
 ```
+
+The rule matches standalone `.env`, nested `.env`, and suffixes such as
+`.env.local` after path-like separators or whitespace. It avoids unrelated
+suffixes such as `foo.env` and leaves conceptual environment-variable prose
+unblocked.
 
 ---
 
@@ -288,8 +291,8 @@ its own issue.
 |---|---|
 | **Severity** | Low |
 | **Module** | `@agentique.io/validator` |
-| **File** | `packages/validator/src/validator.mjs` (lines 60–72) |
-| **Status** | Open — acceptable friction |
+| **File** | `packages/validator/src/validator.mjs` |
+| **Status** | Addressed — narrow documentation placeholder allowlist added |
 
 ### Description
 
@@ -301,31 +304,32 @@ expressions for `database-url` and `credential-url` detection:
 { id: "credential-url", pattern: /\b[a-z][a-z0-9+.-]*:\/\/[^/\s"'<>:]+:[^@\s"'<>]+@[^\s"'<>]+/i }
 ```
 
-If a starter README or a manifest description contains a fully-formed
-placeholder credential URL for educational purposes (e.g.,
-`postgres://<user>:<password>@localhost/db`), the validator will flag it as a
-secret-like value, causing validation failure.
+If a starter README or a manifest description contains a fully formed
+placeholder credential URL for educational purposes, the validator can otherwise
+flag it as a secret-like value, causing validation failure.
 
-### Recommended Fix
+### Repository Guard
 
-Add an allowlist for well-known documentation placeholder patterns:
+The validator now checks secret-like matches at match level and skips only
+narrow, known-safe documentation placeholders:
 
 ```javascript
-const SAFE_EXAMPLE_PATTERNS = [
-  /postgres:\/\/<user>:<password>@localhost/i,
-  /mysql:\/\/root:password@localhost/i,
-  /mongodb:\/\/user:pass@localhost/i,
-  /redis:\/\/default:password@localhost/i
+const safeSecretExamplePatterns = [
+  {
+    id: "database-url",
+    pattern: /^(?:postgres(?:ql)?|mysql|mongodb(?:\+srv)?|redis):\/\/(?:<user>|user|root|default):(?:<password>|password)@(?:localhost|127\.0\.0\.1)(?::\d+)?(?:\/[A-Za-z0-9._/-]*)?$/i
+  },
+  {
+    id: "credential-url",
+    pattern: /^https?:\/\/(?:<user>|user):(?:<password>|password)@example\.(?:com|org|net)(?:\/[^\s"'<>]*)?$/i
+  }
 ];
-
-function isSafeExample(text, match) {
-  return SAFE_EXAMPLE_PATTERNS.some((safe) => safe.test(match));
-}
 ```
 
-Alternatively, allow creators to annotate code blocks with a
-`<!-- agentique:ignore-secrets -->` directive that suppresses secret scanning
-for the annotated region, similar to `eslint-disable` comments.
+Generic `credential-url` matching reuses the database placeholder check so a
+safe database example is not re-flagged by the broader URL rule. Real
+credential URLs, database URLs, assignment secrets, provider tokens, and private
+keys continue to fail with redacted findings.
 
 ---
 

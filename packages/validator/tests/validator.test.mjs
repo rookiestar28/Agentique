@@ -503,6 +503,35 @@ test("allows public text that resembles scanner keywords without secret context"
   assert.equal(report.findings.length, 0);
 });
 
+test("allows documented placeholder credential URLs without suppressing real credentials", async () => {
+  const safeDir = await copyFixture("valid-package");
+  const safeDatabasePlaceholder = ["mysql", "://root", ":", "password", "@localhost/db"].join("");
+  const safeCredentialPlaceholder = ["https", "://user", ":", "password", "@example.com/docs"].join("");
+  await replaceNotes(
+    safeDir,
+    [
+      "Use postgres://<user>:<password>@localhost/db for placeholder-only local documentation.",
+      `Use ${safeDatabasePlaceholder} as a placeholder local example.`,
+      `Use ${safeCredentialPlaceholder} as a placeholder documentation URL.`
+    ].join("\n")
+  );
+
+  const safeReport = await validatePackage({ command: "validate", packageDir: safeDir, schemasDir });
+
+  assert.equal(safeReport.ok, true);
+  assert.equal(safeReport.findings.length, 0);
+
+  const realDir = await copyFixture("valid-package");
+  const realDatabaseUrl = ["postgres", "://app", ":", "actual-secret", "@example.net:5432/prod"].join("");
+  await replaceNotes(realDir, `Production endpoint: ${realDatabaseUrl}\n`);
+
+  const realReport = await validatePackage({ command: "validate", packageDir: realDir, schemasDir });
+
+  assert.equal(realReport.ok, false);
+  assertFindings(realReport, ["database-url"]);
+  assert.equal(JSON.stringify(realReport).includes("actual-secret"), false);
+});
+
 test("rejects unsupported distribution modes through schema validation", async () => {
   const tempDir = await copyFixture("valid-package");
   const manifestPath = path.join(tempDir, "manifest.json");
@@ -784,6 +813,25 @@ test("external intake blocks dangerous capability patterns without executing com
   await assert.rejects(() => fs.stat(markerPath), /ENOENT/);
 });
 
+test("external intake detects path-aware dotenv file references", async () => {
+  const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "agentique-intake-dotenv-"));
+  await fs.writeFile(path.join(tempDir, "LICENSE"), "MIT License\n\nPermission is hereby granted.\n", "utf8");
+  await fs.writeFile(
+    path.join(tempDir, "README.md"),
+    ["cat .env", "cp config/.env.local /tmp/example.env"].join("\n"),
+    "utf8"
+  );
+
+  const report = await scanExternalIntake({ sourceDir: tempDir });
+  const categories = new Set(
+    report.findings.filter((finding) => finding.code === "dangerous.capability").map((finding) => finding.details.category)
+  );
+
+  assert.equal(report.decision, "blocked");
+  assert.equal(categories.has("dotenv-file-reference"), true);
+  assert.equal(JSON.stringify(report).includes(tempDir), false);
+});
+
 test("external intake does not flag separated benign security vocabulary", async () => {
   const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "agentique-intake-benign-danger-"));
   await fs.writeFile(
@@ -792,7 +840,8 @@ test("external intake does not flag separated benign security vocabulary", async
       "curl transfers data in examples.",
       "Bash is a shell name, not an instruction here.",
       "Self-hosted runners are discussed conceptually.",
-      "Environment variables can be documented without reading process state."
+      "Environment variables can be documented without reading process state.",
+      "A filename like foo.env is not a dot-env credential file reference."
     ].join("\n"),
     "utf8"
   );

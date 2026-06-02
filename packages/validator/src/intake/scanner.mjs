@@ -46,7 +46,11 @@ const DANGEROUS_CAPABILITY_RULES = Object.freeze([
   }),
   Object.freeze({
     category: "credential-environment-access",
-    pattern: /\b(?:process\.env|os\.environ|getenv\(|GITHUB_TOKEN|AWS_SECRET_ACCESS_KEY|npm_token|pypi_token|\.env)\b/i
+    pattern: /\b(?:process\.env|os\.environ|getenv\(|GITHUB_TOKEN|AWS_SECRET_ACCESS_KEY|npm_token|pypi_token)\b/i
+  }),
+  Object.freeze({
+    category: "dotenv-file-reference",
+    pattern: /(?:^|[\s"'=:\/\\])\.env(?:\.[A-Za-z0-9_-]+)?(?:\b|$)/i
   }),
   Object.freeze({
     category: "encoded-payload",
