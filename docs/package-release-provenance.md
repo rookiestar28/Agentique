@@ -4,10 +4,12 @@ The companion packages are published for reviewed public release under the `@age
 
 ## Publishable Packages
 
-- `@agentique.io/schemas`
-- `@agentique.io/validator`
-- `@agentique.io/action`
-- `@agentique.io/readback`
+- `@agentique.io/schemas` at version `0.1.0`
+- `@agentique.io/validator` at version `0.1.0`
+- `@agentique.io/action` at version `0.1.0`
+- `@agentique.io/readback` at version `0.1.0`
+
+All four packages are public on npm.
 
 ## Required Pre-Publish Checks
 
@@ -26,6 +28,8 @@ Use registry trusted publishing where available. Trusted publishing uses CI iden
 Provenance helps consumers trace package source and build context. It does not mean a package is risk-free, platform-approved, or safety-certified.
 
 The first public package publication used an owner-approved short-lived granular token fallback after local and hosted validation passed. Future releases should prefer the checked-in GitHub Actions trusted-publishing workflow once npm trusted publisher setup is complete.
+
+Registry readback and clean install smoke passed with npm 11.14.1 for the dotted `@agentique.io` scope.
 
 Public package provenance must not include platform scoring, quarantine criteria, internal review procedures, moderation disposition logic, or operational playbooks.
 
