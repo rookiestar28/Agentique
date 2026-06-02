@@ -1,6 +1,6 @@
 # Package Release Provenance
 
-The companion packages are prepared for reviewed public release, but package publishing remains blocked until owner approval.
+The companion packages are published for reviewed public release under the `@agentique.io` npm scope.
 
 ## Publishable Packages
 
@@ -24,6 +24,8 @@ The companion packages are prepared for reviewed public release, but package pub
 Use registry trusted publishing where available. Trusted publishing uses CI identity instead of long-lived package tokens and can publish provenance attestations for packages.
 
 Provenance helps consumers trace package source and build context. It does not mean a package is risk-free, platform-approved, or safety-certified.
+
+The first public package publication used an owner-approved short-lived granular token fallback after local and hosted validation passed. Future releases should prefer the checked-in GitHub Actions trusted-publishing workflow once npm trusted publisher setup is complete.
 
 Public package provenance must not include platform scoring, quarantine criteria, internal review procedures, moderation disposition logic, or operational playbooks.
 
