@@ -47,16 +47,21 @@ still fail with an HTTP 401 or 403 error.
 ### Current Repository Guard
 
 ```yaml
-- name: Publish packages with trusted publishing
-  run: |
-    cd schemas
-    npm publish --access public --provenance
-    cd ../packages/validator
-    npm publish --access public --provenance
-    cd ../packages/action
-    npm publish --access public --provenance
-    cd ../packages/readback
-    npm publish --access public --provenance
+- name: Publish schemas
+  working-directory: schemas
+  run: npm publish --access public --provenance
+
+- name: Publish validator
+  working-directory: packages/validator
+  run: npm publish --access public --provenance
+
+- name: Publish action
+  working-directory: packages/action
+  run: npm publish --access public --provenance
+
+- name: Publish readback
+  working-directory: packages/readback
+  run: npm publish --access public --provenance
 ```
 
 ### Remaining Confirmation
@@ -222,7 +227,7 @@ unblocked.
 | **Severity** | Low |
 | **Module** | `@agentique.io/validator` |
 | **File** | `packages/validator/src/validator.mjs`; `packages/validator/tests/validator.test.mjs` |
-| **Status** | Addressed for package validation — oversized manifest and package files now fail closed; external intake truncation is tracked separately |
+| **Status** | Addressed — package validation has file-size gates and external intake high-risk truncation now fails closed |
 
 ### Description
 
@@ -280,8 +285,9 @@ function hashFileStream(filePath) {
 }
 ```
 
-External intake still has separate prefix/truncation behavior and is tracked as
-its own issue.
+External intake uses bounded prefix inspection for high-risk text checks and now
+fails closed with explicit truncation findings when the inspected prefix is
+incomplete.
 
 ---
 
