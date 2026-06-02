@@ -866,10 +866,44 @@ test("external intake inventories recognized package metadata license", async ()
       source: "package-json",
       expression: "Apache-2.0",
       normalized: "Apache-2.0",
-      status: "recognized"
+      status: "recognized",
+      policy: "allowed"
     }
   ]);
-  assertFindings(report, ["license.detected"]);
+  assertFindings(report, ["license.allowed"]);
+});
+
+test("external intake recognizes expanded SPDX identifiers with policy outcomes", async () => {
+  const cases = [
+    ["CC0-1.0", "CC0-1.0", "allowed", "passed", "license.allowed"],
+    ["0BSD", "0BSD", "allowed", "passed", "license.allowed"],
+    ["BSL-1.1", "BSL-1.1", "allowed", "passed", "license.allowed"],
+    ["Unlicense", "Unlicense", "allowed", "passed", "license.allowed"],
+    ["LGPL-3.0-only", "LGPL-3.0-only", "needs-review", "blocked", "license.needs-review"],
+    ["AGPL-3.0-only", "AGPL-3.0-only", "blocked", "blocked", "license.blocked"],
+    ["MIT OR Apache-2.0", "MIT OR Apache-2.0", "allowed", "passed", "license.allowed"]
+  ];
+
+  for (const [expression, normalized, policy, decision, expectedFinding] of cases) {
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "agentique-intake-license-policy-"));
+    await fs.writeFile(path.join(tempDir, "package.json"), `${JSON.stringify({ license: expression }, null, 2)}\n`, "utf8");
+
+    const report = await scanExternalIntake({ sourceDir: tempDir });
+
+    assert.equal(report.decision, decision, `expected ${expression} policy decision`);
+    assert.deepEqual(report.licenses, [
+      {
+        path: "package.json",
+        source: "package-json",
+        expression,
+        normalized,
+        status: "recognized",
+        policy
+      }
+    ]);
+    assertFindings(report, [expectedFinding]);
+    assert.equal(JSON.stringify(report).includes(tempDir), false);
+  }
 });
 
 test("external intake blocks missing unknown and conflicting license signals", async () => {

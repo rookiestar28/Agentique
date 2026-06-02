@@ -339,41 +339,37 @@ keys continue to fail with redacted findings.
 |---|---|
 | **Severity** | Low |
 | **Module** | `@agentique.io/validator` — External Intake Scanner |
-| **File** | `packages/validator/src/intake/scanner.mjs` (lines 277–316) |
-| **Status** | Open — acceptable for initial release |
+| **File** | `packages/validator/src/intake/scanner.mjs` |
+| **Status** | Addressed — recognition expanded and separated from intake policy |
 
 ### Description
 
-Both `normalizeLicenseExpression` (SPDX string normalization) and
-`normalizeLicenseText` (license file content heuristic) only recognize seven
-license families: MIT, Apache-2.0, GPL-2.0, GPL-3.0, BSD-3-Clause, ISC, and
-MPL-2.0.
+Earlier versions of `normalizeLicenseExpression` (SPDX string normalization)
+and `normalizeLicenseText` (license file content heuristic) recognized only a
+small set of license families: MIT, Apache-2.0, GPL-2.0, GPL-3.0,
+BSD-3-Clause, ISC, and MPL-2.0.
 
 Legitimate but less common licenses — including LGPL-2.1, LGPL-3.0, AGPL-3.0,
-Unlicense, CC0-1.0, CC-BY-4.0, BSL-1.1, 0BSD, and Artistic-2.0 — are
-classified as `unknown`, which triggers a blocking `license.unknown` finding
-and prevents external intake from passing.
+Unlicense, CC0-1.0, CC-BY-4.0, BSL-1.1, 0BSD, and Artistic-2.0 — could be
+classified as `unknown`, which triggered a blocking `license.unknown` finding
+and prevented external intake from passing.
 
-### Recommended Fix
+### Repository Guard
 
-Expand the recognizer in two stages:
+License handling now separates recognition from policy:
 
-**Stage 1 — Expand the SPDX expression map:**
+- `status` reports whether the license signal is recognized.
+- `policy` reports public intake handling: `allowed`, `needs-review`,
+  `blocked`, or `unknown`.
+- Findings use `license.allowed`, `license.needs-review`, `license.blocked`,
+  or `license.unknown`.
 
 ```javascript
-const map = new Map([
+const LICENSE_ID_NORMALIZATION = new Map([
   ["MIT", "MIT"],
   ["APACHE-2.0", "Apache-2.0"],
-  ["GPL-2.0", "GPL-2.0"],
-  ["GPL-2.0-ONLY", "GPL-2.0"],
-  ["GPL-3.0", "GPL-3.0"],
-  ["GPL-3.0-ONLY", "GPL-3.0"],
-  ["LGPL-2.1", "LGPL-2.1"],
-  ["LGPL-2.1-ONLY", "LGPL-2.1"],
-  ["LGPL-3.0", "LGPL-3.0"],
-  ["LGPL-3.0-ONLY", "LGPL-3.0"],
-  ["AGPL-3.0", "AGPL-3.0"],
-  ["AGPL-3.0-ONLY", "AGPL-3.0"],
+  ["LGPL-3.0-ONLY", "LGPL-3.0-only"],
+  ["AGPL-3.0-ONLY", "AGPL-3.0-only"],
   ["BSD-2-CLAUSE", "BSD-2-Clause"],
   ["BSD-3-CLAUSE", "BSD-3-Clause"],
   ["ISC", "ISC"],
@@ -385,16 +381,30 @@ const map = new Map([
 ]);
 ```
 
-**Stage 2 — Add text heuristics for the new families:**
+Simple SPDX `AND`/`OR` expressions are recognized when every identifier is
+known. Unsupported or custom expressions fail closed as `license.unknown`.
+Text heuristics were expanded for common recognized license files, including
+LGPL, AGPL, Unlicense, CC0, BSD-2-Clause, and BSL-1.1.
 
 ```javascript
-if (/GNU LESSER GENERAL PUBLIC LICENSE/i.test(content)) {
-  if (/Version 3/i.test(content)) return "LGPL-3.0";
-  if (/Version 2\.1/i.test(content)) return "LGPL-2.1";
+function licensePolicyForExpression(normalized) {
+  if (!normalized) return "unknown";
+  const identifiers = normalized.split(/\s+(?:AND|OR)\s+/);
+  if (identifiers.some((identifier) => LICENSE_POLICY.get(identifier) === "blocked")) {
+    return "blocked";
+  }
+  if (identifiers.some((identifier) => LICENSE_POLICY.get(identifier) === "needs-review")) {
+    return "needs-review";
+  }
+  if (identifiers.every((identifier) => LICENSE_POLICY.get(identifier) === "allowed")) {
+    return "allowed";
+  }
+  return "unknown";
 }
-if (/GNU AFFERO GENERAL PUBLIC LICENSE/i.test(content)) return "AGPL-3.0";
-if (/this is free and unencumbered software/i.test(content)) return "Unlicense";
 ```
+
+Recognition is not legal approval. Review-required and blocked policies remain
+blocking in external intake reports.
 
 ---
 
