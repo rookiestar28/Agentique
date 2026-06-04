@@ -8,6 +8,21 @@ Package registry pages, badge/readback documentation, and action usage documenta
 
 `@agentique.io/uploader` is implemented in source and included in local validation, but npm registry readback currently reports it as not found. Its package page and live upload availability are not advertised until a separate owner-approved publish/readback closeout records a Go decision.
 
+## Uploader Publication Decision
+
+Current uploader publication decision: **No-Go**.
+
+Reason: uploader source, tarball smoke, and pending registry readback are complete, but owner-approved npm publication, hosted CI evidence for this branch, registry publish/readback, and install smoke from npm are not complete.
+
+Current blockers:
+
+- Owner-approved uploader publish Go is not recorded.
+- Hosted CI evidence for the final public release candidate is not recorded.
+- npm registry readback for `@agentique.io/uploader` is not published.
+- Clean install smoke from the npm registry package is not recorded.
+
+The uploader package page remains pending and non-advertised. Existing approved advertised channels remain Go.
+
 Current public-safe evidence is recorded in [release-evidence.md](release-evidence.md).
 
 ## Local Evidence

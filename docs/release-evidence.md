@@ -64,6 +64,7 @@ Current command-line finding:
 - `@agentique.io/uploader` is included in root tests, package dry-run, publish workflow validation, and production dependency audit.
 - npm registry readback for `@agentique.io/uploader` currently returns not found, so the package page is tracked as pending and non-advertised.
 - Live upload availability remains platform and owner gated. Source checks do not advertise live publication or platform approval.
+- Final uploader publication closeout is No-Go until owner-approved publication, hosted CI evidence, npm registry readback, and clean install smoke from npm are recorded.
 
 ## All-Channel Public URL Mode
 
@@ -146,4 +147,4 @@ These smoke checks approve source repository, published package registry, action
 
 ## Current Decision
 
-The source repository, published npm packages, action usage reference, badge/readback documentation, and `agentique.io` public links are Go for advertised channels. `@agentique.io/uploader` npm publication and live upload advertising remain pending owner-approved closeout. GitHub Marketplace-style promotion remains separate from this source/package release.
+The source repository, published npm packages, action usage reference, badge/readback documentation, and `agentique.io` public links are Go for advertised channels. `@agentique.io/uploader` npm publication and live upload advertising are No-Go for this closeout and remain pending owner-approved publication evidence. GitHub Marketplace-style promotion remains separate from this source/package release.

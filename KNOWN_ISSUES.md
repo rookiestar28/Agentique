@@ -481,7 +481,7 @@ according to owner review.
 | **Severity** | Medium |
 | **Module** | `@agentique.io/uploader` — Release and Registry State |
 | **File** | `packages/uploader`; `docs/package-release-provenance.md`; `docs/public-url-inventory.json`; `docs/release-go-no-go.json` |
-| **Status** | Open — source implementation exists, but npm registry publication and install smoke are pending owner-approved release closeout |
+| **Status** | Open — source implementation and local tarball smoke exist, but npm registry publication remains No-Go until owner-approved publish evidence, registry readback, and install smoke from npm are recorded |
 
 ### Description
 
@@ -493,7 +493,8 @@ until registry publication and install smoke evidence are recorded.
 
 The public URL inventory tracks the uploader package page as pending and
 non-advertised. Existing published package pages for schemas, validator, action,
-and readback remain approved advertised channels.
+and readback remain approved advertised channels. The current uploader
+publication closeout is No-Go.
 
 ### Required Closeout
 

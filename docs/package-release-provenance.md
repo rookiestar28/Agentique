@@ -43,6 +43,8 @@ npm run install:smoke
 
 The registry readback script records the current expected state: schemas, validator, action, and readback are published, while uploader remains pending until owner-approved publication.
 
+Current uploader publication closeout is No-Go. Do not advertise `@agentique.io/uploader` as installable until owner approval, hosted CI evidence, registry publish/readback, and clean install smoke from npm are recorded.
+
 Public package provenance must not include platform scoring, quarantine criteria, internal review procedures, moderation disposition logic, or operational playbooks.
 
 ## Version And Tag Discipline
