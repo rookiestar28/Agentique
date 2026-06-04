@@ -121,7 +121,7 @@ test("auth status fails closed for invalid token and config errors", async () =>
   const invalidToken = await executeUploaderCli(["auth", "status", "--token", "short", "--json"]);
   const configError = await executeUploaderCli(["auth", "status", "--json"], {
     env: {
-      AGENTIQUE_CONFIG: "C:\\Users\\Ray\\missing-agentique-config.json"
+      AGENTIQUE_CONFIG: path.join(os.homedir(), "missing-agentique-config.json")
     }
   });
 
@@ -129,7 +129,10 @@ test("auth status fails closed for invalid token and config errors", async () =>
   assert.equal(JSON.parse(invalidToken.stdout).code, "auth.invalid_token");
   assert.equal(configError.exitCode, EXIT_CODES.unavailable);
   assert.equal(JSON.parse(configError.stdout).code, "auth.config_error");
-  assert.doesNotMatch(invalidToken.stdout + configError.stdout + configError.stderr, /short|missing-agentique-config|Users|Ray/i);
+  assert.doesNotMatch(
+    invalidToken.stdout + configError.stdout + configError.stderr,
+    forbiddenLocalOutputPattern(["short", "missing-agentique-config"])
+  );
 });
 
 test("missing token value is a usage error", async () => {
@@ -145,8 +148,9 @@ test("upload submit and status require auth before network access", async () => 
     calls += 1;
     throw new Error("unexpected network call");
   };
+  const localOperand = path.join(os.homedir(), "agentique-redaction-fixture");
 
-  const submit = await executeUploaderCli(["upload", "submit", "C:\\Users\\Ray\\private-package", "--json"], { fetchImpl });
+  const submit = await executeUploaderCli(["upload", "submit", localOperand, "--json"], { fetchImpl });
   const status = await executeUploaderCli(["upload", "status", "sub_test_123", "--json"], { fetchImpl });
   const submitBody = JSON.parse(submit.stdout);
   const statusBody = JSON.parse(status.stdout);
@@ -156,7 +160,7 @@ test("upload submit and status require auth before network access", async () => 
   assert.equal(submitBody.code, "auth.not_configured");
   assert.equal(statusBody.code, "auth.not_configured");
   assert.equal(calls, 0);
-  assert.doesNotMatch(submit.stdout + submit.stderr, /Users|private-package|Ray/i);
+  assert.doesNotMatch(submit.stdout + submit.stderr, forbiddenLocalOutputPattern(["agentique-redaction-fixture"]));
 });
 
 test("upload plan emits validator evidence for a valid starter", async () => {
@@ -175,7 +179,7 @@ test("upload plan emits validator evidence for a valid starter", async () => {
   assert.equal(status.data.package.name, "agent-assistant");
   assert.equal(status.data.evidence.inventory.length, 2);
   assert.match(status.data.evidence.inventoryDigest, /^sha256:[a-f0-9]{64}$/);
-  assert.doesNotMatch(result.stdout, /Agentique-Public|我的專案|Users|Ray/i);
+  assert.doesNotMatch(result.stdout, forbiddenLocalOutputPattern());
 });
 
 test("upload plan fails closed for invalid packages without absolute path leakage", async () => {
@@ -187,7 +191,7 @@ test("upload plan fails closed for invalid packages without absolute path leakag
   assert.equal(status.ok, false);
   assert.equal(status.code, "upload.plan.validation_failed");
   assert.ok(status.data.evidence.findingCount > 0);
-  assert.doesNotMatch(result.stdout, /Agentique-Public|我的專案|Users|Ray|uploader-plan-invalid/i);
+  assert.doesNotMatch(result.stdout, forbiddenLocalOutputPattern(["uploader-plan-invalid"]));
 });
 
 test("upload submit completes a review-only session without forwarding bearer auth to storage", async () => {
@@ -266,7 +270,7 @@ test("upload submit completes a review-only session without forwarding bearer au
   assert.equal(status.data.transfer.authorizationForwarded, false);
   assert.match(status.data.transfer.payloadDigest, /^sha256:[a-f0-9]{64}$/);
   assert.equal(calls.length, 4);
-  assert.doesNotMatch(result.stdout, /flag-token-value|storage\.agentique\.test|sig=private|Agentique-Public|我的專案|Users|Ray/i);
+  assert.doesNotMatch(result.stdout, forbiddenLocalOutputPattern(["flag-token-value", "storage.agentique.test", "sig=private"]));
 });
 
 test("upload submit fails closed when server completion is not verified", async () => {
@@ -459,4 +463,18 @@ function headerValue(headers, name) {
     }
   }
   return null;
+}
+
+function forbiddenLocalOutputPattern(extraTerms = []) {
+  const terms = [
+    path.basename(repoRoot),
+    os.userInfo().username,
+    ...os.homedir().split(/[\\/]/).filter(Boolean),
+    ...extraTerms
+  ].filter(Boolean);
+  return new RegExp(terms.map(escapeRegExp).join("|"), "i");
+}
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }

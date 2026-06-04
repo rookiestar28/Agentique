@@ -4,6 +4,8 @@
 
 This package exposes a review-only upload lane. It can validate a package locally, create an authenticated review session, transfer local evidence to the server-provided upload URL, complete the session, and read back review status. It does not publish, approve, certify, host, or moderate resources.
 
+Registry publication is pending. The source package is included in local validation and package dry-run checks, but `@agentique.io/uploader` should not be advertised as installable from npm until registry readback and install smoke evidence are recorded.
+
 Current boundary:
 
 - The package reserves the `agentique` command name.

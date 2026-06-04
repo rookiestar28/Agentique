@@ -42,11 +42,13 @@ Local tools in this repository do not publish, approve, certify, edit, delete, o
 
 ## Quick Start With Packages
 
-The companion packages are published on npm under the `@agentique.io` scope:
+The published companion packages are available on npm under the `@agentique.io` scope:
 
 ```bash
 npm install @agentique.io/schemas @agentique.io/validator @agentique.io/readback
 ```
+
+Published packages currently include `@agentique.io/schemas`, `@agentique.io/validator`, `@agentique.io/action`, and `@agentique.io/readback` at version `0.1.0`. The uploader package is implemented in this source repository but is not yet published on npm.
 
 Use the validator package for local static checks:
 
@@ -104,6 +106,15 @@ node packages/validator/src/cli.mjs external-intake <repo-or-dir> --json
 
 The external intake scan is a local advisory preflight. It does not install dependencies, run lifecycle scripts, fetch submodules, download Git LFS objects, extract archives, or approve the candidate for publication.
 
+Review uploader source behavior locally:
+
+```bash
+node packages/uploader/src/cli.mjs auth status --json
+node packages/uploader/src/cli.mjs upload plan starters/agent-assistant --schemas-dir schemas --json
+```
+
+The source uploader can create review-only upload sessions when configured with platform API access, but the npm package is unpublished and live upload availability is not advertised from this repository.
+
 Run release-readiness checks locally:
 
 ```bash
@@ -123,7 +134,8 @@ Current source repository, package registry, action usage, badge/readback docume
 Public-safe evidence currently recorded:
 
 - The public repository is available at [github.com/rookiestar28/Agentique](https://github.com/rookiestar28/Agentique).
-- The companion npm packages are published under the `@agentique.io` scope.
+- The published companion npm packages are `@agentique.io/schemas`, `@agentique.io/validator`, `@agentique.io/action`, and `@agentique.io/readback`.
+- `@agentique.io/uploader` is source-implemented, included in local validation and package dry-run checks, and not yet published on npm.
 - Local package tests, starter validation, release checks, workflow posture checks, package dry-runs, dependency audits, and secret scans pass.
 - Hosted Release Check evidence is recorded for the latest pushed public release candidate.
 - Public `main` branch protection is enabled.
@@ -138,6 +150,7 @@ Approved and separate channels:
 - Public action usage documentation is approved as a repository usage reference.
 - Repository-side known-issues hardening is reconciled in `KNOWN_ISSUES.md`; npm owner-side Trusted Publisher setup remains an external confirmation before token-free package publishing.
 - GitHub Marketplace-style promotion remains separate from this source/package release.
+- Uploader npm publication and live upload advertising remain separate owner-approved release decisions.
 
 Release evidence and approved public channels are tracked in [docs/release-evidence.md](docs/release-evidence.md), [docs/release-go-no-go.md](docs/release-go-no-go.md), and [docs/public-url-inventory.json](docs/public-url-inventory.json).
 
@@ -151,6 +164,7 @@ Release evidence and approved public channels are tracked in [docs/release-evide
 | `packages/validator` | No-execution CLI and library for local package validation and upload preparation. |
 | `packages/action` | Least-privilege GitHub Action wrapper around local validation. |
 | `packages/readback` | Read-only client and badge helpers for public resource status. |
+| `packages/uploader` | Source implementation of the review-only uploader CLI package; npm publication is pending owner approval. |
 | `scripts/` | Repository validation, starter validation, workflow posture, package dry-run, URL inventory, and go/no-go checks. |
 
 ## Resource Package Workflow
@@ -356,6 +370,7 @@ Package-level audits:
 npm --prefix packages/validator audit --omit=dev
 npm --prefix packages/action audit --omit=dev
 npm --prefix packages/readback audit --omit=dev
+npm --prefix packages/uploader audit --omit=dev
 ```
 
 Release status and follow-up boundaries are documented in [docs/release-go-no-go.md](docs/release-go-no-go.md). Package release expectations are documented in [docs/package-release-provenance.md](docs/package-release-provenance.md).

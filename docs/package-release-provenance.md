@@ -1,6 +1,6 @@
 # Package Release Provenance
 
-The companion packages are published for reviewed public release under the `@agentique.io` npm scope.
+Companion packages are released under the `@agentique.io` npm scope after owner review and registry readback.
 
 ## Publishable Packages
 
@@ -8,8 +8,9 @@ The companion packages are published for reviewed public release under the `@age
 - `@agentique.io/validator` at version `0.1.0`
 - `@agentique.io/action` at version `0.1.0`
 - `@agentique.io/readback` at version `0.1.0`
+- `@agentique.io/uploader` source package at version `0.1.0`; npm publication pending owner-approved closeout
 
-All four packages are public on npm.
+Schemas, validator, action, and readback are public on npm. Uploader is implemented in source and included in package dry-run checks, but registry readback currently reports it as not found.
 
 ## Required Pre-Publish Checks
 
@@ -19,7 +20,7 @@ All four packages are public on npm.
 - Release manifest and public-content checks pass.
 - Release notes are reviewed for private data, local paths, unsupported claims, and package scope accuracy.
 - Final public repository and package URLs are approved.
-- Public release notes mention surfacing contracts only as baseline companion metadata and read-only helper support.
+- Public release notes mention surfacing contracts, lane descriptors, uploader source status, and read-only helper support only as baseline companion metadata.
 
 ## Provenance Posture
 
@@ -31,7 +32,7 @@ Provenance helps consumers trace package source and build context. It does not m
 
 The first public package publication used an owner-approved short-lived granular token fallback after local and hosted validation passed. Future releases should prefer the checked-in GitHub Actions trusted-publishing workflow once npm Trusted Publisher setup is complete. Token fallback is a contingency for owner-approved manual recovery only; it is not part of the normal trusted-publishing workflow and must not be added to workflow YAML.
 
-Registry readback and clean install smoke passed with npm 11.14.1 for the dotted `@agentique.io` scope.
+Registry readback and clean install smoke passed with npm 11.14.1 for the published dotted `@agentique.io` package set. Uploader requires separate registry readback and install smoke before its package page is advertised.
 
 Public package provenance must not include platform scoring, quarantine criteria, internal review procedures, moderation disposition logic, or operational playbooks.
 
@@ -47,7 +48,7 @@ Public package provenance must not include platform scoring, quarantine criteria
 
 The checked-in workflow publishes each package in its own step with an explicit `working-directory`. This makes package-level failure evidence visible in GitHub Actions and avoids hiding partial-publish state inside one shell block.
 
-After any publish failure, compare registry readback for all four packages before advertising, tagging, or changing public URL inventory. If one package version is live while another failed, stop promotion and either publish the missing package version, deprecate the affected version, or publish a coordinated replacement version according to owner review.
+After any publish failure, compare registry readback for all publish-target packages before advertising, tagging, or changing public URL inventory. If one package version is live while another failed, stop promotion and either publish the missing package version, deprecate the affected version, or publish a coordinated replacement version according to owner review.
 
 ## Rollback
 
