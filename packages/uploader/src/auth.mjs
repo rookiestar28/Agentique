@@ -5,6 +5,12 @@ export const AUTH_ENV_VAR = "AGENTIQUE_TOKEN";
 export const CONFIG_ENV_VAR = "AGENTIQUE_CONFIG";
 
 export function resolveAuthState({ tokenOption = null, env = process.env, readFile = readFileSync } = {}) {
+  const material = resolveAuthMaterial({ tokenOption, env, readFile });
+  const { token: _token, ...safe } = material;
+  return safe;
+}
+
+export function resolveAuthMaterial({ tokenOption = null, env = process.env, readFile = readFileSync } = {}) {
   const configCandidate = readConfigToken({ env, readFile });
   const sources = [
     { source: "flag", token: tokenOption },
@@ -20,7 +26,8 @@ export function resolveAuthState({ tokenOption = null, env = process.env, readFi
         code: "auth.config_error",
         configured: false,
         source: "config",
-        redacted: true
+        redacted: true,
+        token: null
       };
     }
 
@@ -29,7 +36,8 @@ export function resolveAuthState({ tokenOption = null, env = process.env, readFi
       code: "auth.not_configured",
       configured: false,
       source: "none",
-      redacted: true
+      redacted: true,
+      token: null
     };
   }
 
@@ -40,7 +48,8 @@ export function resolveAuthState({ tokenOption = null, env = process.env, readFi
       code: validation.code,
       configured: false,
       source: selected.source,
-      redacted: true
+      redacted: true,
+      token: null
     };
   }
 
@@ -50,7 +59,8 @@ export function resolveAuthState({ tokenOption = null, env = process.env, readFi
     configured: true,
     source: selected.source,
     tokenFingerprint: fingerprintToken(selected.token),
-    redacted: true
+    redacted: true,
+    token: selected.token
   };
 }
 

@@ -1,6 +1,7 @@
 import { createUploaderBoundaryStatus, UPLOADER_PACKAGE_VERSION } from "./index.mjs";
 import { resolveAuthState } from "./auth.mjs";
 import { createUploadPlan } from "./plan.mjs";
+import { readUploadStatus, submitReviewOnlyUpload } from "./submit.mjs";
 
 export const EXIT_CODES = Object.freeze({
   success: 0,
@@ -17,7 +18,7 @@ export const USAGE = `Usage:
   agentique upload status <submission-id> [--json]
 
 Current status:
-  Live upload commands are not enabled in this package release.
+  Submit and status commands create review-only sessions; they do not publish packages automatically.
 `;
 
 const COMMANDS = new Set(["auth", "upload"]);
@@ -89,6 +90,7 @@ export function parseArgs(argv) {
   let version = false;
   let token = null;
   let schemasDir = null;
+  let apiUrl = null;
 
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
@@ -120,6 +122,17 @@ export function parseArgs(argv) {
       }
       schemasDir = value;
       index += 1;
+    } else if (arg === "--api-url") {
+      const value = argv[index + 1];
+      if (!value || value.startsWith("-")) {
+        return {
+          json: json || argv.includes("--json"),
+          command: tokens.join(" ") || "unknown",
+          error: "--api-url requires a value."
+        };
+      }
+      apiUrl = value;
+      index += 1;
     } else if (arg.startsWith("-")) {
       return {
         json: json || argv.includes("--json"),
@@ -131,7 +144,7 @@ export function parseArgs(argv) {
     }
   }
 
-  return { json, help, version, token, schemasDir, tokens };
+  return { json, help, version, token, schemasDir, apiUrl, tokens };
 }
 
 function handleAuthCommand(action, parsed, options) {
@@ -231,6 +244,54 @@ async function handleUploadCommand(action, operand, parsed, options) {
         data: plan
       }),
       exitCode: plan.ok ? EXIT_CODES.success : EXIT_CODES.unavailable,
+      json: parsed.json
+    });
+  }
+
+  if (action === "submit") {
+    const submission = await submitReviewOnlyUpload({
+      packageDir: operand,
+      schemasDir: parsed.schemasDir,
+      apiUrl: parsed.apiUrl ?? undefined,
+      tokenOption: parsed.token,
+      env: options.env,
+      readFile: options.readFile,
+      cwd: options.cwd,
+      fetchImpl: options.fetchImpl
+    });
+
+    return formatResult({
+      result: createResult({
+        ok: submission.ok,
+        code: submission.code,
+        message: submission.ok ? "Review-only upload submission created." : submission.message,
+        command: "upload submit",
+        data: submission
+      }),
+      exitCode: submission.ok ? EXIT_CODES.success : EXIT_CODES.unavailable,
+      json: parsed.json
+    });
+  }
+
+  if (action === "status") {
+    const status = await readUploadStatus({
+      submissionId: operand,
+      apiUrl: parsed.apiUrl ?? undefined,
+      tokenOption: parsed.token,
+      env: options.env,
+      readFile: options.readFile,
+      fetchImpl: options.fetchImpl
+    });
+
+    return formatResult({
+      result: createResult({
+        ok: status.ok,
+        code: status.code,
+        message: status.ok ? "Upload submission status read." : status.message,
+        command: "upload status",
+        data: status
+      }),
+      exitCode: status.ok ? EXIT_CODES.success : EXIT_CODES.unavailable,
       json: parsed.json
     });
   }
