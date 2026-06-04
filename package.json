@@ -9,6 +9,8 @@
   ],
   "scripts": {
     "pack:dry-run": "node scripts/package-dry-run.mjs",
+    "install:smoke": "node scripts/package-install-smoke.mjs",
+    "registry:readback": "node scripts/registry-readback.mjs",
     "release:go-no-go": "node scripts/check-release-go-no-go.mjs",
     "release:check": "node scripts/release-check.mjs .",
     "urls:check": "node scripts/check-public-url-inventory.mjs",

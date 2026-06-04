@@ -34,6 +34,15 @@ The first public package publication used an owner-approved short-lived granular
 
 Registry readback and clean install smoke passed with npm 11.14.1 for the published dotted `@agentique.io` package set. Uploader requires separate registry readback and install smoke before its package page is advertised.
 
+Local release candidates should run:
+
+```bash
+npm run registry:readback
+npm run install:smoke
+```
+
+The registry readback script records the current expected state: schemas, validator, action, and readback are published, while uploader remains pending until owner-approved publication.
+
 Public package provenance must not include platform scoring, quarantine criteria, internal review procedures, moderation disposition logic, or operational playbooks.
 
 ## Version And Tag Discipline

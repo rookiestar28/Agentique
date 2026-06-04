@@ -359,6 +359,8 @@ npm run validate:starters
 npm run release:check
 npm run workflow:check
 npm run pack:dry-run
+npm run registry:readback
+npm run install:smoke
 npm run urls:check
 npm run release:go-no-go
 npm audit --omit=dev
