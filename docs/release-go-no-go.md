@@ -37,7 +37,7 @@ Current public-safe evidence is recorded in [release-evidence.md](release-eviden
 - Package tests, starter validation, release check, and dependency audits pass locally.
 - Surfacing contract fixture matrix is covered by release checks.
 - Readback helper docs describe context bundle and selection projections as read-only public projections.
-- Hosted Release Check evidence is recorded for the latest pushed public release candidate.
+- Hosted Release Check evidence is recorded for the latest pushed public release candidate; later branch changes require a fresh hosted run before downstream release claims.
 - Public `main` branch protection is enabled.
 - Final public URLs are approved.
 - `agentique.io` public links are approved.

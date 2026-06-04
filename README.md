@@ -17,6 +17,7 @@ This repository is for creators and integrators before and after platform submis
 - Prepare static resource packages with public manifests.
 - Validate package shape, hashes, paths, bounded file reads, contract-bearing JSON files, and secret-like content locally.
 - Run the same validation in GitHub Actions with read-only permissions.
+- Inspect source-only uploader readiness before a platform-owned submission.
 - Consume public readback status and badge states for resources that are already published by `agentique.io`.
 - Use public tools to prepare, validate, and display resource status before entering the Agentique website upload flow.
 
@@ -32,6 +33,7 @@ Local tools in this repository do not publish, approve, certify, edit, delete, o
 - [Starters](#starters)
 - [Non-Static Lane Examples](#non-static-lane-examples)
 - [Validator CLI](#validator-cli)
+- [Uploader CLI Source Preview](#uploader-cli-source-preview)
 - [GitHub Action](#github-action)
 - [Readback SDK And Badges](#readback-sdk-and-badges)
 - [Schemas](#schemas)
@@ -121,6 +123,8 @@ Run release-readiness checks locally:
 npm run release:check
 npm run workflow:check
 npm run pack:dry-run
+npm run registry:readback
+npm run install:smoke
 npm run urls:check
 npm run release:go-no-go
 ```
@@ -136,8 +140,8 @@ Public-safe evidence currently recorded:
 - The public repository is available at [github.com/rookiestar28/Agentique](https://github.com/rookiestar28/Agentique).
 - The published companion npm packages are `@agentique.io/schemas`, `@agentique.io/validator`, `@agentique.io/action`, and `@agentique.io/readback`.
 - `@agentique.io/uploader` is source-implemented, included in local validation and package dry-run checks, and not yet published on npm.
-- Local package tests, starter validation, release checks, workflow posture checks, package dry-runs, dependency audits, and secret scans pass.
-- Hosted Release Check evidence is recorded for the latest pushed public release candidate.
+- Local package tests, starter validation, release checks, workflow posture checks, registry readback, install smoke, package dry-runs, dependency audits, and secret scans pass.
+- Hosted Release Check evidence is recorded for the latest pushed public release candidate; later branch changes require a fresh hosted run before downstream release claims.
 - Public `main` branch protection is enabled.
 - Final public repository, package, docs, schema, action usage, badge/readback documentation, and platform URLs are approved.
 - The `agentique.io` public URL and public readback endpoint respond successfully to command-line smoke checks.
@@ -165,7 +169,7 @@ Release evidence and approved public channels are tracked in [docs/release-evide
 | `packages/action` | Least-privilege GitHub Action wrapper around local validation. |
 | `packages/readback` | Read-only client and badge helpers for public resource status. |
 | `packages/uploader` | Source implementation of the review-only uploader CLI package; npm publication is pending owner approval. |
-| `scripts/` | Repository validation, starter validation, workflow posture, package dry-run, URL inventory, and go/no-go checks. |
+| `scripts/` | Repository validation, starter validation, workflow posture, registry readback, install smoke, package dry-run, URL inventory, and go/no-go checks. |
 
 ## Resource Package Workflow
 
@@ -247,6 +251,23 @@ External intake findings are review inputs only. Passing this local preflight do
 License findings distinguish recognized signals from intake policy outcomes such as allowed, needs-review, blocked, and unknown. These labels are conservative local review signals, not legal advice or platform approval.
 
 See [packages/validator/README.md](packages/validator/README.md).
+
+## Uploader CLI Source Preview
+
+The source uploader package is a review-only CLI implementation. It is useful for local integration review because it can report redacted auth status, generate validator-backed upload plans, and exercise review-session submit/status flows when configured with platform API access.
+
+Source commands:
+
+```bash
+node packages/uploader/src/cli.mjs auth status --json
+node packages/uploader/src/cli.mjs upload plan <package-dir> --schemas-dir schemas --json
+node packages/uploader/src/cli.mjs upload submit <package-dir> --schemas-dir schemas --token <token> --api-url https://www.agentique.io --json
+node packages/uploader/src/cli.mjs upload status <submission-id> --token <token> --api-url https://www.agentique.io --json
+```
+
+The uploader source does not publish, approve, certify, host, or moderate resources. `@agentique.io/uploader` is not published on npm, so do not advertise package installation or live upload availability until owner approval, hosted CI evidence, registry readback, and clean install smoke are recorded.
+
+See [packages/uploader/README.md](packages/uploader/README.md), [docs/release-go-no-go.md](docs/release-go-no-go.md), and [docs/package-release-provenance.md](docs/package-release-provenance.md).
 
 ## GitHub Action
 
