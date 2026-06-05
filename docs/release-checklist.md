@@ -19,6 +19,10 @@ Use this checklist before any public release, package publish, repository link c
 - Public docs describe external-intake output as advisory review evidence only.
 - Surfacing contract fixture matrix exists and covers overlapping, risky, stale, off-topic, invalid-output, and budget-overflow cases.
 - Public docs describe context bundle and selection readback helpers as read-only baseline projections.
+- Uploader source status is documented separately from npm publication and live upload availability.
+- Pending package pages are marked non-advertised in the URL inventory.
+- Registry readback passed with expected published and pending package states.
+- Package install smoke passed from locally packed tarballs with lifecycle scripts disabled.
 
 ## Package Publishing
 
@@ -27,6 +31,8 @@ Packages must not use long-lived package tokens when OIDC trusted publishing is 
 Provenance and attestations help consumers trace where an artifact came from. They do not prove that the artifact is risk-free.
 
 The first public npm release used an owner-approved short-lived granular token fallback after local and hosted validation passed. Future releases should prefer the checked-in trusted-publishing workflow once npm trusted publisher setup is complete.
+
+Before advertising `@agentique.io/uploader`, run `AGENTIQUE_UPLOADER_EXPECT_PUBLISHED=1 npm run registry:readback`, run `npm run install:smoke`, and record version, dist-tag, tarball contents, clean install smoke, and uploader CLI smoke evidence for the exact version being advertised.
 
 ## Launch Boundary
 
