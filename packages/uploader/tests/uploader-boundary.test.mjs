@@ -466,13 +466,29 @@ function headerValue(headers, name) {
 }
 
 function forbiddenLocalOutputPattern(extraTerms = []) {
+  // IMPORTANT: keep this exact-term based; CI paths contain generic words that are valid public output elsewhere.
   const terms = [
-    path.basename(repoRoot),
-    os.userInfo().username,
-    ...os.homedir().split(/[\\/]/).filter(Boolean),
+    ...pathOutputVariants(repoRoot),
+    ...pathOutputVariants(os.homedir()),
     ...extraTerms
-  ].filter(Boolean);
+  ].filter(isMeaningfulSensitiveTerm);
   return new RegExp(terms.map(escapeRegExp).join("|"), "i");
+}
+
+function pathOutputVariants(value) {
+  if (!value) {
+    return [];
+  }
+  const resolved = path.resolve(value);
+  const slashVariant = resolved.replaceAll("\\", "/");
+  const backslashVariant = resolved.replaceAll("/", "\\");
+  const jsonEscapedBackslashVariant = backslashVariant.replaceAll("\\", "\\\\");
+
+  return [...new Set([resolved, slashVariant, backslashVariant, jsonEscapedBackslashVariant])];
+}
+
+function isMeaningfulSensitiveTerm(value) {
+  return typeof value === "string" && value.length >= 4;
 }
 
 function escapeRegExp(value) {
