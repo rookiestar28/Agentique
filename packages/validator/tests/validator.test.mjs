@@ -23,6 +23,7 @@ const schemaFiles = [
   "package-manifest.schema.json",
   "permission-risk.schema.json",
   "public-readback.schema.json",
+  "registry-trust.schema.json",
   "resource-manifest.schema.json",
   "skill-metadata.schema.json",
   "surfacing-metadata.schema.json",
@@ -90,8 +91,17 @@ test("validates schema fixture catalog for every public schema", async () => {
     const validate = ajv.getSchema(`https://schemas.agentique.io/${schemaFile}`);
     const fixtures = fixtureCatalog[schemaFile];
 
-    assert.equal(validate(fixtures.valid), true, `${schemaFile} valid fixture should pass`);
-    assert.deepEqual(Object.keys(fixtures.invalid).sort(), ["boundary", "extra-property", "missing-required"]);
+    const validCases = fixtures.validCases ?? { valid: fixtures.valid };
+    for (const [caseName, value] of Object.entries(validCases)) {
+      assert.equal(validate(value), true, `${schemaFile} ${caseName} fixture should pass: ${JSON.stringify(validate.errors)}`);
+    }
+
+    for (const requiredInvalidCase of ["boundary", "extra-property", "missing-required"]) {
+      assert.ok(
+        Object.hasOwn(fixtures.invalid, requiredInvalidCase),
+        `${schemaFile} should include ${requiredInvalidCase} invalid fixture`
+      );
+    }
 
     for (const [caseName, value] of Object.entries(fixtures.invalid)) {
       assert.equal(validate(value), false, `${schemaFile} ${caseName} fixture should fail`);

@@ -11,6 +11,7 @@ const schemaFiles = [
   "package-manifest.schema.json",
   "permission-risk.schema.json",
   "public-readback.schema.json",
+  "registry-trust.schema.json",
   "resource-manifest.schema.json",
   "skill-metadata.schema.json",
   "surfacing-metadata.schema.json",

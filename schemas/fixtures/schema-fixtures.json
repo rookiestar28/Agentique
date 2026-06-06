@@ -201,7 +201,9 @@
   "package-manifest.schema.json": {
     "valid": {
       "formatVersion": "1.0",
-      "files": ["README.md"],
+      "files": [
+        "README.md"
+      ],
       "hashes": {
         "README.md": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
       }
@@ -212,7 +214,9 @@
       },
       "extra-property": {
         "formatVersion": "1.0",
-        "files": ["README.md"],
+        "files": [
+          "README.md"
+        ],
         "hashes": {
           "README.md": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
         },
@@ -220,7 +224,9 @@
       },
       "boundary": {
         "formatVersion": "1.0",
-        "files": ["node_modules/pkg/index.js"],
+        "files": [
+          "node_modules/pkg/index.js"
+        ],
         "hashes": {
           "node_modules/pkg/index.js": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
         }
@@ -237,7 +243,9 @@
       "credentialed": false,
       "approvalRequired": false,
       "dataSensitivity": "public",
-      "capabilities": ["read-public-content"],
+      "capabilities": [
+        "read-public-content"
+      ],
       "reviewNotes": "Reads public package content without credential access."
     },
     "invalid": {
@@ -259,7 +267,9 @@
         "credentialed": true,
         "approvalRequired": false,
         "dataSensitivity": "sensitive",
-        "capabilities": ["credential-use"]
+        "capabilities": [
+          "credential-use"
+        ]
       }
     }
   },
@@ -269,7 +279,50 @@
       "state": "published",
       "updatedAt": "2026-05-31T00:00:00.000Z",
       "platformUrl": "https://agentique.io/resources/example-resource",
-      "tokenCount": 12
+      "tokenCount": 12,
+      "platformProjection": {
+        "source": "agentique.io",
+        "publicationState": "published",
+        "currentVersion": "1.0.0",
+        "observedAt": "2026-06-06T00:00:00.000Z",
+        "publishedAt": "2026-06-06T00:00:00.000Z"
+      },
+      "desiredState": {
+        "fingerprint": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+        "readbackState": "unchanged",
+        "scannerPolicyVersion": "policy-v1",
+        "reasons": [
+          "current"
+        ]
+      },
+      "scannerPolicy": {
+        "policyVersion": "policy-v1",
+        "analyzerManifestVersion": "analyzer-v1",
+        "ruleManifestVersion": "rules-v1",
+        "freshness": "current"
+      },
+      "reviewEligibility": {
+        "state": "eligible",
+        "evidenceTypes": [
+          "download"
+        ]
+      },
+      "trustPanel": {
+        "state": "current",
+        "messages": [
+          "Public readback shows current platform state."
+        ],
+        "versionHistoryUrl": "https://agentique.io/resources/example-resource/versions"
+      },
+      "versionHistory": [
+        {
+          "version": "1.0.0",
+          "observedAt": "2026-06-06T00:00:00.000Z",
+          "state": "current",
+          "desiredStateFingerprint": "sha256:3333333333333333333333333333333333333333333333333333333333333333"
+        }
+      ],
+      "reportActionState": "available"
     },
     "invalid": {
       "missing-required": {
@@ -287,60 +340,20 @@
         "state": "published",
         "updatedAt": "2026-05-31T00:00:00.000Z",
         "platformUrl": "https://agentique.io/resources/example-resource"
+      },
+      "platform-boundary": {
+        "resourceId": "example-resource",
+        "state": "published",
+        "updatedAt": "2026-05-31T00:00:00.000Z",
+        "platformUrl": "https://agentique.io/resources/example-resource",
+        "platformProjection": {
+          "source": "user-claim",
+          "publicationState": "approved"
+        }
       }
     }
   },
   "resource-manifest.schema.json": {
-    "valid": {
-      "formatVersion": "1.0",
-      "name": "example-resource",
-      "summary": "A public fixture resource manifest.",
-      "source": {
-        "type": "git",
-        "url": "https://github.com/agentique/example-resource"
-      },
-      "distribution": {
-        "mode": "package_download"
-      },
-      "package": {
-        "formatVersion": "1.0",
-        "files": ["README.md"],
-        "hashes": {
-          "README.md": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
-        }
-      },
-      "surfacing": {
-        "taskIntents": ["source-review", "public-summary"],
-        "audience": ["agent", "developer"],
-        "priority": 0.6,
-        "recency": {
-          "lastReviewedAt": "2026-06-01T00:00:00.000Z",
-          "reviewCadenceDays": 90
-        },
-        "compatibility": {
-          "runtimeFamilies": ["node", "browser"],
-          "protocols": ["https"]
-        },
-        "contextBudget": {
-          "maxTokens": 4000,
-          "maxBytes": 65536,
-          "preferredSummaryBytes": 4096
-        },
-        "notes": "Public creator-provided hints for resource selection."
-      },
-      "permissionRisk": {
-        "readOnly": true,
-        "destructive": false,
-        "idempotent": true,
-        "openWorld": false,
-        "externalNetwork": false,
-        "credentialed": false,
-        "approvalRequired": false,
-        "dataSensitivity": "public",
-        "capabilities": ["read-public-content"],
-        "reviewNotes": "Reads public package content without credential access."
-      }
-    },
     "invalid": {
       "missing-required": {
         "formatVersion": "1.0"
@@ -358,7 +371,9 @@
         },
         "package": {
           "formatVersion": "1.0",
-          "files": ["README.md"],
+          "files": [
+            "README.md"
+          ],
           "hashes": {
             "README.md": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
           }
@@ -378,9 +393,315 @@
         },
         "package": {
           "formatVersion": "1.0",
-          "files": ["README.md"],
+          "files": [
+            "README.md"
+          ],
           "hashes": {
             "README.md": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+          }
+        }
+      },
+      "platform-overclaim": {
+        "formatVersion": "1.0",
+        "name": "example-resource",
+        "summary": "A public fixture resource manifest.",
+        "source": {
+          "type": "git",
+          "url": "https://github.com/agentique/example-resource"
+        },
+        "distribution": {
+          "mode": "package_download"
+        },
+        "package": {
+          "formatVersion": "1.0",
+          "files": [
+            "README.md"
+          ],
+          "hashes": {
+            "README.md": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+          }
+        },
+        "surfacing": {
+          "taskIntents": [
+            "source-review",
+            "public-summary"
+          ],
+          "audience": [
+            "agent",
+            "developer"
+          ],
+          "priority": 0.6,
+          "recency": {
+            "lastReviewedAt": "2026-06-01T00:00:00.000Z",
+            "reviewCadenceDays": 90
+          },
+          "compatibility": {
+            "runtimeFamilies": [
+              "node",
+              "browser"
+            ],
+            "protocols": [
+              "https"
+            ]
+          },
+          "contextBudget": {
+            "maxTokens": 4000,
+            "maxBytes": 65536,
+            "preferredSummaryBytes": 4096
+          },
+          "notes": "Public creator-provided hints for resource selection."
+        },
+        "permissionRisk": {
+          "readOnly": true,
+          "destructive": false,
+          "idempotent": true,
+          "openWorld": false,
+          "externalNetwork": false,
+          "credentialed": false,
+          "approvalRequired": false,
+          "dataSensitivity": "public",
+          "capabilities": [
+            "read-public-content"
+          ],
+          "reviewNotes": "Reads public package content without credential access."
+        },
+        "registryTrust": {
+          "creatorMetadata": {
+            "declaredBy": "example-creator",
+            "declaredAt": "2026-06-06T00:00:00.000Z",
+            "notes": "Creator-provided public metadata for registry trust review."
+          },
+          "packageContext": {
+            "packageName": "@example/resource-helper",
+            "version": "1.0.0",
+            "sourceUrl": "https://github.com/example/resource-helper",
+            "ownershipEvidenceVersion": "ownership-v1",
+            "packageDigest": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+          },
+          "creatorCheckpoints": [
+            {
+              "kind": "lane-selection",
+              "acknowledged": true,
+              "completedAt": "2026-06-06T00:01:00.000Z",
+              "evidenceHash": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
+            },
+            {
+              "kind": "public-draft-preview",
+              "acknowledged": true,
+              "completedAt": "2026-06-06T00:02:00.000Z"
+            },
+            {
+              "kind": "review-only-confirmation",
+              "acknowledged": true,
+              "completedAt": "2026-06-06T00:03:00.000Z"
+            }
+          ],
+          "generatedDraft": {
+            "draftOnly": true,
+            "kind": "manifest",
+            "generatedAt": "2026-06-06T00:04:00.000Z",
+            "schemaVersion": "draft-v1",
+            "summary": "Draft-only manifest suggestion prepared for user review."
+          },
+          "patchDelta": {
+            "mode": "patch",
+            "operations": [
+              {
+                "op": "replace",
+                "path": "/summary",
+                "valueSummary": "Updated public summary copy."
+              }
+            ]
+          },
+          "platformManaged": {
+            "approved": true,
+            "listed": true,
+            "scanPassed": true,
+            "verifiedBadge": true,
+            "platformTrustScore": 100,
+            "latestVersion": true,
+            "publishedAt": "2026-06-06T00:00:00.000Z"
+          }
+        }
+      }
+    },
+    "validCases": {
+      "legacy-compatible": {
+        "formatVersion": "1.0",
+        "name": "example-resource",
+        "summary": "A public fixture resource manifest.",
+        "source": {
+          "type": "git",
+          "url": "https://github.com/agentique/example-resource"
+        },
+        "distribution": {
+          "mode": "package_download"
+        },
+        "package": {
+          "formatVersion": "1.0",
+          "files": [
+            "README.md"
+          ],
+          "hashes": {
+            "README.md": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+          }
+        },
+        "surfacing": {
+          "taskIntents": [
+            "source-review",
+            "public-summary"
+          ],
+          "audience": [
+            "agent",
+            "developer"
+          ],
+          "priority": 0.6,
+          "recency": {
+            "lastReviewedAt": "2026-06-01T00:00:00.000Z",
+            "reviewCadenceDays": 90
+          },
+          "compatibility": {
+            "runtimeFamilies": [
+              "node",
+              "browser"
+            ],
+            "protocols": [
+              "https"
+            ]
+          },
+          "contextBudget": {
+            "maxTokens": 4000,
+            "maxBytes": 65536,
+            "preferredSummaryBytes": 4096
+          },
+          "notes": "Public creator-provided hints for resource selection."
+        },
+        "permissionRisk": {
+          "readOnly": true,
+          "destructive": false,
+          "idempotent": true,
+          "openWorld": false,
+          "externalNetwork": false,
+          "credentialed": false,
+          "approvalRequired": false,
+          "dataSensitivity": "public",
+          "capabilities": [
+            "read-public-content"
+          ],
+          "reviewNotes": "Reads public package content without credential access."
+        }
+      },
+      "registry-trust": {
+        "formatVersion": "1.0",
+        "name": "example-resource",
+        "summary": "A public fixture resource manifest.",
+        "source": {
+          "type": "git",
+          "url": "https://github.com/agentique/example-resource"
+        },
+        "distribution": {
+          "mode": "package_download"
+        },
+        "package": {
+          "formatVersion": "1.0",
+          "files": [
+            "README.md"
+          ],
+          "hashes": {
+            "README.md": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+          }
+        },
+        "surfacing": {
+          "taskIntents": [
+            "source-review",
+            "public-summary"
+          ],
+          "audience": [
+            "agent",
+            "developer"
+          ],
+          "priority": 0.6,
+          "recency": {
+            "lastReviewedAt": "2026-06-01T00:00:00.000Z",
+            "reviewCadenceDays": 90
+          },
+          "compatibility": {
+            "runtimeFamilies": [
+              "node",
+              "browser"
+            ],
+            "protocols": [
+              "https"
+            ]
+          },
+          "contextBudget": {
+            "maxTokens": 4000,
+            "maxBytes": 65536,
+            "preferredSummaryBytes": 4096
+          },
+          "notes": "Public creator-provided hints for resource selection."
+        },
+        "permissionRisk": {
+          "readOnly": true,
+          "destructive": false,
+          "idempotent": true,
+          "openWorld": false,
+          "externalNetwork": false,
+          "credentialed": false,
+          "approvalRequired": false,
+          "dataSensitivity": "public",
+          "capabilities": [
+            "read-public-content"
+          ],
+          "reviewNotes": "Reads public package content without credential access."
+        },
+        "registryTrust": {
+          "creatorMetadata": {
+            "declaredBy": "example-creator",
+            "declaredAt": "2026-06-06T00:00:00.000Z",
+            "notes": "Creator-provided public metadata for registry trust review."
+          },
+          "packageContext": {
+            "packageName": "@example/resource-helper",
+            "version": "1.0.0",
+            "sourceUrl": "https://github.com/example/resource-helper",
+            "ownershipEvidenceVersion": "ownership-v1",
+            "packageDigest": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+          },
+          "creatorCheckpoints": [
+            {
+              "kind": "lane-selection",
+              "acknowledged": true,
+              "completedAt": "2026-06-06T00:01:00.000Z",
+              "evidenceHash": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
+            },
+            {
+              "kind": "public-draft-preview",
+              "acknowledged": true,
+              "completedAt": "2026-06-06T00:02:00.000Z"
+            },
+            {
+              "kind": "review-only-confirmation",
+              "acknowledged": true,
+              "completedAt": "2026-06-06T00:03:00.000Z"
+            }
+          ],
+          "generatedDraft": {
+            "draftOnly": true,
+            "kind": "manifest",
+            "generatedAt": "2026-06-06T00:04:00.000Z",
+            "schemaVersion": "draft-v1",
+            "summary": "Draft-only manifest suggestion prepared for user review."
+          },
+          "patchDelta": {
+            "mode": "patch",
+            "operations": [
+              {
+                "op": "replace",
+                "path": "/summary",
+                "valueSummary": "Updated public summary copy."
+              }
+            ]
           }
         }
       }
@@ -390,8 +711,12 @@
     "valid": {
       "name": "source-summarizer",
       "summary": "Summarizes public sources with attribution.",
-      "inputs": ["topic"],
-      "outputs": ["summary"]
+      "inputs": [
+        "topic"
+      ],
+      "outputs": [
+        "summary"
+      ]
     },
     "invalid": {
       "missing-required": {
@@ -400,8 +725,12 @@
       "extra-property": {
         "name": "source-summarizer",
         "summary": "Summarizes public sources with attribution.",
-        "inputs": ["topic"],
-        "outputs": ["summary"],
+        "inputs": [
+          "topic"
+        ],
+        "outputs": [
+          "summary"
+        ],
         "unexpected": true
       },
       "boundary": {
@@ -414,8 +743,14 @@
   },
   "surfacing-metadata.schema.json": {
     "valid": {
-      "taskIntents": ["source-review", "public-summary"],
-      "audience": ["agent", "developer"],
+      "taskIntents": [
+        "source-review",
+        "public-summary"
+      ],
+      "audience": [
+        "agent",
+        "developer"
+      ],
       "priority": 0.5,
       "recency": {
         "lastReviewedAt": "2026-06-01T00:00:00.000Z"
@@ -427,11 +762,17 @@
     },
     "invalid": {
       "missing-required": {
-        "taskIntents": ["source-review"]
+        "taskIntents": [
+          "source-review"
+        ]
       },
       "extra-property": {
-        "taskIntents": ["source-review"],
-        "audience": ["agent"],
+        "taskIntents": [
+          "source-review"
+        ],
+        "audience": [
+          "agent"
+        ],
         "priority": 0.5,
         "contextBudget": {
           "maxTokens": 4000,
@@ -441,7 +782,9 @@
       },
       "boundary": {
         "taskIntents": [],
-        "audience": ["unknown"],
+        "audience": [
+          "unknown"
+        ],
         "priority": 2,
         "contextBudget": {
           "maxTokens": 64,
@@ -454,7 +797,10 @@
     "valid": {
       "name": "example-public-tool",
       "summary": "Describes a public lookup tool listing for review.",
-      "capabilities": ["lookup", "summarize"],
+      "capabilities": [
+        "lookup",
+        "summarize"
+      ],
       "permissionRisk": {
         "readOnly": true,
         "destructive": false,
@@ -464,7 +810,10 @@
         "credentialed": false,
         "approvalRequired": false,
         "dataSensitivity": "public",
-        "capabilities": ["read-public-content", "external-network"],
+        "capabilities": [
+          "read-public-content",
+          "external-network"
+        ],
         "reviewNotes": "Reads public web content without credentials."
       },
       "outputContract": {
@@ -491,12 +840,16 @@
       "missing-required": {
         "name": "example-public-tool",
         "summary": "Describes a public lookup tool listing for review.",
-        "capabilities": ["lookup"]
+        "capabilities": [
+          "lookup"
+        ]
       },
       "extra-property": {
         "name": "example-public-tool",
         "summary": "Describes a public lookup tool listing for review.",
-        "capabilities": ["lookup"],
+        "capabilities": [
+          "lookup"
+        ],
         "permissionRisk": {
           "readOnly": true,
           "destructive": false,
@@ -582,6 +935,102 @@
         "name": "x",
         "summary": "too short",
         "steps": []
+      }
+    }
+  },
+  "registry-trust.schema.json": {
+    "valid": {
+      "contractVersion": "1.0",
+      "creatorMetadata": {
+        "declaredBy": "example-creator",
+        "declaredAt": "2026-06-06T00:00:00.000Z",
+        "notes": "Creator-provided public metadata for registry trust review."
+      },
+      "packageContext": {
+        "packageName": "@example/resource-helper",
+        "version": "1.0.0",
+        "sourceUrl": "https://github.com/example/resource-helper",
+        "ownershipEvidenceVersion": "ownership-v1",
+        "packageDigest": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+      },
+      "creatorCheckpoints": [
+        {
+          "kind": "lane-selection",
+          "acknowledged": true,
+          "completedAt": "2026-06-06T00:01:00.000Z",
+          "evidenceHash": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
+        },
+        {
+          "kind": "public-draft-preview",
+          "acknowledged": true,
+          "completedAt": "2026-06-06T00:02:00.000Z"
+        },
+        {
+          "kind": "review-only-confirmation",
+          "acknowledged": true,
+          "completedAt": "2026-06-06T00:03:00.000Z"
+        }
+      ],
+      "generatedDraft": {
+        "draftOnly": true,
+        "kind": "manifest",
+        "generatedAt": "2026-06-06T00:04:00.000Z",
+        "schemaVersion": "draft-v1",
+        "summary": "Draft-only manifest suggestion prepared for user review."
+      },
+      "patchDelta": {
+        "mode": "patch",
+        "operations": [
+          {
+            "op": "replace",
+            "path": "/summary",
+            "valueSummary": "Updated public summary copy."
+          }
+        ]
+      },
+      "desiredState": {
+        "fingerprint": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+        "readbackState": "review-required",
+        "contentHash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+        "scannerPolicyVersion": "policy-v1",
+        "reasons": [
+          "checkpoint-review"
+        ]
+      },
+      "scannerPolicy": {
+        "policyVersion": "policy-v1",
+        "analyzerManifestVersion": "analyzer-v1",
+        "ruleManifestVersion": "rules-v1",
+        "freshness": "current"
+      },
+      "reviewEligibility": {
+        "state": "needs-evidence",
+        "evidenceTypes": [
+          "download"
+        ],
+        "reasons": [
+          "interaction-evidence-required"
+        ]
+      },
+      "platformProjection": {
+        "source": "agentique.io",
+        "publicationState": "review-required",
+        "currentVersion": "1.0.0",
+        "observedAt": "2026-06-06T00:05:00.000Z"
+      }
+    },
+    "invalid": {
+      "missing-required": {},
+      "extra-property": {
+        "contractVersion": "1.0",
+        "certifiedSafe": true
+      },
+      "boundary": {
+        "contractVersion": "1.0",
+        "desiredState": {
+          "fingerprint": "sha256:not-a-fingerprint",
+          "readbackState": "approved"
+        }
       }
     }
   }
