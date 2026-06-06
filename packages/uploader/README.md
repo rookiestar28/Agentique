@@ -9,9 +9,11 @@ The package is published on npm at version `0.1.0` after owner-approved publicat
 Current boundary:
 
 - The package reserves the `agentique` command name.
-- The CLI exposes help, version, auth, upload plan, upload submit, and upload status commands.
+- The CLI exposes help, version, auth, upload plan, local draft, local patch, upload submit, and upload status commands.
 - Auth status can read a one-command `--token`, `AGENTIQUE_TOKEN`, or an `AGENTIQUE_CONFIG` JSON file and reports only redacted metadata.
 - Upload plan validates local packages with `@agentique.io/validator` without executing package code.
+- Upload draft emits local draft-only card or manifest output for review; it does not submit generated content.
+- Upload patch emits local patch or delta operation summaries when package metadata provides them; it does not submit partial updates.
 - Upload submit requires token auth, validates the package first, creates a review-only session, uploads evidence, and requires server completion verification.
 - Upload status requires token auth and reads a review-only submission status.
 - JSON output is available with `--json`.
@@ -26,6 +28,8 @@ agentique --help
 agentique --version
 agentique auth status --token <token> --json
 agentique upload plan ./my-package --schemas-dir ./schemas --json
+agentique upload draft ./my-package --schemas-dir ./schemas --draft-kind manifest --json
+agentique upload patch ./my-package --schemas-dir ./schemas --json
 agentique upload submit ./my-package --schemas-dir ./schemas --token <token> --api-url https://www.agentique.io --json
 agentique upload status submission-id --token <token> --api-url https://www.agentique.io --json
 ```

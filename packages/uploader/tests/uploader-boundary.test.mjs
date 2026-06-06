@@ -42,11 +42,14 @@ test("parser handles global flags and rejects unknown options", () => {
     token: null,
     schemasDir: null,
     apiUrl: null,
+    draftKind: null,
     tokens: ["upload", "plan", "pkg"]
   });
 
   assert.equal(parseArgs(["upload", "plan", "--token"]).error, "--token requires a value.");
   assert.equal(parseArgs(["upload", "plan", "--api-url"]).error, "--api-url requires a value.");
+  assert.equal(parseArgs(["upload", "draft", "pkg", "--draft-kind"]).error, "--draft-kind requires a value.");
+  assert.equal(parseArgs(["upload", "draft", "pkg", "--draft-kind", "page"]).error, "--draft-kind must be card or manifest.");
   assert.equal(parseArgs(["upload", "plan", "--unknown"]).error, "Unknown option: --unknown");
 });
 
@@ -215,6 +218,125 @@ test("upload plan fails closed for invalid packages without absolute path leakag
   assert.equal(status.code, "upload.plan.validation_failed");
   assert.ok(status.data.evidence.findingCount > 0);
   assert.doesNotMatch(result.stdout, forbiddenLocalOutputPattern(["uploader-plan-invalid"]));
+});
+
+test("upload draft emits local draft-only manifest output", async () => {
+  const packageDir = await createCheckpointPackageFixture({
+    generatedDraft: {
+      draftOnly: true,
+      kind: "manifest",
+      generatedAt: "2026-06-06T00:00:00.000Z",
+      schemaVersion: "draft-v1",
+      summary: "Draft-only manifest suggestion prepared for local review."
+    }
+  });
+  const result = await executeUploaderCli(
+    ["upload", "draft", packageDir, "--schemas-dir", path.join(repoRoot, "schemas"), "--draft-kind", "manifest", "--json"],
+    { cwd: repoRoot }
+  );
+  const status = JSON.parse(result.stdout);
+
+  assert.equal(result.exitCode, EXIT_CODES.success);
+  assert.equal(status.ok, true);
+  assert.equal(status.code, "upload.draft.ready");
+  assert.equal(status.data.draftOnly, true);
+  assert.equal(status.data.submitted, false);
+  assert.equal(status.data.requiresUserConfirmation, true);
+  assert.equal(status.data.requiresServerValidationBeforeSubmit, true);
+  assert.equal(status.data.draft.kind, "manifest");
+  assert.equal(status.data.draft.summary, "Draft-only manifest suggestion prepared for local review.");
+  assert.doesNotMatch(result.stdout, forbiddenLocalOutputPattern([packageDir]));
+});
+
+test("upload draft rejects overclaim and sensitive generated copy", async () => {
+  const packageDir = await createCheckpointPackageFixture({
+    generatedDraft: {
+      draftOnly: true,
+      kind: "card",
+      generatedAt: "2026-06-06T00:00:00.000Z",
+      schemaVersion: "draft-v1",
+      summary: "This draft is approved for hosted execution."
+    }
+  });
+  const result = await executeUploaderCli(["upload", "draft", packageDir, "--schemas-dir", path.join(repoRoot, "schemas"), "--json"], {
+    cwd: repoRoot
+  });
+  const status = JSON.parse(result.stdout);
+
+  assert.equal(result.exitCode, EXIT_CODES.unavailable);
+  assert.equal(status.code, "upload.draft.unsafe_content");
+  assert.ok(status.data.issues.some((entry) => entry.code === "draft-overclaim-approval"));
+  assert.ok(status.data.issues.some((entry) => entry.code === "draft-overclaim-hosted-execution"));
+  assert.doesNotMatch(result.stdout, /approved for hosted execution|flag-token-value/i);
+  assert.doesNotMatch(result.stdout, forbiddenLocalOutputPattern([packageDir]));
+});
+
+test("upload patch emits explicit partial update operations", async () => {
+  const packageDir = await createCheckpointPackageFixture({
+    patchDelta: {
+      mode: "patch",
+      operations: [
+        {
+          op: "replace",
+          path: "/summary",
+          valueSummary: "Updates public summary only."
+        }
+      ]
+    }
+  });
+  const result = await executeUploaderCli(["upload", "patch", packageDir, "--schemas-dir", path.join(repoRoot, "schemas"), "--json"], {
+    cwd: repoRoot
+  });
+  const status = JSON.parse(result.stdout);
+
+  assert.equal(result.exitCode, EXIT_CODES.success);
+  assert.equal(status.ok, true);
+  assert.equal(status.code, "upload.patch_delta.ready");
+  assert.equal(status.data.partialUpdateOnly, true);
+  assert.equal(status.data.submitted, false);
+  assert.equal(status.data.patchDelta.mode, "patch");
+  assert.equal(status.data.patchDelta.operationCount, 1);
+  assert.deepEqual(status.data.patchDelta.operations[0], {
+    op: "replace",
+    path: "/summary",
+    valueSummary: "Updates public summary only."
+  });
+  assert.doesNotMatch(result.stdout, forbiddenLocalOutputPattern([packageDir]));
+});
+
+test("upload patch rejects missing metadata and full snapshot-like operations", async () => {
+  const missingPackageDir = await createCheckpointPackageFixture();
+  const missing = await executeUploaderCli(
+    ["upload", "patch", missingPackageDir, "--schemas-dir", path.join(repoRoot, "schemas"), "--json"],
+    { cwd: repoRoot }
+  );
+  const missingStatus = JSON.parse(missing.stdout);
+
+  assert.equal(missing.exitCode, EXIT_CODES.unavailable);
+  assert.equal(missingStatus.code, "upload.patch_delta.required");
+
+  const snapshotPackageDir = await createCheckpointPackageFixture({
+    patchDelta: {
+      mode: "patch",
+      operations: [
+        {
+          op: "replace",
+          path: "/manifest",
+          valueSummary: "Replaces a complete manifest snapshot."
+        }
+      ]
+    }
+  });
+  const snapshot = await executeUploaderCli(
+    ["upload", "patch", snapshotPackageDir, "--schemas-dir", path.join(repoRoot, "schemas"), "--json"],
+    { cwd: repoRoot }
+  );
+  const snapshotStatus = JSON.parse(snapshot.stdout);
+
+  assert.equal(snapshot.exitCode, EXIT_CODES.unavailable);
+  assert.equal(snapshotStatus.code, "upload.patch_delta.full_snapshot_forbidden");
+  assert.ok(snapshotStatus.data.issues.some((entry) => entry.code === "patch-delta-full-snapshot-forbidden"));
+  assert.doesNotMatch(missing.stdout + snapshot.stdout, forbiddenLocalOutputPattern([missingPackageDir, snapshotPackageDir]));
 });
 
 test("upload submit completes a review-only session without forwarding bearer auth to storage", async () => {
@@ -490,17 +612,20 @@ test("usage errors are deterministic", async () => {
   const unknownOption = await executeUploaderCli(["upload", "plan", "pkg", "--token", "--json"]);
   const missingSchemasDir = await executeUploaderCli(["upload", "plan", "pkg", "--schemas-dir", "--json"]);
   const missingApiUrl = await executeUploaderCli(["upload", "submit", "pkg", "--api-url", "--json"]);
+  const invalidDraftKind = await executeUploaderCli(["upload", "draft", "pkg", "--draft-kind", "page", "--json"]);
 
   assert.equal(JSON.parse(missingCommand.stdout).code, "cli.usage_error");
   assert.equal(JSON.parse(unknownCommand.stdout).code, "cli.unknown_command");
   assert.equal(JSON.parse(unknownOption.stdout).code, "cli.usage_error");
   assert.equal(JSON.parse(missingSchemasDir.stdout).code, "cli.usage_error");
   assert.equal(JSON.parse(missingApiUrl.stdout).code, "cli.usage_error");
+  assert.equal(JSON.parse(invalidDraftKind.stdout).code, "cli.usage_error");
   assert.equal(missingCommand.exitCode, EXIT_CODES.usage);
   assert.equal(unknownCommand.exitCode, EXIT_CODES.usage);
   assert.equal(unknownOption.exitCode, EXIT_CODES.usage);
   assert.equal(missingSchemasDir.exitCode, EXIT_CODES.usage);
   assert.equal(missingApiUrl.exitCode, EXIT_CODES.usage);
+  assert.equal(invalidDraftKind.exitCode, EXIT_CODES.usage);
 });
 
 test("cli upload submit emits stable json and requires auth before live requests", async () => {
@@ -535,7 +660,7 @@ async function execFileExpectFailure(command, args) {
   }
 }
 
-async function createCheckpointPackageFixture() {
+async function createCheckpointPackageFixture({ generatedDraft = null, patchDelta = null } = {}) {
   const tempDir = await mkdtemp(path.join(os.tmpdir(), "agentique-uploader-checkpoints-"));
   const agentsDir = path.join(tempDir, "agents");
   await mkdir(agentsDir, { recursive: true });
@@ -548,6 +673,28 @@ async function createCheckpointPackageFixture() {
   const hashes = {
     "README.md": fingerprint(readme),
     "agents/research-assistant.md": fingerprint(assistant)
+  };
+  const registryTrust = {
+    creatorMetadata: {
+      declaredBy: "test-author",
+      declaredAt: "2026-06-06T00:00:00.000Z",
+      notes: "Creator supplied checkpoint evidence for review-only submission."
+    },
+    packageContext: {
+      packageName: "checkpoint-fixture",
+      version: "1.0.0",
+      sourceUrl: "https://github.com/rookiestar28/Agentique/tree/main/starters/agent-assistant",
+      ownershipEvidenceVersion: "owner-v1",
+      packageDigest: fingerprint(JSON.stringify(hashes))
+    },
+    creatorCheckpoints: REQUIRED_CREATOR_CHECKPOINTS.map((kind, index) => ({
+      kind,
+      acknowledged: true,
+      completedAt: `2026-06-06T00:00:0${index}.000Z`,
+      evidenceHash: fingerprint(kind)
+    })),
+    ...(generatedDraft ? { generatedDraft } : {}),
+    ...(patchDelta ? { patchDelta } : {})
   };
   const manifest = {
     formatVersion: "1.0",
@@ -578,26 +725,7 @@ async function createCheckpointPackageFixture() {
       files: ["README.md", "agents/research-assistant.md"],
       hashes
     },
-    registryTrust: {
-      creatorMetadata: {
-        declaredBy: "test-author",
-        declaredAt: "2026-06-06T00:00:00.000Z",
-        notes: "Creator supplied checkpoint evidence for review-only submission."
-      },
-      packageContext: {
-        packageName: "checkpoint-fixture",
-        version: "1.0.0",
-        sourceUrl: "https://github.com/rookiestar28/Agentique/tree/main/starters/agent-assistant",
-        ownershipEvidenceVersion: "owner-v1",
-        packageDigest: fingerprint(JSON.stringify(hashes))
-      },
-      creatorCheckpoints: REQUIRED_CREATOR_CHECKPOINTS.map((kind, index) => ({
-        kind,
-        acknowledged: true,
-        completedAt: `2026-06-06T00:00:0${index}.000Z`,
-        evidenceHash: fingerprint(kind)
-      }))
-    }
+    registryTrust
   };
   await writeFile(path.join(tempDir, "manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
 

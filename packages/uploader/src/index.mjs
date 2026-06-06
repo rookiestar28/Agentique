@@ -18,6 +18,8 @@ export const UPLOADER_PACKAGE_BOUNDARY = Object.freeze({
 
 export const UPLOADER_PACKAGE_VERSION = UPLOADER_PACKAGE_BOUNDARY.version;
 
+export { createGeneratedDraftOutput, createPatchDeltaOutput } from "./draft.mjs";
+
 export function createUploaderBoundaryStatus() {
   return {
     ok: false,

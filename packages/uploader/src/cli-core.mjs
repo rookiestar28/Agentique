@@ -1,5 +1,6 @@
 import { createUploaderBoundaryStatus, UPLOADER_PACKAGE_VERSION } from "./index.mjs";
 import { resolveAuthState } from "./auth.mjs";
+import { createGeneratedDraftOutput, createPatchDeltaOutput } from "./draft.mjs";
 import { createUploadPlan } from "./plan.mjs";
 import { readUploadStatus, submitReviewOnlyUpload } from "./submit.mjs";
 
@@ -14,15 +15,17 @@ export const USAGE = `Usage:
   agentique --version
   agentique auth status [--json]
   agentique upload plan <package-dir> [--json]
+  agentique upload draft <package-dir> [--draft-kind card|manifest] [--json]
+  agentique upload patch <package-dir> [--json]
   agentique upload submit <package-dir> [--json]
   agentique upload status <submission-id> [--json]
 
 Current status:
-  Submit and status commands create review-only sessions; they do not publish packages automatically.
+  Draft and patch commands are local-only. Submit and status commands create review-only sessions; they do not publish packages automatically.
 `;
 
 const COMMANDS = new Set(["auth", "upload"]);
-const UPLOAD_COMMANDS = new Set(["plan", "submit", "status"]);
+const UPLOAD_COMMANDS = new Set(["plan", "draft", "patch", "submit", "status"]);
 
 export async function executeUploaderCli(argv, options = {}) {
   const parsed = parseArgs(argv);
@@ -91,6 +94,7 @@ export function parseArgs(argv) {
   let token = null;
   let schemasDir = null;
   let apiUrl = null;
+  let draftKind = null;
 
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
@@ -133,6 +137,24 @@ export function parseArgs(argv) {
       }
       apiUrl = value;
       index += 1;
+    } else if (arg === "--draft-kind") {
+      const value = argv[index + 1];
+      if (!value || value.startsWith("-")) {
+        return {
+          json: json || argv.includes("--json"),
+          command: tokens.join(" ") || "unknown",
+          error: "--draft-kind requires a value."
+        };
+      }
+      if (!["card", "manifest"].includes(value)) {
+        return {
+          json: json || argv.includes("--json"),
+          command: tokens.join(" ") || "unknown",
+          error: "--draft-kind must be card or manifest."
+        };
+      }
+      draftKind = value;
+      index += 1;
     } else if (arg.startsWith("-")) {
       return {
         json: json || argv.includes("--json"),
@@ -144,7 +166,7 @@ export function parseArgs(argv) {
     }
   }
 
-  return { json, help, version, token, schemasDir, apiUrl, tokens };
+  return { json, help, version, token, schemasDir, apiUrl, draftKind, tokens };
 }
 
 function handleAuthCommand(action, parsed, options) {
@@ -208,7 +230,7 @@ async function handleUploadCommand(action, operand, parsed, options) {
       result: createResult({
         ok: false,
         code: "cli.usage_error",
-        message: "Expected upload command: plan, submit, or status",
+        message: "Expected upload command: plan, draft, patch, submit, or status",
         command: "upload"
       }),
       exitCode: EXIT_CODES.usage,
@@ -272,6 +294,47 @@ async function handleUploadCommand(action, operand, parsed, options) {
         data: submission
       }),
       exitCode: submission.ok ? EXIT_CODES.success : EXIT_CODES.unavailable,
+      json: parsed.json
+    });
+  }
+
+  if (action === "draft") {
+    const draft = await createGeneratedDraftOutput({
+      packageDir: operand,
+      schemasDir: parsed.schemasDir,
+      kind: parsed.draftKind,
+      cwd: options.cwd
+    });
+
+    return formatResult({
+      result: createResult({
+        ok: draft.ok,
+        code: draft.code,
+        message: draft.ok ? "Generated draft output is ready for local review." : draft.message,
+        command: "upload draft",
+        data: draft
+      }),
+      exitCode: draft.ok ? EXIT_CODES.success : EXIT_CODES.unavailable,
+      json: parsed.json
+    });
+  }
+
+  if (action === "patch") {
+    const patch = await createPatchDeltaOutput({
+      packageDir: operand,
+      schemasDir: parsed.schemasDir,
+      cwd: options.cwd
+    });
+
+    return formatResult({
+      result: createResult({
+        ok: patch.ok,
+        code: patch.code,
+        message: patch.ok ? "Patch or delta output is ready for local review." : patch.message,
+        command: "upload patch",
+        data: patch
+      }),
+      exitCode: patch.ok ? EXIT_CODES.success : EXIT_CODES.unavailable,
       json: parsed.json
     });
   }
