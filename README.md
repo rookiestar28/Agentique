@@ -52,6 +52,8 @@ npm install @agentique.io/schemas @agentique.io/validator @agentique.io/readback
 
 Published packages currently include `@agentique.io/schemas`, `@agentique.io/validator`, `@agentique.io/action`, `@agentique.io/readback`, and `@agentique.io/uploader` at version `0.1.0`.
 
+Parser/variant package surfaces in the current source branch remain branch-local release-candidate evidence. They are not part of a new advertised package release until the scoped release decision in [docs/release-go-no-go.md](docs/release-go-no-go.md) changes from No-Go.
+
 Use the validator package for local static checks:
 
 ```bash
@@ -64,19 +66,16 @@ Use readback helpers for public resource state exposed by `agentique.io`:
 import {
   createBadgeState,
   createReadbackClient,
-  normalizeParserVariantReadback,
   normalizeTrustReadback
 } from "@agentique.io/readback";
 
 const client = createReadbackClient();
 const readback = await client.getReadback("resource-id");
 const trust = normalizeTrustReadback(readback);
-const parserVariant = normalizeParserVariantReadback(readback);
 const badge = createBadgeState(readback);
 
 console.log(`${badge.label}: ${badge.message}`);
 console.log(trust.platformState);
-console.log(parserVariant.parserEvidence?.parseStatus ?? "unavailable");
 ```
 
 ## Quick Start From Source
@@ -148,6 +147,8 @@ The source repository, npm packages, action usage reference, badge/readback docu
 
 Current source repository, package registry, action usage, badge/readback documentation, and platform-link publication decision: **Go**.
 
+Parser/variant package changes in the current source branch are **No-Go** for a new package-release claim until hosted CI for the pushed candidate, owner release approval, package-version decision, registry readback for the advertised version, clean install smoke, and rollback or unpublish evidence are recorded. Existing published package pages remain approved at version `0.1.0`.
+
 Public-safe evidence currently recorded:
 
 - The public repository is available at [github.com/rookiestar28/Agentique](https://github.com/rookiestar28/Agentique).
@@ -193,7 +194,7 @@ Release evidence and approved public channels are tracked in [docs/release-evide
 5. Add optional `registryTrust` metadata only for public-safe creator checkpoints, package context, generated draft metadata, or patch/delta metadata.
 6. Add optional `parserVariant` metadata only for static parser evidence, sanitized graph summaries, compatibility reasons, and source-only platform variant descriptions.
 7. Validate locally with the validator CLI.
-8. Use uploader plan, import-plan, variant-plan, draft, or patch commands for local review-only preparation when useful.
+8. Use uploader plan, draft, or patch commands for local review-only preparation when useful; use source-checkout import-plan and variant-plan dry-runs only as branch-local parser/variant package-release evidence.
 9. Submit through the platform-owned upload flow or an authenticated review-only uploader session when configured.
 10. Use readback helpers only after `agentique.io` exposes public resource status.
 
@@ -277,7 +278,9 @@ See [packages/validator/README.md](packages/validator/README.md).
 
 ## Uploader CLI
 
-The uploader package is a published review-only CLI implementation. It is useful for local integration review because it can report redacted auth status, generate validator-backed upload plans, emit parser import and variant dry-runs, and exercise review-session submit/status flows when configured with platform API access.
+The uploader package is a published review-only CLI implementation. It is useful for local integration review because it can report redacted auth status, generate validator-backed upload plans, and exercise review-session submit/status flows when configured with platform API access.
+
+The current source branch also includes parser import and variant dry-runs for local review. Those source-branch parser/variant surfaces are not a new published package claim until the package release gate records the required hosted, owner, registry, install-smoke, and rollback evidence.
 
 Install from npm:
 
@@ -298,7 +301,7 @@ node packages/uploader/src/cli.mjs upload submit <package-dir> --schemas-dir sch
 node packages/uploader/src/cli.mjs upload status <submission-id> --token <token> --api-url https://www.agentique.io --json
 ```
 
-`upload plan` reports validator-backed package evidence and creator checkpoint readiness. `upload import-plan` reports parser evidence, graph counts, and compatibility for local review. `upload variant-plan` reports source-only variant states and review reasons for local review. `upload draft` and `upload patch` are local-only and unsubmitted. `upload submit` requires scoped token auth, an Agentique API origin, checkpoint-ready package metadata, and server completion verification.
+`upload plan` reports validator-backed package evidence and creator checkpoint readiness. From the source checkout, `upload import-plan` reports parser evidence, graph counts, and compatibility for local review, while `upload variant-plan` reports source-only variant states and review reasons for local review. `upload draft` and `upload patch` are local-only and unsubmitted. `upload submit` requires scoped token auth, an Agentique API origin, checkpoint-ready package metadata, and server completion verification.
 
 The uploader does not publish, approve, certify, host, or moderate resources. Package installation is available from npm, while authenticated review-session access and final resource publication remain platform-owned and account/token gated.
 
@@ -348,19 +351,16 @@ Example:
 import {
   createBadgeState,
   createReadbackClient,
-  normalizeParserVariantReadback,
   normalizeTrustReadback
 } from "@agentique.io/readback";
 
 const client = createReadbackClient();
 const readback = await client.getReadback("resource-id");
 const trust = normalizeTrustReadback(readback);
-const parserVariant = normalizeParserVariantReadback(readback);
 const badge = createBadgeState(readback);
 
 console.log(`${badge.label}: ${badge.message}`);
 console.log(trust.trustPanel?.state ?? trust.platformState);
-console.log(parserVariant.parserEvidence?.parseStatus ?? "unavailable");
 ```
 
 Read-only methods:
@@ -387,7 +387,7 @@ Badge states:
 - `unavailable`
 - `rate-limited`
 
-Trust normalization projects public desired-state, scanner-policy, trust-panel, review-eligibility, report-action, and version-history fields when the platform exposes them. Parser/variant normalization projects public parser evidence and variant state while reporting digest presence instead of raw digests. Badge output is a public readback summary, not a safety guarantee. See [packages/readback/README.md](packages/readback/README.md).
+Trust normalization projects public desired-state, scanner-policy, trust-panel, review-eligibility, report-action, and version-history fields when the platform exposes them. Parser/variant normalization in the current source branch projects public parser evidence and variant state while reporting digest presence instead of raw digests; it remains branch-local package-release evidence until a new package version is approved and published. Badge output is a public readback summary, not a safety guarantee. See [packages/readback/README.md](packages/readback/README.md).
 
 ## Schemas
 
@@ -409,7 +409,7 @@ Schemas are stored in `schemas/` and can be used by local tooling or external va
 
 The validator CLI uses these schemas through `--schemas-dir schemas`.
 
-`parser-variant.schema.json` defines public parser evidence, sanitized resource graph summaries, compatibility reasons, and platform variant states. Creator manifests may describe source-only variant metadata, but they must not claim platform-managed validation, platform download availability, publication, approval, or runtime compatibility.
+`parser-variant.schema.json` in the current source branch defines public parser evidence, sanitized resource graph summaries, compatibility reasons, and platform variant states. Creator manifests may describe source-only variant metadata, but they must not claim platform-managed validation, platform download availability, publication, approval, or runtime compatibility. This schema remains branch-local package-release evidence until a new package version is approved and published.
 
 ## Contract Evaluation Fixtures
 
