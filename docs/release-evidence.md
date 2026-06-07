@@ -82,6 +82,8 @@ Current branch-local release tooling packs schemas, validator, action, readback,
 
 Registry readback still proves the currently published `0.1.0` package pages only. Branch-local parser/variant source changes require hosted CI, owner review, a package-version release decision, registry readback for the advertised version, and clean install smoke before any new package-release claim changes.
 
+Parser/variant package publication is currently No-Go for a new package-release claim. The blockers are missing hosted Release Check evidence for the pushed candidate, missing owner-approved package-version and publish decision, registry/readback evidence that still covers only existing `0.1.0` packages, and missing rollback or unpublish evidence for a new parser/variant package release.
+
 ## All-Channel Public URL Mode
 
 Approved advertised URL checks pass for source, published packages, action usage, badge/readback documentation, schema, docs, and platform links:
@@ -164,4 +166,4 @@ These smoke checks approve source repository, published package registry, action
 
 ## Current Decision
 
-The source repository, published npm packages including `@agentique.io/uploader`, action usage reference, badge/readback documentation, and `agentique.io` public links are Go for advertised channels. The current source branch does not publish a new package version by itself; later pushed changes still require hosted CI evidence and owner review before downstream release claims are updated. Authenticated review-session access and final resource publication remain platform-owned and account/token gated. GitHub Marketplace-style promotion remains separate from this source/package release.
+The source repository, published npm packages including `@agentique.io/uploader`, action usage reference, badge/readback documentation, and `agentique.io` public links remain Go for existing advertised channels. Parser/variant branch-local package changes are No-Go for a new package-release claim until hosted CI, owner release approval, package-version decision, registry readback for the advertised version, clean install smoke, and rollback or unpublish evidence are recorded. Authenticated review-session access and final resource publication remain platform-owned and account/token gated. GitHub Marketplace-style promotion remains separate from this source/package release.

@@ -22,6 +22,21 @@ Current blockers:
 
 The uploader package page is approved for advertising. Authenticated review-session access and final resource publication remain platform-owned and account/token gated.
 
+## Parser And Variant Package Release Decision
+
+Current parser/variant package release decision: **No-Go** for a new package-release claim.
+
+Reason: parser/variant source changes are branch-local evidence only. Existing published package pages remain approved at `0.1.0`, but no new parser/variant package release is approved without hosted CI for the pushed candidate, owner release approval, a package-version decision, registry readback for the advertised version, clean install smoke, and rollback or unpublish evidence.
+
+Current blockers:
+
+- Fresh hosted Release Check evidence for the pushed parser/variant package candidate is not recorded.
+- No owner-approved package-version and publish decision is recorded for parser/variant package changes.
+- Registry readback and clean install smoke currently prove only existing published `0.1.0` packages.
+- Rollback or unpublish evidence for a new parser/variant package release is not recorded.
+
+Parser/variant schemas, validator findings, readback helpers, uploader dry-runs, examples, and release smoke coverage are branch-local preparation evidence. They do not publish new package contents, create platform downloads, prove runtime compatibility, approve resources, or replace platform review.
+
 Current public-safe evidence is recorded in [release-evidence.md](release-evidence.md).
 
 ## Local Evidence
@@ -37,6 +52,7 @@ Current public-safe evidence is recorded in [release-evidence.md](release-eviden
 - Readback helper docs describe context bundle and selection projections as read-only public projections.
 - Hosted Release Check evidence is recorded for the latest pushed public release candidate; later branch changes require a fresh hosted run before downstream release claims.
 - Current branch-local release gate refresh passed package tests, starter validation, release checks, workflow posture, package dry-run, URL inventory, registry readback, install smoke, go/no-go, content scan, diff check, and production dependency audits.
+- Parser/variant package surface smoke passes from locally packed tarballs, but this remains branch-local evidence until a new package release is approved and published.
 - Public `main` branch protection is enabled.
 - Final public URLs are approved.
 - `agentique.io` public links are approved.

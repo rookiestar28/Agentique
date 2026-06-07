@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
+  collectReleaseDecisionFailures
+} from "../check-release-go-no-go.mjs";
+import {
   evaluateRegistryReadback,
   REGISTRY_EXPECTATIONS
 } from "../registry-readback.mjs";
@@ -20,6 +23,38 @@ test("registry readback policy accepts published companion packages", () => {
   assert.match(
     evaluateRegistryReadback({ status: "not_found", version: null }, uploader),
     /expected published/
+  );
+});
+
+test("release go/no-go accepts scoped parser variant publication no-go", () => {
+  assert.deepEqual(
+    collectReleaseDecisionFailures({
+      decision: "go",
+      releaseBlocked: false,
+      localChecks: { tests: true },
+      externalEvidence: { ownerApproval: true },
+      parserVariantPublicationDecision: {
+        decision: "no_go",
+        releaseBlocked: true,
+        blockers: ["hosted release check for the pushed parser variant package candidate is missing"]
+      }
+    }),
+    []
+  );
+});
+
+test("release go/no-go rejects scoped parser variant no-go without blockers", () => {
+  assert.deepEqual(
+    collectReleaseDecisionFailures({
+      decision: "go",
+      releaseBlocked: false,
+      parserVariantPublicationDecision: {
+        decision: "no_go",
+        releaseBlocked: true,
+        blockers: []
+      }
+    }),
+    ["parserVariantPublicationDecision: no_go decision requires explicit blockers"]
   );
 });
 
