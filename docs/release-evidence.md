@@ -90,11 +90,11 @@ Parser/variant package publication is currently Go for the coordinated `0.2.0` p
 
 Current source now includes readback catalog list/detail/download-metadata helpers, catalog metadata normalizers, a safe direct-download utility, uploader catalog read commands, uploader direct download, and package-surface smoke coverage for installed tarballs.
 
-Catalog/download evidence includes local source behavior, local tests, installed-tarball smoke, registry install smoke for `0.2.0`, and the bounded live metadata smoke below. It does not prove direct-download byte-transfer availability, approve resources, certify safety, install or execute downloaded content, or replace platform review.
+Catalog/download evidence includes local source behavior, local tests, installed-tarball smoke, registry install smoke for `0.2.0`, the bounded live metadata smoke below, and owner-approved disposable byte-transfer smoke. It does not approve resources, certify safety, install or execute downloaded content, or replace platform review.
 
 Registry readback proves schemas, validator, action, readback, and uploader at `0.2.0`. Catalog/download package changes are published in package version `0.2.0` after owner-approved GitHub Actions publication, hosted Release Check, full registry readback, registry install smoke, and documented rollback/unpublish procedure evidence.
 
-Catalog/download package publication is currently Go for the coordinated `0.2.0` package-release claim. Direct-download live availability remains unadvertised because owner-approved disposable direct-download byte-transfer evidence is not recorded.
+Catalog/download package publication is currently Go for the coordinated `0.2.0` package-release claim. Owner-approved disposable direct byte-transfer smoke passed for a metadata-only public resource.
 
 ## Catalog And Download Live Metadata Evidence
 
@@ -106,9 +106,9 @@ GET-only unauthenticated live metadata smoke was refreshed on 2026-06-07.
 | Canonical public resource list URL | HTTP 200 JSON with a read-only list response and page metadata. |
 | First listed public resource detail URL | HTTP 200 JSON with read-only resource detail metadata. |
 | First listed public resource download-metadata URL | HTTP 200 JSON with available download metadata. |
-| Direct byte-download probe | Skipped because no owner-approved disposable public resource scope was recorded for byte-transfer evidence. |
+| Direct byte-transfer smoke | Pass | Owner-approved disposable smoke on 2026-06-07 selected metadata-only resource `cmpu0alp200m0lt0ax39rcb9o` (`post-dev-recap.zip`, 1377 bytes). Public metadata was read without auth, the unauthenticated byte ticket endpoint returned a server-provided URL that was not printed or recorded, byte transfer completed, size matched, SHA256 matched, and the artifact was not opened, extracted, or executed. |
 
-This evidence supports catalog and download-metadata endpoint availability inputs for the release decision. It does not advertise current source package changes as published npm capabilities and does not prove direct byte-download availability.
+This evidence supports catalog, download-metadata, and bounded disposable byte-transfer availability inputs for the release decision. It does not certify content safety, approve resources, install or execute downloaded content, or guarantee every public resource is downloadable.
 
 ## Catalog And Download Closeout Evidence
 
@@ -119,9 +119,10 @@ Current source closeout evidence is complete for local preparation only:
 - Uploader catalog and direct-download commands are covered by package tests.
 - Installed-tarball smoke covers readback catalog/download exports and uploader catalog/direct-download help surfaces.
 - Registry readback proves schemas, validator, action, readback, and uploader at `0.2.0`.
+- Owner-approved disposable byte-transfer smoke passed for metadata-only resource `cmpu0alp200m0lt0ax39rcb9o`; size and SHA256 matched, no auth was used, and the artifact was not opened, extracted, or executed.
 - Live metadata smoke proves the public list/detail/download-metadata endpoints for the sampled public resource.
 
-Current closeout evidence includes hosted CI on `main`, GitHub Actions publication, full registry readback for `0.2.0`, registry install smoke, and documented rollback/unpublish procedure evidence. Direct byte-download smoke is not recorded, so direct-download live availability remains unadvertised.
+Current closeout evidence includes hosted CI on `main`, GitHub Actions publication, full registry readback for `0.2.0`, registry install smoke, owner-approved disposable byte-transfer smoke, and documented rollback/unpublish procedure evidence.
 
 ## All-Channel Public URL Mode
 
@@ -199,10 +200,10 @@ Command-line public link smoke checks were run on 2026-06-02, and package regist
 | `https://github.com/rookiestar28/Agentique/tree/main/packages/action#usage` | Approved action usage reference |
 | `https://github.com/rookiestar28/Agentique/tree/main/packages/readback#badge-states` | Approved badge/readback documentation |
 | `https://www.agentique.io/` | HTTP 200 |
-| `https://www.agentique.io/api/public/v1/resources?limit=1` | Current HTTP 200 JSON metadata smoke for the existing readback endpoint inventory. This row is not a direct-download live availability claim for current source changes. |
+| `https://www.agentique.io/api/public/v1/resources?limit=1` | Current HTTP 200 JSON metadata smoke for the existing readback endpoint inventory. Bounded disposable byte-transfer evidence is recorded separately above. |
 
 These smoke checks approve source repository, published package registry, action usage, badge/readback documentation, schema, documentation, and `agentique.io` public links for advertising. GitHub Marketplace-style promotion remains a separate future channel.
 
 ## Current Decision
 
-The source repository, published npm packages including `@agentique.io/uploader`, action usage reference, badge/readback documentation, and `agentique.io` public links remain Go for existing advertised channels. Parser/variant source changes are Go for the coordinated `0.2.0` package-release claim. Catalog/download source changes are Go for the coordinated `0.2.0` package-release claim, while direct-download live availability remains unadvertised until owner-approved disposable direct-download evidence is recorded. Authenticated review-session access and final resource publication remain platform-owned and account/token gated. GitHub Marketplace-style promotion remains separate from this source/package release.
+The source repository, published npm packages including `@agentique.io/uploader`, action usage reference, badge/readback documentation, and `agentique.io` public links remain Go for existing advertised channels. Parser/variant source changes are Go for the coordinated `0.2.0` package-release claim. Catalog/download source changes are Go for the coordinated `0.2.0` package-release claim, and owner-approved disposable byte-transfer smoke is recorded. Authenticated review-session access and final resource publication remain platform-owned and account/token gated. GitHub Marketplace-style promotion remains separate from this source/package release.

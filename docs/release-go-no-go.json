@@ -50,18 +50,34 @@
     "decision": "go",
     "releaseBlocked": false,
     "advertisePackageChanges": true,
-    "advertiseLiveAvailability": false,
+    "advertiseLiveAvailability": true,
     "closeoutEvidence": {
       "sourceBranchValidation": true,
       "installedTarballSmoke": true,
       "liveMetadataSmoke": true,
-      "directByteDownloadSmoke": false,
+      "directByteDownloadSmoke": true,
       "hostedCiForCandidate": true,
       "ownerPackageReleaseApproval": true,
       "newVersionRegistryReadback": true,
       "rollbackEvidenceForNewRelease": true
     },
-    "reason": "Catalog/download CLI and SDK package changes are published in the coordinated 0.2.0 package release. Hosted Release Check passed on main, GitHub Actions trusted publishing completed, registry readback confirms all companion packages at 0.2.0, registry install smoke passed, and the public rollback/unpublish procedure is documented. Direct-download live availability is not advertised because owner-approved disposable direct-download byte-transfer evidence is not recorded.",
+    "directDownloadEvidence": {
+      "ownerApproved": true,
+      "observedAt": "2026-06-07",
+      "resourceId": "cmpu0alp200m0lt0ax39rcb9o",
+      "resourceTitle": "Post Dev Recap Skill",
+      "resourceClass": "metadata-only static-skill",
+      "fileName": "post-dev-recap.zip",
+      "mediaType": "application/zip",
+      "sizeBytes": 1377,
+      "sha256Matched": true,
+      "authUsed": false,
+      "signedUrlOutput": false,
+      "opened": false,
+      "extracted": false,
+      "executed": false
+    },
+    "reason": "Catalog/download CLI and SDK package changes are published in the coordinated 0.2.0 package release. Hosted Release Check passed on main, GitHub Actions trusted publishing completed, registry readback confirms all companion packages at 0.2.0, registry install smoke passed, and the public rollback/unpublish procedure is documented. Owner-approved disposable direct byte-transfer smoke passed on 2026-06-07 for a metadata-only public resource without auth, signed URL output, opening, extraction, or execution.",
     "blockers": []
   },
   "blockers": []

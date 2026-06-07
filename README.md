@@ -55,7 +55,7 @@ Published package pages currently include `@agentique.io/schemas`, `@agentique.i
 
 Parser/variant package surfaces are included in the coordinated npm package release `0.2.0`; the scoped release decision in [docs/release-go-no-go.md](docs/release-go-no-go.md) records hosted CI, GitHub Actions publication, registry readback, clean install smoke, and rollback/unpublish procedure evidence.
 
-Catalog/download CLI and SDK surfaces are also included in the coordinated npm package release `0.2.0`. Direct-download live availability remains a separate claim and is not advertised until owner-approved disposable byte-transfer evidence is recorded.
+Catalog/download CLI and SDK surfaces are also included in the coordinated npm package release `0.2.0`. Owner-approved disposable byte-transfer evidence is recorded for a metadata-only public resource; this is a bounded live transfer smoke, not a safety certification or platform approval of downloaded content.
 
 Use the validator package for local static checks:
 
@@ -156,7 +156,7 @@ Current source repository, package registry, action usage, badge/readback docume
 
 Parser/variant package changes in the current source branch are **Go** for the coordinated `0.2.0` npm package-release claim. Owner approval to use the manual GitHub Actions package publishing workflow is recorded, hosted Release Check passed on `main`, GitHub Actions publication completed, registry readback confirms all companion packages at `0.2.0`, and registry install smoke passed.
 
-Catalog/download package changes in the current source branch are **Go** for the coordinated `0.2.0` npm package-release claim. Current metadata endpoint evidence is recorded, owner-approved GitHub Actions publication completed, registry readback confirms all companion packages at `0.2.0`, and registry install smoke passed. Direct-download live availability remains **No-Go** until owner-approved disposable direct-download evidence is recorded.
+Catalog/download package changes in the current source branch are **Go** for the coordinated `0.2.0` npm package-release claim. Current metadata endpoint evidence is recorded, owner-approved GitHub Actions publication completed, registry readback confirms all companion packages at `0.2.0`, and registry install smoke passed. Owner-approved disposable direct byte-transfer smoke also passed for a metadata-only public resource without auth, signed URL output, opening, extraction, or execution.
 
 Public-safe evidence currently recorded:
 
@@ -167,7 +167,7 @@ Public-safe evidence currently recorded:
 - Hosted Release Check evidence is recorded for the latest pushed public release candidate; later branch changes require a fresh hosted run before downstream release claims.
 - Public `main` branch protection is enabled.
 - Final public repository, package, docs, schema, action usage, badge/readback documentation, and platform URLs are approved.
-- Existing `agentique.io` public links remain approved through the recorded URL inventory; current source catalog/download metadata evidence is recorded, while direct-download live availability claims require owner-approved disposable byte-transfer evidence before advertising.
+- Existing `agentique.io` public links remain approved through the recorded URL inventory; current source catalog/download metadata evidence and owner-approved disposable byte-transfer evidence are recorded.
 - Owner go/no-go approval is recorded.
 
 Approved and separate channels:
@@ -289,7 +289,7 @@ See [packages/validator/README.md](packages/validator/README.md).
 
 The uploader package is a published review-only CLI implementation. It is useful for local integration review because it can report redacted auth status, generate validator-backed upload plans, and exercise review-session submit/status flows when configured with platform API access.
 
-The current source branch also includes parser import and variant dry-runs, public catalog reads, download-metadata reads, and direct artifact byte download for local review. These parser/variant and catalog/download package surfaces are included in the `0.2.0` package release after hosted CI, GitHub Actions publication, registry readback, and registry install smoke. Direct-download live availability remains unadvertised until owner-approved disposable byte-transfer evidence is recorded.
+The current source branch also includes parser import and variant dry-runs, public catalog reads, download-metadata reads, and direct artifact byte download for local review. These parser/variant and catalog/download package surfaces are included in the `0.2.0` package release after hosted CI, GitHub Actions publication, registry readback, and registry install smoke. Owner-approved disposable direct byte-transfer smoke passed for a metadata-only public resource.
 
 Install from npm:
 
@@ -316,7 +316,7 @@ node packages/uploader/src/cli.mjs download <resource-id> --output ./downloads/ 
 
 `upload plan` reports validator-backed package evidence and creator checkpoint readiness. From the source checkout, `upload import-plan` reports parser evidence, graph counts, and compatibility for local review, while `upload variant-plan` reports source-only variant states and review reasons for local review. `upload draft` and `upload patch` are local-only and unsubmitted. `upload submit` requires scoped token auth, an Agentique API origin, checkpoint-ready package metadata, and server completion verification.
 
-`catalog list`, `catalog get`, and `catalog download-metadata` are GET-only public readback commands and do not require uploader auth. `download` resolves public metadata, writes bytes to the explicit `--output` path, verifies SDK size/digest checks, and redacts signed URLs and absolute local paths from CLI output. It does not install, extract, open, execute, approve, certify, publish, host, or moderate content. Uploader package installation is available from npm at `0.2.0`; direct-download live availability remains unadvertised until owner-approved disposable byte-transfer evidence is recorded.
+`catalog list`, `catalog get`, and `catalog download-metadata` are GET-only public readback commands and do not require uploader auth. `download` resolves public metadata, writes bytes to the explicit `--output` path, verifies SDK size/digest checks, and redacts signed URLs and absolute local paths from CLI output. It does not install, extract, open, execute, approve, certify, publish, host, or moderate content. Uploader package installation is available from npm at `0.2.0`; owner-approved disposable byte-transfer evidence is recorded for a metadata-only public resource.
 
 See [packages/uploader/README.md](packages/uploader/README.md), [docs/release-go-no-go.md](docs/release-go-no-go.md), and [docs/package-release-provenance.md](docs/package-release-provenance.md).
 
@@ -409,7 +409,7 @@ Badge states:
 - `unavailable`
 - `rate-limited`
 
-Trust normalization projects public desired-state, scanner-policy, trust-panel, review-eligibility, report-action, and version-history fields when the platform exposes them. Catalog/download normalizers and the direct download utility in the current source branch remain unpublished package-release evidence until a new package version is published and verified through registry readback and clean install smoke. Parser/variant normalization in the current source branch projects public parser evidence and variant state while reporting digest presence instead of raw digests; it remains unpublished package-release evidence until a new package version is published and verified. Badge output is a public readback summary, not a safety guarantee. See [packages/readback/README.md](packages/readback/README.md).
+Trust normalization projects public desired-state, scanner-policy, trust-panel, review-eligibility, report-action, and version-history fields when the platform exposes them. Parser/variant and catalog/download normalization are included in the coordinated `0.2.0` package release after hosted CI, GitHub Actions publication, registry readback, and registry install smoke. The direct download utility remains bounded to explicit-output byte transfer with size/digest checks and no install, extraction, opening, execution, approval, certification, hosting, or moderation behavior. Badge output is a public readback summary, not a safety guarantee. See [packages/readback/README.md](packages/readback/README.md).
 
 ## Schemas
 
@@ -431,7 +431,7 @@ Schemas are stored in `schemas/` and can be used by local tooling or external va
 
 The validator CLI uses these schemas through `--schemas-dir schemas`.
 
-`parser-variant.schema.json` in the current source branch defines public parser evidence, sanitized resource graph summaries, compatibility reasons, and platform variant states. Creator manifests may describe source-only variant metadata, but they must not claim platform-managed validation, platform download availability, publication, approval, or runtime compatibility. This schema remains unpublished package-release evidence until a new package version is published and verified.
+`parser-variant.schema.json` in the current source branch defines public parser evidence, sanitized resource graph summaries, compatibility reasons, and platform variant states. Creator manifests may describe source-only variant metadata, but they must not claim platform-managed validation, platform download availability, publication, approval, or runtime compatibility. This schema is included in the coordinated `0.2.0` package release.
 
 ## Contract Evaluation Fixtures
 

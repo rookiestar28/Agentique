@@ -57,7 +57,7 @@ Local validation is not platform approval. Local validation is not safety certif
 
 Parser/variant package changes are Go for the coordinated `0.2.0` package-release claim. Registry readback shows schemas, validator, action, readback, and uploader at version `0.2.0`. Owner approval to use the manual GitHub Actions publishing workflow for target version `0.2.0` is recorded, and registry install smoke passed.
 
-Catalog/download package changes are Go for the coordinated `0.2.0` package-release claim. Registry readback shows schemas, validator, action, readback, and uploader at version `0.2.0`. Owner approval to use the manual GitHub Actions publishing workflow for target version `0.2.0` is recorded, and registry install smoke passed. Direct-download live availability remains unadvertised until owner-approved disposable direct-download evidence is recorded.
+Catalog/download package changes are Go for the coordinated `0.2.0` package-release claim. Registry readback shows schemas, validator, action, readback, and uploader at version `0.2.0`. Owner approval to use the manual GitHub Actions publishing workflow for target version `0.2.0` is recorded, registry install smoke passed, and owner-approved disposable byte-transfer evidence is recorded for a metadata-only public resource.
 
 ## Support Routing
 

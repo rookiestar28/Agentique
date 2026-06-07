@@ -38,18 +38,18 @@ Parser/variant schemas, validator findings, readback helpers, uploader dry-runs,
 
 ## Catalog And Download Package Release Decision
 
-Current catalog/download package release decision: **Go** for the coordinated `0.2.0` package-release claim. Direct-download live availability remains unadvertised until its separate evidence gate passes.
+Current catalog/download package release decision: **Go** for the coordinated `0.2.0` package-release claim. Owner-approved disposable direct byte-transfer smoke passed for a metadata-only public resource.
 
-Reason: catalog/download CLI and SDK package changes are published in the coordinated package release `0.2.0`, and owner approval to use the manual GitHub Actions package publishing workflow is recorded. Hosted Release Check passed on `main`, GitHub Actions publication completed, registry readback confirms all companion packages at `0.2.0`, registry install smoke passed, and the public rollback/unpublish procedure is documented. A GET-only live metadata smoke on 2026-06-07 reached the canonical public list, first resource detail, and first resource download-metadata endpoints with 200 JSON responses. Direct-download live availability is not advertised until owner-approved disposable direct-download evidence is recorded.
+Reason: catalog/download CLI and SDK package changes are published in the coordinated package release `0.2.0`, and owner approval to use the manual GitHub Actions package publishing workflow is recorded. Hosted Release Check passed on `main`, GitHub Actions publication completed, registry readback confirms all companion packages at `0.2.0`, registry install smoke passed, and the public rollback/unpublish procedure is documented. A GET-only live metadata smoke on 2026-06-07 reached the canonical public list, first resource detail, and first resource download-metadata endpoints with 200 JSON responses. Owner-approved disposable direct byte-transfer smoke passed on 2026-06-07 for a metadata-only public resource without auth, signed URL output, opening, extraction, or execution.
 
 Current blockers:
 
 - None for the `0.2.0` package-release claim.
-- Owner-approved disposable direct-download byte-transfer evidence is not recorded, so direct-download live availability is not advertised.
+- None for the bounded disposable direct byte-transfer smoke. This evidence is not a safety certification, content approval, or guarantee that every public resource is downloadable.
 
-Catalog list/detail/download-metadata commands, direct download command, readback catalog normalizers, direct download utility, live metadata smoke, and release smoke coverage are package and local-preparation evidence. They do not prove direct-download live availability, approve resources, certify safety, install or execute downloaded content, or replace platform review.
+Catalog list/detail/download-metadata commands, direct download command, readback catalog normalizers, direct download utility, live metadata smoke, disposable byte-transfer smoke, and release smoke coverage are package and local-preparation evidence. They do not approve resources, certify safety, install or execute downloaded content, or replace platform review.
 
-Closeout evidence: source validation, installed-tarball smoke, hosted CI on `main`, GitHub Actions publication, registry readback for all companion packages at `0.2.0`, registry install smoke, live metadata smoke, and owner approval to use the manual GitHub Actions publishing workflow are recorded. Direct byte-download smoke is not recorded, so direct-download live availability is not advertised.
+Closeout evidence: source validation, installed-tarball smoke, hosted CI on `main`, GitHub Actions publication, registry readback for all companion packages at `0.2.0`, registry install smoke, live metadata smoke, disposable byte-transfer smoke, and owner approval to use the manual GitHub Actions publishing workflow are recorded.
 
 Current public-safe evidence is recorded in [release-evidence.md](release-evidence.md).
 
@@ -66,8 +66,8 @@ Current public-safe evidence is recorded in [release-evidence.md](release-eviden
 - Readback helper docs describe context bundle and selection projections as read-only public projections.
 - Hosted Release Check evidence is recorded for the latest pushed public release candidate; later branch changes require a fresh hosted run before downstream release claims.
 - Current source release gate refresh passed package tests, starter validation, release checks, workflow posture, package dry-run, URL inventory, registry readback, install smoke, go/no-go, content scan, diff check, and production dependency audits.
-- Parser/variant package surface smoke passes from locally packed tarballs, but this remains unpublished evidence until a new package release is published and verified.
-- Catalog/download package surface smoke passes from locally packed tarballs, and the live metadata smoke passed for public list/detail/download-metadata endpoints, but this remains unpublished evidence until a new package release is published and verified. Direct-download live availability remains separate and unadvertised until owner-approved disposable byte-transfer evidence is recorded.
+- Parser/variant package surface smoke passes from locally packed tarballs, and registry readback plus registry install smoke verify the same surfaces are included in package version `0.2.0`.
+- Catalog/download package surface smoke passes from locally packed tarballs, live metadata smoke passed for public list/detail/download-metadata endpoints, registry install smoke passed for `0.2.0`, and owner-approved disposable byte-transfer evidence is recorded.
 - Public `main` branch protection is enabled.
 - Final public URLs are approved.
 - `agentique.io` public links are approved.

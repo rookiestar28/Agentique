@@ -12,7 +12,7 @@ Companion packages are released under the `@agentique.io` npm scope after owner 
 
 Schemas, validator, action, readback, and uploader are public on npm. The uploader package is review-only; it can plan, produce local draft metadata, and prepare patch/delta output, but it does not publish, approve, certify, host, moderate, install, extract, open, or execute resources.
 
-The coordinated package release `0.2.0` is published for schemas, validator, action, readback, and uploader. Current source catalog/download helpers are included in that package release. Owner approval is recorded to use the manual GitHub Actions package publishing workflow. Direct-download live availability remains a separate claim and must not be advertised until owner-approved disposable direct-download evidence is recorded.
+The coordinated package release `0.2.0` is published for schemas, validator, action, readback, and uploader. Current source catalog/download helpers are included in that package release. Owner approval is recorded to use the manual GitHub Actions package publishing workflow. Owner-approved disposable byte-transfer evidence is recorded for a metadata-only public resource; this evidence does not certify content safety or approve arbitrary resources.
 
 ## Required Pre-Publish Checks
 
@@ -45,7 +45,7 @@ npm run install:smoke
 
 The registry readback script records the current expected state from `docs/release-go-no-go.json`: schemas, validator, action, readback, and uploader are published at version `0.2.0`.
 
-Current uploader publication closeout is Go for npm package availability at `0.2.0` after owner approval, hosted CI evidence, registry publish/readback, and clean install smoke. The package remains review-only, local draft and patch/delta output remain unsubmitted preparation artifacts, direct-download live availability is not advertised, and final resource publication stays on `agentique.io`.
+Current uploader publication closeout is Go for npm package availability at `0.2.0` after owner approval, hosted CI evidence, registry publish/readback, and clean install smoke. The package remains review-only, local draft and patch/delta output remain unsubmitted preparation artifacts, bounded disposable byte-transfer evidence is recorded, and final resource publication stays on `agentique.io`.
 
 Public package provenance must not include platform scoring, quarantine criteria, internal review procedures, moderation disposition logic, or operational playbooks.
 
