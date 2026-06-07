@@ -658,7 +658,11 @@ describe("normalizer", () => {
       platformId: "codex",
       artifactKind: "skill",
       availability: "available",
+      downloadKind: "direct",
+      method: null,
+      ticketEndpoint: null,
       url: "https://agentique.io/downloads/agent-1.zip",
+      urlRedacted: false,
       filename: "agent-1.zip",
       mediaType: "application/zip",
       sizeBytes: 42,
@@ -669,10 +673,80 @@ describe("normalizer", () => {
       digestPresent: true,
       digestValid: true,
       reasons: ["published"],
+      unavailableReason: null,
       observedAt: "2026-06-07T01:02:00.000Z",
       expiresAt: "2026-06-07T02:02:00.000Z"
     });
     assert.equal(JSON.stringify(normalized).includes("hidden"), false);
+  });
+
+  it("normalizes live ticket download metadata without exposing raw URLs", () => {
+    const normalized = normalizeDownloadMetadata({
+      ok: true,
+      availability: "available",
+      data: {
+        resourceId: "agent-ticket",
+        selectedPlatform: "source-package",
+        status: "published",
+        method: "POST",
+        downloadEndpoint: "/api/agents/agent-ticket/download?ignored=true",
+        files: [
+          {
+            filename: "agent-ticket.zip",
+            mediaType: "application/zip",
+            sizeBytes: 64,
+            digest: `sha256:${"b".repeat(64)}`,
+            privateUrl: "hidden"
+          }
+        ],
+        sourcePackage: {
+          objectPath: "hidden"
+        }
+      }
+    });
+
+    assert.deepEqual(normalized, {
+      resourceId: "agent-ticket",
+      platformId: "source-package",
+      artifactKind: null,
+      availability: "available",
+      downloadKind: "ticket",
+      method: "POST",
+      ticketEndpoint: "/api/agents/agent-ticket/download",
+      url: null,
+      urlRedacted: false,
+      filename: "agent-ticket.zip",
+      mediaType: "application/zip",
+      sizeBytes: 64,
+      digest: {
+        algorithm: "sha256",
+        value: "b".repeat(64)
+      },
+      digestPresent: true,
+      digestValid: true,
+      reasons: [],
+      unavailableReason: null,
+      observedAt: null,
+      expiresAt: null
+    });
+    assert.equal(JSON.stringify(normalized).includes("hidden"), false);
+  });
+
+  it("redacts signed direct URLs from metadata projection", () => {
+    const normalized = normalizeDownloadMetadata({
+      resourceId: "agent-signed",
+      download: {
+        availability: "available",
+        url: "https://storage.agentique.example/files/agent.zip?sig=private",
+        filename: "agent.zip"
+      }
+    });
+
+    assert.equal(normalized.downloadKind, "unknown");
+    assert.equal(normalized.url, null);
+    assert.equal(normalized.urlRedacted, true);
+    assert.equal(normalized.filename, "agent.zip");
+    assert.doesNotMatch(JSON.stringify(normalized), /sig=private|storage\.agentique/i);
   });
 
   it("normalizes unavailable and malformed download metadata as fail-closed summaries", () => {
@@ -681,7 +755,11 @@ describe("normalizer", () => {
       platformId: null,
       artifactKind: null,
       availability: "unavailable",
+      downloadKind: "unavailable",
+      method: null,
+      ticketEndpoint: null,
       url: null,
+      urlRedacted: false,
       filename: null,
       mediaType: null,
       sizeBytes: null,
@@ -689,6 +767,7 @@ describe("normalizer", () => {
       digestPresent: true,
       digestValid: false,
       reasons: [],
+      unavailableReason: null,
       observedAt: null,
       expiresAt: null
     });

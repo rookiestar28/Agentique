@@ -25,6 +25,11 @@ export async function downloadResourceArtifact(options = {}) {
     });
   }
   if (!normalized.url) {
+    if (normalized.urlRedacted) {
+      throw new ReadbackError("Download URL is not safe for public projection.", {
+        code: "unsafe-download-url"
+      });
+    }
     throw new ReadbackError("Download metadata is missing a public URL.", {
       code: "missing-download-url"
     });

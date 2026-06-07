@@ -455,7 +455,7 @@ test("download writes artifact bytes without uploader auth or signed-url output"
               resourceId: "agent-1",
               download: {
                 availability: "available",
-                url: "https://storage.agentique.example/files/agent-1.txt?sig=private",
+                url: "https://storage.agentique.example/files/agent-1.txt",
                 filename: "agent-1.txt",
                 mediaType: "text/plain",
                 sizeBytes: Buffer.byteLength(body),
@@ -464,7 +464,7 @@ test("download writes artifact bytes without uploader auth or signed-url output"
             });
           }
 
-          assert.equal(String(url), "https://storage.agentique.example/files/agent-1.txt?sig=private");
+          assert.equal(String(url), "https://storage.agentique.example/files/agent-1.txt");
           assert.equal(init.method, "GET");
           assert.equal(init.redirect, "manual");
           assert.equal(Object.hasOwn(init, "headers"), false);
@@ -488,7 +488,7 @@ test("download writes artifact bytes without uploader auth or signed-url output"
     assert.equal(calls.length, 2);
     assert.doesNotMatch(
       result.stdout + result.stderr,
-      forbiddenLocalOutputPattern(["flag-token-value", "storage.agentique.example", "sig=private", tempDir])
+        forbiddenLocalOutputPattern(["flag-token-value", "storage.agentique.example", tempDir])
     );
   } finally {
     await rm(tempDir, { recursive: true, force: true });
@@ -662,7 +662,7 @@ test("download cleans temporary files for existing output, digest mismatch, and 
             resourceId: "agent-existing",
             download: {
               availability: "available",
-              url: "https://storage.agentique.example/files/existing.txt?sig=private",
+              url: "https://storage.agentique.example/files/existing.txt",
               filename: "existing.txt"
             }
           });
@@ -679,7 +679,7 @@ test("download cleans temporary files for existing output, digest mismatch, and 
               resourceId: "agent-digest",
               download: {
                 availability: "available",
-                url: "https://storage.agentique.example/files/digest.txt?sig=private",
+                url: "https://storage.agentique.example/files/digest.txt",
                 filename: "digest.txt",
                 sizeBytes: 6,
                 digest: `sha256:${"b".repeat(64)}`
