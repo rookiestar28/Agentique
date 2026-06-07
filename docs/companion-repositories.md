@@ -10,7 +10,7 @@ Agentique's public companion work is consolidated in this repository. The monore
 - `packages/validator`: static no-execution local checks for package validation, parser/variant metadata, and upload preparation.
 - `packages/action`: least-privilege workflow wrapper around local validation.
 - `packages/readback`: read-only SDK, catalog/download metadata normalizers, direct byte-download utility, badge helpers, parser/variant normalizers, and trust projection normalizers for public status and readback projections.
-- `packages/uploader`: published review-only uploader CLI with plan, import-plan, variant-plan, local draft, patch/delta preparation, catalog read, and direct-download commands. Authenticated review-session access, final resource publication, and live catalog/download availability remain platform-owned and account/token gated.
+- `packages/uploader`: published review-only uploader CLI with plan, import-plan, variant-plan, local draft, patch/delta preparation, catalog read, and direct-download commands. Authenticated review-session access and final resource publication remain platform-owned and account/token gated. New catalog/download npm availability claims remain release-gated.
 - `scripts/`: repository release checks, starter validation, workflow posture checks, registry readback, install smoke, URL inventory checks, and package dry-runs.
 
 ## Link Readiness

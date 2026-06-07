@@ -86,7 +86,7 @@
         "@agentique.io/readback": "0.2.1",
         "@agentique.io/uploader": "0.2.1"
       },
-      "reason": "The canonical-host POST ticket flow and live envelope compatibility are branch-local patch changes after the published 0.2.0 package set. The coordinated 0.2.1 patch candidate keeps companion package versions aligned; the behavior changes are concentrated in readback and uploader."
+      "reason": "The canonical-host POST ticket flow and live envelope compatibility are source-revision patch changes after the published 0.2.0 package set. The coordinated 0.2.1 patch candidate keeps companion package versions aligned; the behavior changes are concentrated in readback and uploader."
     },
     "reason": "Existing catalog/download surfaces remain published at 0.2.0 where already released. The canonical-host POST ticket flow and live envelope compatibility are patch-candidate behavior changes in readback and uploader, carried by a coordinated 0.2.1 package candidate. Publishing those changes is blocked until hosted Release Check passes for the candidate, owner package-release approval is recorded, the trusted publishing workflow completes, registry readback verifies the new versions, clean install smoke passes for the new versions, rollback/unpublish evidence is recorded, and branch cleanup is complete.",
     "blockers": [

@@ -4,7 +4,7 @@ This file records public-safe release evidence for the companion repository. Do 
 
 ## Evidence Snapshot
 
-- Date: 2026-06-07
+- Date: 2026-06-08
 - Environment: Windows PowerShell
 - Node.js: v24.13.1
 - npm: 11.8.0
@@ -62,19 +62,19 @@ Uploader source alignment and npm package checks were refreshed on 2026-06-07.
 
 Current command-line finding:
 
-- `@agentique.io/uploader` is implemented in source at version `0.2.0`.
+- `@agentique.io/uploader` is implemented in this source revision at candidate version `0.2.1`; npm registry availability remains `0.2.0` until a patch publish is approved and completed.
 - Uploader CLI source includes redacted auth status, upload-plan evidence, creator checkpoint readiness, local draft output, local patch/delta output, review-only submit/status helpers, bearer/storage separation, bounded transfer retry, and server completion verification checks.
-- Current source branch additionally includes GET-only catalog list/detail/download-metadata commands and a direct byte-download command with explicit output path, no auth forwarding, signed URL redaction, no absolute output path in CLI output, redirect controls, max-byte checks, digest checks, and no install/extract/open/execute behavior.
+- This source revision additionally includes GET-only catalog list/detail/download-metadata commands and a direct byte-download command with explicit output path, no auth forwarding, signed URL redaction, no absolute output path in CLI output, redirect controls, max-byte checks, digest checks, and no install/extract/open/execute behavior.
 - `@agentique.io/uploader` is included in root tests, package dry-run, publish workflow validation, and root/workspace production dependency audit.
 - npm registry readback for `@agentique.io/uploader` returns published version `0.2.0`, so the package page remains approved for advertising.
 - Authenticated review-session access and final resource publication remain platform and account/token gated. Package checks do not advertise live publication or platform approval.
 - Final uploader publication closeout is Go for npm package availability after owner-approved publication, hosted CI evidence, npm registry readback, and clean install smoke from npm.
 
-Current documentation now describes registry trust metadata, creator checkpoints, trust readback, local draft output, and patch/delta output. Current local release gates pass for this source branch, owner approval to use the manual GitHub Actions package publishing workflow is recorded, the coordinated `0.2.0` package publication completed, and registry install smoke passed.
+Current documentation now describes registry trust metadata, creator checkpoints, trust readback, local draft output, patch/delta output, and the coordinated `0.2.1` patch-candidate boundary. Local release gates pass for this source revision. Owner approval to use the manual GitHub Actions package publishing workflow is recorded for prior published releases, the coordinated `0.2.0` package publication completed, and registry install smoke passed. The `0.2.1` patch candidate is not yet approved or published.
 
 ## Parser And Variant Branch-Local Evidence
 
-Current source now includes public parser/variant schemas, schema fixtures, validator summaries, readback projection helpers, uploader import-plan and variant-plan dry-runs, and a synthetic source-only starter package. These package surfaces are included in the coordinated `0.2.0` release after hosted release checks, GitHub Actions publication, and registry readback.
+This source revision includes public parser/variant schemas, schema fixtures, validator summaries, readback projection helpers, uploader import-plan and variant-plan dry-runs, and a synthetic source-only starter package. These package surfaces are included in the coordinated `0.2.0` release after hosted release checks, GitHub Actions publication, and registry readback, and remain present in the `0.2.1` patch candidate.
 
 Parser/variant evidence remains limited to static metadata, local dry-runs, and read-only public projection helpers. It does not advertise platform-managed validation, hosted execution, platform download availability, runtime compatibility, approval, publication, or safety outcomes.
 
@@ -88,9 +88,9 @@ Parser/variant package publication is currently Go for the coordinated `0.2.0` p
 
 ## Catalog And Download Patch-Candidate Evidence
 
-Current source now includes readback catalog list/detail/download-metadata helpers, catalog metadata normalizers, a safe direct-download utility, uploader catalog read commands, uploader direct download, and package-surface smoke coverage for installed tarballs.
+This source revision includes readback catalog list/detail/download-metadata helpers, catalog metadata normalizers, a safe direct-download utility, uploader catalog read commands, uploader direct download, and package-surface smoke coverage for installed tarballs.
 
-Current branch source additionally includes canonical-host live envelope compatibility and an unauthenticated POST ticket byte-transfer path. The branch is a coordinated `0.2.1` patch candidate; the behavior changes are concentrated in readback and uploader. Those patch versions are not yet published.
+This source revision additionally includes canonical-host live envelope compatibility and an unauthenticated POST ticket byte-transfer path. It is a coordinated `0.2.1` patch candidate; the behavior changes are concentrated in readback and uploader. Those patch versions are not yet published.
 
 Catalog/download evidence includes local source behavior, local tests, installed-tarball smoke, existing registry install smoke for `0.2.0`, the live metadata checks below, and owner-approved disposable byte-transfer smoke. It does not approve resources, certify safety, install or execute downloaded content, or replace platform review.
 
@@ -112,7 +112,7 @@ This evidence supports catalog, download-metadata, and bounded disposable byte-t
 
 ## Catalog And Download Closeout Evidence
 
-Current source closeout evidence is complete for local preparation only:
+Source closeout evidence is complete for local preparation only:
 
 - Readback SDK catalog and download-metadata helpers are covered by package tests.
 - The safe direct-download utility is covered by package tests with path, overwrite, redirect, size, digest, cleanup, and token-forwarding boundaries.
@@ -206,4 +206,4 @@ These smoke checks approve source repository, published package registry, action
 
 ## Current Decision
 
-The source repository, published npm packages including `@agentique.io/uploader`, action usage reference, badge/readback documentation, and `agentique.io` public links remain Go for existing advertised channels. Parser/variant source changes are Go for the coordinated `0.2.0` package-release claim. Catalog/download behavior already published in `0.2.0` remains limited to that release evidence. The canonical-host live envelope and POST-ticket byte-transfer compatibility in this branch is part of a coordinated `0.2.1` patch candidate and is No-Go for a new npm availability claim until patch release gates pass. Authenticated review-session access and final resource publication remain platform-owned and account/token gated. GitHub Marketplace-style promotion remains separate from this source/package release.
+The source repository, published npm packages including `@agentique.io/uploader`, action usage reference, badge/readback documentation, and `agentique.io` public links remain Go for existing advertised channels. Parser/variant source changes are Go for the coordinated `0.2.0` package-release claim. Catalog/download behavior already published in `0.2.0` remains limited to that release evidence. The canonical-host live envelope and POST-ticket byte-transfer compatibility in this source revision is part of a coordinated `0.2.1` patch candidate and is No-Go for a new npm availability claim until patch release gates pass. Authenticated review-session access and final resource publication remain platform-owned and account/token gated. GitHub Marketplace-style promotion remains separate from this source/package release.

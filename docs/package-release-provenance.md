@@ -12,7 +12,7 @@ Companion packages are released under the `@agentique.io` npm scope after owner 
 
 Schemas, validator, action, readback, and uploader are public on npm. The uploader package is review-only; it can plan, produce local draft metadata, and prepare patch/delta output, but it does not publish, approve, certify, host, moderate, install, extract, open, or execute resources.
 
-The coordinated package release `0.2.0` is published for schemas, validator, action, readback, and uploader. Current branch changes to canonical-host live envelope compatibility and POST-ticket byte transfer are patch candidates for `@agentique.io/readback@0.2.1` and `@agentique.io/uploader@0.2.1`; they are not yet published. Owner-approved disposable byte-transfer evidence is recorded for a public catalog resource; this evidence does not certify content safety or approve arbitrary resources.
+The coordinated package release `0.2.0` is published for schemas, validator, action, readback, and uploader. This repository revision is a coordinated `0.2.1` patch candidate; behavior changes are concentrated in readback/uploader canonical-host live envelope compatibility and POST-ticket byte transfer. The `0.2.1` package set is not yet published. Owner-approved disposable byte-transfer evidence is recorded for a public catalog resource; this evidence does not certify content safety or approve arbitrary resources.
 
 ## Patch Candidate
 

@@ -1,8 +1,8 @@
 # Release Go/No-Go
 
-Current source repository, published package registry pages, action usage, badge/readback documentation, and platform-link publication decision: **Go** for advertised channels.
+Source repository, published package registry pages, action usage, badge/readback documentation, and platform-link publication decision: **Go** for advertised channels.
 
-Current source changes have local release-gate evidence only until they are pushed, hosted checks run, and the package publishing workflow completes on `main`. They do not publish a new package version by themselves.
+This source revision has local release-gate evidence only until it is pushed, hosted checks run, and the package publishing workflow completes on `main`. It does not publish a new package version by itself.
 
 The source repository is public. The public repository URL, package registry pages, action usage reference, badge/readback documentation, public documentation URL, schema URL base, `agentique.io` public URL, hosted CI evidence, branch protection evidence, and owner go/no-go approval are recorded.
 
@@ -40,9 +40,9 @@ Parser/variant schemas, validator findings, readback helpers, uploader dry-runs,
 
 Current catalog/download package release decision: **No-Go** for a new patch package-release claim.
 
-Existing catalog/download surfaces that were already published in the coordinated `0.2.0` package set remain advertised only within the evidence recorded for that release. The canonical-host live envelope compatibility and unauthenticated POST ticket byte-transfer path are branch-local changes in a coordinated `0.2.1` patch candidate. The behavior changes are concentrated in `@agentique.io/readback` and `@agentique.io/uploader`; the patch package set is not yet published on npm.
+Existing catalog/download surfaces that were already published in the coordinated `0.2.0` package set remain advertised only within the evidence recorded for that release. The canonical-host live envelope compatibility and unauthenticated POST ticket byte-transfer path are source-revision changes in a coordinated `0.2.1` patch candidate. The behavior changes are concentrated in `@agentique.io/readback` and `@agentique.io/uploader`; the patch package set is not yet published on npm.
 
-Reason: local source validation, installed-tarball smoke, live metadata checks, and owner-approved disposable byte-transfer evidence passed for the branch, but a new npm availability claim requires hosted Release Check evidence for the patch candidate, owner approval to publish, trusted publishing completion, registry readback for the patch versions, clean install smoke for the patch versions, rollback/unpublish evidence, and branch cleanup.
+Reason: local source validation, installed-tarball smoke, live metadata checks, and owner-approved disposable byte-transfer evidence passed for this source revision, but a new npm availability claim requires hosted Release Check evidence for the patch candidate, owner approval to publish, trusted publishing completion, registry readback for the patch versions, clean install smoke for the patch versions, rollback/unpublish evidence, and branch cleanup.
 
 Current blockers:
 
@@ -71,7 +71,7 @@ Current public-safe evidence is recorded in [release-evidence.md](release-eviden
 - Surfacing contract fixture matrix is covered by release checks.
 - Readback helper docs describe context bundle and selection projections as read-only public projections.
 - Hosted Release Check evidence is recorded for the latest pushed public release candidate; later branch changes require a fresh hosted run before downstream release claims.
-- Current source release gate refresh passed package tests, starter validation, release checks, workflow posture, package dry-run, URL inventory, registry readback, install smoke, go/no-go, content scan, diff check, and production dependency audits.
+- Current release gate refresh passed package tests, starter validation, release checks, workflow posture, package dry-run, URL inventory, registry readback, install smoke, go/no-go, content scan, diff check, and production dependency audits.
 - Parser/variant package surface smoke passes from locally packed tarballs, and registry readback plus registry install smoke verify the same surfaces are included in package version `0.2.0`.
 - Catalog/download package surface smoke passes from locally packed tarballs, live metadata checks passed for public list/detail/download-metadata endpoints, registry install smoke passed for existing `0.2.0` packages, and owner-approved disposable byte-transfer evidence is recorded for the patch candidate.
 - Public `main` branch protection is enabled.
