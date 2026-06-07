@@ -89,11 +89,25 @@ Parser/variant package publication is currently No-Go for a new package-release 
 
 Current branch-local source now includes readback catalog list/detail/download-metadata helpers, catalog metadata normalizers, a safe direct-download utility, uploader catalog read commands, uploader direct download, and package-surface smoke coverage for installed tarballs.
 
-Catalog/download evidence remains limited to local source behavior, local tests, and installed-tarball smoke. It does not advertise a new npm package version, prove current live endpoint availability, approve resources, certify safety, install or execute downloaded content, or replace platform review.
+Catalog/download evidence remains limited to local source behavior, local tests, installed-tarball smoke, and the bounded live metadata smoke below. It does not advertise a new npm package version, prove direct-download byte-transfer availability, approve resources, certify safety, install or execute downloaded content, or replace platform review.
 
-Registry readback still proves the currently published `0.1.0` package pages only. Branch-local catalog/download source changes require hosted CI, owner review, a package-version release decision, registry readback for the advertised version, clean install smoke, rollback or unpublish evidence, and current live endpoint evidence before any new package-release or live availability claim changes.
+Registry readback still proves the currently published `0.1.0` package pages only. Branch-local catalog/download source changes require hosted CI, owner review, a package-version release decision, registry readback for the advertised version, clean install smoke, rollback or unpublish evidence, and owner-approved disposable direct-download evidence before any new package-release or direct-download live availability claim changes.
 
-Catalog/download package publication and live availability claims are currently No-Go. The blockers are missing hosted Release Check evidence for the pushed candidate, missing owner-approved package-version and publish decision, registry/readback evidence that still covers only existing `0.1.0` packages, missing rollback or unpublish evidence for a new package release, and missing current live endpoint evidence.
+Catalog/download package publication and direct-download live availability claims are currently No-Go. The blockers are missing hosted Release Check evidence for the pushed candidate, missing owner-approved package-version and publish decision, registry/readback evidence that still covers only existing `0.1.0` packages, missing rollback or unpublish evidence for a new package release, and missing owner-approved disposable direct-download byte-transfer evidence.
+
+## Catalog And Download Live Metadata Evidence
+
+GET-only unauthenticated live metadata smoke was refreshed on 2026-06-07.
+
+| Endpoint class | Result |
+|---|---|
+| Non-canonical public resource list URL | HTTP 308 redirect to the canonical `www.agentique.io` URL. |
+| Canonical public resource list URL | HTTP 200 JSON with a read-only list response and page metadata. |
+| First listed public resource detail URL | HTTP 200 JSON with read-only resource detail metadata. |
+| First listed public resource download-metadata URL | HTTP 200 JSON with available download metadata. |
+| Direct byte-download probe | Skipped because no owner-approved disposable public resource scope was recorded for byte-transfer evidence. |
+
+This evidence supports catalog and download-metadata endpoint availability inputs for the release decision. It does not advertise source-branch package changes as published npm capabilities and does not prove direct byte-download availability.
 
 ## All-Channel Public URL Mode
 
@@ -171,10 +185,10 @@ Command-line public link smoke checks were run on 2026-06-02, and package regist
 | `https://github.com/rookiestar28/Agentique/tree/main/packages/action#usage` | Approved action usage reference |
 | `https://github.com/rookiestar28/Agentique/tree/main/packages/readback#badge-states` | Approved badge/readback documentation |
 | `https://www.agentique.io/` | HTTP 200 |
-| `https://www.agentique.io/api/public/v1/resources?limit=1` | Historical HTTP 200 JSON smoke for the existing readback endpoint inventory. This row is not a current catalog/download live availability claim for branch-local source changes. |
+| `https://www.agentique.io/api/public/v1/resources?limit=1` | Current HTTP 200 JSON metadata smoke for the existing readback endpoint inventory. This row is not a direct-download live availability claim for branch-local source changes. |
 
 These smoke checks approve source repository, published package registry, action usage, badge/readback documentation, schema, documentation, and `agentique.io` public links for advertising. GitHub Marketplace-style promotion remains a separate future channel.
 
 ## Current Decision
 
-The source repository, published npm packages including `@agentique.io/uploader`, action usage reference, badge/readback documentation, and `agentique.io` public links remain Go for existing advertised channels. Parser/variant branch-local package changes are No-Go for a new package-release claim until hosted CI, owner release approval, package-version decision, registry readback for the advertised version, clean install smoke, and rollback or unpublish evidence are recorded. Catalog/download branch-local package changes are No-Go for a new package-release or live availability claim until the same package-release evidence plus current live endpoint evidence are recorded. Authenticated review-session access and final resource publication remain platform-owned and account/token gated. GitHub Marketplace-style promotion remains separate from this source/package release.
+The source repository, published npm packages including `@agentique.io/uploader`, action usage reference, badge/readback documentation, and `agentique.io` public links remain Go for existing advertised channels. Parser/variant branch-local package changes are No-Go for a new package-release claim until hosted CI, owner release approval, package-version decision, registry readback for the advertised version, clean install smoke, and rollback or unpublish evidence are recorded. Catalog/download branch-local package changes are No-Go for a new package-release or direct-download live availability claim until the same package-release evidence plus owner-approved disposable direct-download evidence are recorded. Authenticated review-session access and final resource publication remain platform-owned and account/token gated. GitHub Marketplace-style promotion remains separate from this source/package release.

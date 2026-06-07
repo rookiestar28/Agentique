@@ -55,7 +55,7 @@ Published packages currently include `@agentique.io/schemas`, `@agentique.io/val
 
 Parser/variant package surfaces in the current source branch remain branch-local release-candidate evidence. They are not part of a new advertised package release until the scoped release decision in [docs/release-go-no-go.md](docs/release-go-no-go.md) changes from No-Go.
 
-Catalog/download CLI and SDK surfaces in the current source branch are also branch-local release-candidate evidence. They are not a new advertised npm package capability or live endpoint availability claim until the scoped release decision and live evidence gates are updated.
+Catalog/download CLI and SDK surfaces in the current source branch are also branch-local release-candidate evidence. They are not a new advertised npm package capability or direct-download live availability claim until the scoped release decision changes from No-Go.
 
 Use the validator package for local static checks:
 
@@ -156,7 +156,7 @@ Current source repository, package registry, action usage, badge/readback docume
 
 Parser/variant package changes in the current source branch are **No-Go** for a new package-release claim until hosted CI for the pushed candidate, owner release approval, package-version decision, registry readback for the advertised version, clean install smoke, and rollback or unpublish evidence are recorded. Existing published package pages remain approved at version `0.1.0`.
 
-Catalog/download package changes in the current source branch are **No-Go** for a new package-release or live availability claim until hosted CI for the pushed candidate, owner release approval, package-version decision, registry readback for the advertised version, clean install smoke, rollback or unpublish evidence, and current live endpoint evidence are recorded.
+Catalog/download package changes in the current source branch are **No-Go** for a new package-release or direct-download live availability claim. Current metadata endpoint evidence is recorded, but No-Go remains until hosted CI for the pushed candidate, owner release approval, package-version decision, registry readback for the advertised version, clean install smoke, rollback or unpublish evidence, and owner-approved disposable direct-download evidence are recorded.
 
 Public-safe evidence currently recorded:
 
@@ -167,7 +167,7 @@ Public-safe evidence currently recorded:
 - Hosted Release Check evidence is recorded for the latest pushed public release candidate; later branch changes require a fresh hosted run before downstream release claims.
 - Public `main` branch protection is enabled.
 - Final public repository, package, docs, schema, action usage, badge/readback documentation, and platform URLs are approved.
-- Existing `agentique.io` public links remain approved through the recorded URL inventory; source-branch catalog/download live availability claims require fresh live evidence before advertising.
+- Existing `agentique.io` public links remain approved through the recorded URL inventory; source-branch catalog/download metadata evidence is recorded, while direct-download live availability claims require owner-approved disposable byte-transfer evidence before advertising.
 - Owner go/no-go approval is recorded.
 
 Approved and separate channels:
@@ -289,7 +289,7 @@ See [packages/validator/README.md](packages/validator/README.md).
 
 The uploader package is a published review-only CLI implementation. It is useful for local integration review because it can report redacted auth status, generate validator-backed upload plans, and exercise review-session submit/status flows when configured with platform API access.
 
-The current source branch also includes parser import and variant dry-runs, public catalog reads, download-metadata reads, and direct artifact byte download for local review. Those source-branch parser/variant and catalog/download surfaces are not a new published package claim until the package release gate records the required hosted, owner, registry, install-smoke, live-evidence, and rollback evidence.
+The current source branch also includes parser import and variant dry-runs, public catalog reads, download-metadata reads, and direct artifact byte download for local review. Those source-branch parser/variant and catalog/download surfaces are not a new published package claim until the package release gate records the required hosted, owner, registry, install-smoke, direct-download live evidence, and rollback evidence.
 
 Install from npm:
 

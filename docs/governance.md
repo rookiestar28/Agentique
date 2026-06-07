@@ -57,7 +57,7 @@ Local validation is not platform approval. Local validation is not safety certif
 
 Parser/variant package changes are currently No-Go for a new package-release claim. Existing package pages remain approved at version `0.1.0`; a new parser/variant package claim requires hosted CI for the pushed candidate, owner release approval, package-version decision, registry readback for the advertised version, clean install smoke, and rollback or unpublish evidence.
 
-Catalog/download package changes are currently No-Go for a new package-release or live availability claim. Existing package pages remain approved at version `0.1.0`; a new catalog/download package or live availability claim requires hosted CI for the pushed candidate, owner release approval, package-version decision, registry readback for the advertised version, clean install smoke, rollback or unpublish evidence, and current live endpoint evidence.
+Catalog/download package changes are currently No-Go for a new package-release or direct-download live availability claim. Existing package pages remain approved at version `0.1.0`; a new catalog/download package or direct-download live availability claim requires hosted CI for the pushed candidate, owner release approval, package-version decision, registry readback for the advertised version, clean install smoke, rollback or unpublish evidence, and owner-approved disposable direct-download evidence.
 
 ## Support Routing
 

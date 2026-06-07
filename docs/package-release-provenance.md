@@ -12,7 +12,7 @@ Companion packages are released under the `@agentique.io` npm scope after owner 
 
 Schemas, validator, action, readback, and uploader are public on npm. The uploader package is review-only; it can plan, produce local draft metadata, and prepare patch/delta output, but it does not publish, approve, certify, host, moderate, install, extract, open, or execute resources.
 
-Current source-branch catalog/download helpers are release-candidate evidence. They must not be advertised as a new npm package capability or live endpoint availability claim until a new package-release decision, registry readback for the advertised version, clean install smoke, rollback or unpublish evidence, and current live endpoint evidence are recorded.
+Current source-branch catalog/download helpers are release-candidate evidence. They must not be advertised as a new npm package capability or direct-download live availability claim until a new package-release decision, registry readback for the advertised version, clean install smoke, rollback or unpublish evidence, and owner-approved disposable direct-download evidence are recorded.
 
 ## Required Pre-Publish Checks
 
@@ -45,7 +45,7 @@ npm run install:smoke
 
 The registry readback script records the current expected state: schemas, validator, action, readback, and uploader are published at version `0.1.0`.
 
-Current uploader publication closeout is Go for npm package availability after owner approval, hosted CI evidence, registry publish/readback, and clean install smoke. The package remains review-only, local draft and patch/delta output remain unsubmitted preparation artifacts, source-branch catalog/download changes remain unpublished release-candidate evidence, and final resource publication stays on `agentique.io`.
+Current uploader publication closeout is Go for npm package availability after owner approval, hosted CI evidence, registry publish/readback, and clean install smoke. The package remains review-only, local draft and patch/delta output remain unsubmitted preparation artifacts, source-branch catalog/download changes remain unpublished release-candidate evidence, direct-download live availability is not advertised, and final resource publication stays on `agentique.io`.
 
 Public package provenance must not include platform scoring, quarantine criteria, internal review procedures, moderation disposition logic, or operational playbooks.
 

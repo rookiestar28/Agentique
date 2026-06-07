@@ -6,7 +6,7 @@ This package exposes a review-only upload lane plus source-branch public readbac
 
 The package is published on npm at version `0.1.0` after owner-approved publication, registry readback, and clean install smoke. It remains review-only; authenticated review-session access and final resource publication stay on `agentique.io`.
 
-Catalog and direct-download commands in the current source branch are release-candidate evidence. Do not advertise them as a new published npm package capability until the package release gate records hosted CI, owner release approval, package-version decision, registry readback for the advertised version, clean install smoke, rollback or unpublish evidence, and current live endpoint evidence.
+Catalog and direct-download commands in the current source branch are release-candidate evidence. Do not advertise them as a new published npm package capability until the package release gate records hosted CI, owner release approval, package-version decision, registry readback for the advertised version, clean install smoke, rollback or unpublish evidence, and owner-approved disposable direct-download evidence.
 
 Current boundary:
 
