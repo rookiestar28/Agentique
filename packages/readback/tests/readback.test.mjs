@@ -111,6 +111,21 @@ describe("read-only client", () => {
     assert.equal(calls.length, 1);
   });
 
+  it("omits empty resource list query params before request construction", async () => {
+    const calls = [];
+    const client = createReadbackClient({
+      baseUrl: "https://agentique.example",
+      fetchImpl: async (url) => {
+        calls.push(String(url));
+        return jsonResponse({ items: [] });
+      }
+    });
+
+    await client.listResources({ q: "", type: null, status: undefined, cursor: "", limit: null });
+
+    assert.deepEqual(calls, ["https://agentique.example/api/public/v1/resources"]);
+  });
+
   it("uses versioned public resource paths for every method", async () => {
     const calls = [];
     const client = createReadbackClient({
@@ -142,6 +157,25 @@ describe("read-only client", () => {
     for (const url of calls) {
       assert.doesNotMatch(url, /\/api\/public\/resources(?:\/|\?|$)/);
     }
+  });
+
+  it("preserves the base URL host when the base path is root", async () => {
+    const calls = [];
+    const client = createReadbackClient({
+      baseUrl: "https://agentique.example",
+      fetchImpl: async (url) => {
+        calls.push(String(url));
+        return jsonResponse({ items: [] });
+      }
+    });
+
+    await client.listResources();
+    await client.getResource("agent-1");
+
+    assert.deepEqual(calls, [
+      "https://agentique.example/api/public/v1/resources",
+      "https://agentique.example/api/public/v1/resources/agent-1"
+    ]);
   });
 
   it("uses GET requests and query allowlists for context and selection helpers", async () => {

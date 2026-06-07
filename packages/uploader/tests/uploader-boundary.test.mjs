@@ -43,13 +43,58 @@ test("parser handles global flags and rejects unknown options", () => {
     schemasDir: null,
     apiUrl: null,
     draftKind: null,
+    q: null,
+    type: null,
+    status: null,
+    limit: null,
+    cursor: null,
     tokens: ["upload", "plan", "pkg"]
   });
+
+  assert.deepEqual(
+    parseArgs([
+      "catalog",
+      "list",
+      "--q",
+      "assistant",
+      "--type",
+      "skill",
+      "--status",
+      "published",
+      "--limit",
+      "25",
+      "--cursor",
+      "next-page",
+      "--api-url",
+      "https://agentique.example",
+      "--json"
+    ]),
+    {
+      json: true,
+      help: false,
+      version: false,
+      token: null,
+      schemasDir: null,
+      apiUrl: "https://agentique.example",
+      draftKind: null,
+      q: "assistant",
+      type: "skill",
+      status: "published",
+      limit: "25",
+      cursor: "next-page",
+      tokens: ["catalog", "list"]
+    }
+  );
 
   assert.equal(parseArgs(["upload", "plan", "--token"]).error, "--token requires a value.");
   assert.equal(parseArgs(["upload", "plan", "--api-url"]).error, "--api-url requires a value.");
   assert.equal(parseArgs(["upload", "draft", "pkg", "--draft-kind"]).error, "--draft-kind requires a value.");
   assert.equal(parseArgs(["upload", "draft", "pkg", "--draft-kind", "page"]).error, "--draft-kind must be card or manifest.");
+  assert.equal(parseArgs(["catalog", "list", "--q"]).error, "--q requires a value.");
+  assert.equal(parseArgs(["catalog", "list", "--type"]).error, "--type requires a value.");
+  assert.equal(parseArgs(["catalog", "list", "--status"]).error, "--status requires a value.");
+  assert.equal(parseArgs(["catalog", "list", "--limit"]).error, "--limit requires a value.");
+  assert.equal(parseArgs(["catalog", "list", "--cursor"]).error, "--cursor requires a value.");
   assert.equal(parseArgs(["upload", "plan", "--unknown"]).error, "Unknown option: --unknown");
 });
 
@@ -64,6 +109,9 @@ test("cli returns help and version without treating them as errors", async () =>
   assert.match(help.stdout, /agentique upload submit/);
   assert.match(help.stdout, /agentique upload import-plan/);
   assert.match(help.stdout, /agentique upload variant-plan/);
+  assert.match(help.stdout, /agentique catalog list/);
+  assert.match(help.stdout, /agentique catalog get/);
+  assert.match(help.stdout, /agentique catalog download-metadata/);
   assert.equal(help.stderr, "");
   assert.equal(version.stdout, `${UPLOADER_PACKAGE_BOUNDARY.version}\n`);
   assert.equal(version.stderr, "");
@@ -173,6 +221,193 @@ test("upload submit and status require auth before network access", async () => 
   assert.equal(statusBody.code, "auth.not_configured");
   assert.equal(calls, 0);
   assert.doesNotMatch(submit.stdout + submit.stderr, forbiddenLocalOutputPattern(["agentique-redaction-fixture"]));
+});
+
+test("catalog list reads public resources without uploader auth or secret forwarding", async () => {
+  const calls = [];
+  const result = await executeUploaderCli(
+    [
+      "catalog",
+      "list",
+      "--q",
+      "assistant",
+      "--type",
+      "skill",
+      "--status",
+      "published",
+      "--limit",
+      "25",
+      "--cursor",
+      "next-page",
+      "--api-url",
+      "https://agentique.example/base",
+      "--token",
+      "flag-token-value",
+      "--json"
+    ],
+    {
+      fetchImpl: async (url, init = {}) => {
+        calls.push({ url: String(url), init });
+        assert.equal(init.method, "GET");
+        assert.equal(headerValue(init.headers, "accept"), "application/json");
+        assert.equal(headerValue(init.headers, "authorization"), null);
+        assert.equal(headerValue(init.headers, "cookie"), null);
+        return jsonResponse({
+          items: [
+            {
+              id: "agent-1",
+              slug: "agent-one",
+              name: "Agent One",
+              description: "Visible public summary.",
+              resourceType: "skill",
+              state: "published",
+              download: { availability: "source-only" },
+              privateReviewNotes: "hidden"
+            }
+          ],
+          pageInfo: {
+            nextCursor: "cursor-2",
+            hasNextPage: true
+          }
+        });
+      }
+    }
+  );
+  const status = JSON.parse(result.stdout);
+
+  assert.equal(result.exitCode, EXIT_CODES.success);
+  assert.equal(status.code, "catalog.list.read");
+  assert.equal(status.data.items[0].resourceId, "agent-1");
+  assert.equal(status.data.items[0].title, "Agent One");
+  assert.equal(status.data.items[0].downloadAvailability, "source-only");
+  assert.equal(status.data.pageInfo.nextCursor, "cursor-2");
+  assert.equal(
+    calls[0].url,
+    "https://agentique.example/base/api/public/v1/resources?q=assistant&type=skill&cursor=next-page&limit=25&status=published"
+  );
+  assert.doesNotMatch(result.stdout, /flag-token-value|hidden/i);
+});
+
+test("catalog get and download-metadata return stable public readback envelopes", async () => {
+  const calls = [];
+  const fetchImpl = async (url, init = {}) => {
+    calls.push({ url: String(url), init });
+    assert.equal(init.method, "GET");
+    assert.equal(headerValue(init.headers, "authorization"), null);
+
+    if (String(url).endsWith("/download")) {
+      return jsonResponse({
+        resourceId: "agent-1",
+        download: {
+          availability: "available",
+          url: "https://downloads.agentique.example/agent-1.zip?sig=metadata",
+          filename: "agent-1.zip",
+          mediaType: "application/zip",
+          sizeBytes: 42,
+          digest: `sha256:${"a".repeat(64)}`,
+          objectPath: "hidden"
+        }
+      });
+    }
+
+    return jsonResponse({
+      resourceId: "agent-1",
+      title: "Agent One",
+      state: "published",
+      storageKey: "hidden"
+    });
+  };
+
+  const resource = await executeUploaderCli(["catalog", "get", "agent 1", "--api-url", "https://agentique.example", "--json"], {
+    fetchImpl
+  });
+  const metadata = await executeUploaderCli(
+    ["catalog", "download-metadata", "agent 1", "--api-url", "https://agentique.example", "--json"],
+    { fetchImpl }
+  );
+  const resourceStatus = JSON.parse(resource.stdout);
+  const metadataStatus = JSON.parse(metadata.stdout);
+
+  assert.equal(resource.exitCode, EXIT_CODES.success);
+  assert.equal(resourceStatus.code, "catalog.get.read");
+  assert.equal(resourceStatus.data.resourceId, "agent-1");
+  assert.equal(metadata.exitCode, EXIT_CODES.success);
+  assert.equal(metadataStatus.code, "catalog.download_metadata.read");
+  assert.equal(metadataStatus.data.availability, "available");
+  assert.equal(metadataStatus.data.filename, "agent-1.zip");
+  assert.equal(metadataStatus.data.digest.value, "a".repeat(64));
+  assert.deepEqual(
+    calls.map((call) => call.url),
+    [
+      "https://agentique.example/api/public/v1/resources/agent%201",
+      "https://agentique.example/api/public/v1/resources/agent%201/download"
+    ]
+  );
+  assert.doesNotMatch(resource.stdout + metadata.stdout, /storageKey|objectPath|hidden/i);
+});
+
+test("catalog human output is stable and concise", async () => {
+  const list = await executeUploaderCli(["catalog", "list", "--api-url", "https://agentique.example"], {
+    fetchImpl: async () =>
+      jsonResponse({
+        items: [{ id: "agent-1", title: "Agent One" }],
+        pageInfo: { nextCursor: "cursor-2", hasNextPage: true }
+      })
+  });
+  const metadata = await executeUploaderCli(["catalog", "download-metadata", "agent-1", "--api-url", "https://agentique.example"], {
+    fetchImpl: async () =>
+      jsonResponse({
+        resourceId: "agent-1",
+        download: {
+          availability: "source-only",
+          filename: "agent-1.zip",
+          url: "https://downloads.agentique.example/agent-1.zip?sig=metadata"
+        }
+      })
+  });
+
+  assert.equal(list.exitCode, EXIT_CODES.success);
+  assert.equal(list.stderr, "");
+  assert.match(list.stdout, /^Catalog list read 1 resource\. Next cursor: cursor-2\.\n$/);
+  assert.equal(metadata.exitCode, EXIT_CODES.success);
+  assert.equal(metadata.stderr, "");
+  assert.match(metadata.stdout, /^Catalog download metadata read\. Availability: source-only\. Filename: agent-1\.zip\.\n$/);
+  assert.doesNotMatch(list.stdout + metadata.stdout, /https:\/\/downloads|sig=metadata/i);
+});
+
+test("catalog commands fail closed with typed redacted errors", async () => {
+  let invalidLimitCalls = 0;
+  const invalidLimit = await executeUploaderCli(["catalog", "list", "--limit", "0", "--api-url", "https://agentique.example", "--json"], {
+    fetchImpl: async () => {
+      invalidLimitCalls += 1;
+      throw new Error("unexpected network call");
+    }
+  });
+  const unsafeBaseUrl = await executeUploaderCli(["catalog", "list", "--api-url", "http://agentique.example", "--json"], {
+    fetchImpl: async () => {
+      throw new Error("unexpected network call");
+    }
+  });
+  const missing = await executeUploaderCli(["catalog", "get", "missing-agent", "--api-url", "https://agentique.example", "--json"], {
+    fetchImpl: async () => jsonResponse({}, { ok: false, status: 404 })
+  });
+  const unavailable = await executeUploaderCli(["catalog", "download-metadata", "agent-1", "--api-url", "https://agentique.example", "--json"], {
+    fetchImpl: async () => jsonResponse({}, { ok: false, status: 503 })
+  });
+
+  assert.equal(invalidLimit.exitCode, EXIT_CODES.unavailable);
+  assert.equal(JSON.parse(invalidLimit.stdout).code, "catalog.list.invalid-list-limit");
+  assert.equal(invalidLimitCalls, 0);
+  assert.equal(unsafeBaseUrl.exitCode, EXIT_CODES.unavailable);
+  assert.equal(JSON.parse(unsafeBaseUrl.stdout).code, "catalog.list.unsafe-base-url");
+  assert.equal(missing.exitCode, EXIT_CODES.unavailable);
+  assert.equal(JSON.parse(missing.stdout).code, "catalog.get.not-found");
+  assert.equal(unavailable.exitCode, EXIT_CODES.unavailable);
+  assert.equal(JSON.parse(unavailable.stdout).code, "catalog.download-metadata.unavailable");
+  assert.doesNotMatch(
+    invalidLimit.stdout + unsafeBaseUrl.stdout + missing.stdout + unavailable.stdout,
+    /http:\/\/agentique\.example|flag-token-value|sig=|private|hidden/i
+  );
 });
 
 test("upload plan emits validator evidence for a valid starter", async () => {
@@ -748,6 +983,8 @@ test("usage errors are deterministic", async () => {
   const missingSchemasDir = await executeUploaderCli(["upload", "plan", "pkg", "--schemas-dir", "--json"]);
   const missingApiUrl = await executeUploaderCli(["upload", "submit", "pkg", "--api-url", "--json"]);
   const invalidDraftKind = await executeUploaderCli(["upload", "draft", "pkg", "--draft-kind", "page", "--json"]);
+  const missingCatalogResource = await executeUploaderCli(["catalog", "get", "--json"]);
+  const unknownCatalogAction = await executeUploaderCli(["catalog", "publish", "agent-1", "--json"]);
 
   assert.equal(JSON.parse(missingCommand.stdout).code, "cli.usage_error");
   assert.equal(JSON.parse(unknownCommand.stdout).code, "cli.unknown_command");
@@ -755,12 +992,16 @@ test("usage errors are deterministic", async () => {
   assert.equal(JSON.parse(missingSchemasDir.stdout).code, "cli.usage_error");
   assert.equal(JSON.parse(missingApiUrl.stdout).code, "cli.usage_error");
   assert.equal(JSON.parse(invalidDraftKind.stdout).code, "cli.usage_error");
+  assert.equal(JSON.parse(missingCatalogResource.stdout).code, "cli.usage_error");
+  assert.equal(JSON.parse(unknownCatalogAction.stdout).code, "cli.usage_error");
   assert.equal(missingCommand.exitCode, EXIT_CODES.usage);
   assert.equal(unknownCommand.exitCode, EXIT_CODES.usage);
   assert.equal(unknownOption.exitCode, EXIT_CODES.usage);
   assert.equal(missingSchemasDir.exitCode, EXIT_CODES.usage);
   assert.equal(missingApiUrl.exitCode, EXIT_CODES.usage);
   assert.equal(invalidDraftKind.exitCode, EXIT_CODES.usage);
+  assert.equal(missingCatalogResource.exitCode, EXIT_CODES.usage);
+  assert.equal(unknownCatalogAction.exitCode, EXIT_CODES.usage);
 });
 
 test("cli upload submit emits stable json and requires auth before live requests", async () => {

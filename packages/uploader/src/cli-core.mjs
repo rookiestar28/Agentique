@@ -1,3 +1,9 @@
+import {
+  ReadbackError,
+  createReadbackClient,
+  normalizeDownloadMetadata,
+  normalizeResourceList
+} from "@agentique.io/readback";
 import { createUploaderBoundaryStatus, UPLOADER_PACKAGE_VERSION } from "./index.mjs";
 import { resolveAuthState } from "./auth.mjs";
 import { createGeneratedDraftOutput, createPatchDeltaOutput } from "./draft.mjs";
@@ -14,6 +20,9 @@ export const USAGE = `Usage:
   agentique --help
   agentique --version
   agentique auth status [--json]
+  agentique catalog list [--q <query>] [--type <type>] [--status <status>] [--limit <n>] [--cursor <cursor>] [--api-url <url>] [--json]
+  agentique catalog get <resource-id> [--api-url <url>] [--json]
+  agentique catalog download-metadata <resource-id> [--api-url <url>] [--json]
   agentique upload plan <package-dir> [--json]
   agentique upload import-plan <package-dir> [--json]
   agentique upload variant-plan <package-dir> [--json]
@@ -23,10 +32,12 @@ export const USAGE = `Usage:
   agentique upload status <submission-id> [--json]
 
 Current status:
+  Catalog commands are read-only public readback requests. They do not require uploader auth and do not write artifact bytes.
   Import-plan, variant-plan, draft, and patch commands are local-only. Submit and status commands create review-only sessions; they do not publish packages automatically.
 `;
 
-const COMMANDS = new Set(["auth", "upload"]);
+const COMMANDS = new Set(["auth", "catalog", "upload"]);
+const CATALOG_COMMANDS = new Set(["list", "get", "download-metadata"]);
 const UPLOAD_COMMANDS = new Set(["plan", "import-plan", "variant-plan", "draft", "patch", "submit", "status"]);
 
 export async function executeUploaderCli(argv, options = {}) {
@@ -85,6 +96,10 @@ export async function executeUploaderCli(argv, options = {}) {
     return handleAuthCommand(action, parsed, options);
   }
 
+  if (scope === "catalog") {
+    return handleCatalogCommand(action, operand, parsed, options);
+  }
+
   return handleUploadCommand(action, operand, parsed, options);
 }
 
@@ -97,6 +112,11 @@ export function parseArgs(argv) {
   let schemasDir = null;
   let apiUrl = null;
   let draftKind = null;
+  let q = null;
+  let type = null;
+  let status = null;
+  let limit = null;
+  let cursor = null;
 
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
@@ -157,6 +177,61 @@ export function parseArgs(argv) {
       }
       draftKind = value;
       index += 1;
+    } else if (arg === "--q") {
+      const value = argv[index + 1];
+      if (!value || value.startsWith("-")) {
+        return {
+          json: json || argv.includes("--json"),
+          command: tokens.join(" ") || "unknown",
+          error: "--q requires a value."
+        };
+      }
+      q = value;
+      index += 1;
+    } else if (arg === "--type") {
+      const value = argv[index + 1];
+      if (!value || value.startsWith("-")) {
+        return {
+          json: json || argv.includes("--json"),
+          command: tokens.join(" ") || "unknown",
+          error: "--type requires a value."
+        };
+      }
+      type = value;
+      index += 1;
+    } else if (arg === "--status") {
+      const value = argv[index + 1];
+      if (!value || value.startsWith("-")) {
+        return {
+          json: json || argv.includes("--json"),
+          command: tokens.join(" ") || "unknown",
+          error: "--status requires a value."
+        };
+      }
+      status = value;
+      index += 1;
+    } else if (arg === "--limit") {
+      const value = argv[index + 1];
+      if (!value || value.startsWith("-")) {
+        return {
+          json: json || argv.includes("--json"),
+          command: tokens.join(" ") || "unknown",
+          error: "--limit requires a value."
+        };
+      }
+      limit = value;
+      index += 1;
+    } else if (arg === "--cursor") {
+      const value = argv[index + 1];
+      if (!value || value.startsWith("-")) {
+        return {
+          json: json || argv.includes("--json"),
+          command: tokens.join(" ") || "unknown",
+          error: "--cursor requires a value."
+        };
+      }
+      cursor = value;
+      index += 1;
     } else if (arg.startsWith("-")) {
       return {
         json: json || argv.includes("--json"),
@@ -168,7 +243,7 @@ export function parseArgs(argv) {
     }
   }
 
-  return { json, help, version, token, schemasDir, apiUrl, draftKind, tokens };
+  return { json, help, version, token, schemasDir, apiUrl, draftKind, q, type, status, limit, cursor, tokens };
 }
 
 function handleAuthCommand(action, parsed, options) {
@@ -224,6 +299,170 @@ function authMessage(auth) {
     return "Uploader auth must use a scoped CLI token.";
   }
   return "Uploader auth is not configured.";
+}
+
+async function handleCatalogCommand(action, operand, parsed, options) {
+  if (!CATALOG_COMMANDS.has(action)) {
+    return formatResult({
+      result: createResult({
+        ok: false,
+        code: "cli.usage_error",
+        message: "Expected catalog command: list, get, or download-metadata",
+        command: "catalog"
+      }),
+      exitCode: EXIT_CODES.usage,
+      json: parsed.json,
+      includeUsage: true
+    });
+  }
+
+  if (action === "list" && parsed.tokens.length !== 2) {
+    return catalogUsageError(action, parsed.json, "Expected command: catalog list");
+  }
+
+  if (action !== "list" && parsed.tokens.length !== 3) {
+    return catalogUsageError(action, parsed.json, `Expected one resource id for catalog ${action}.`);
+  }
+
+  try {
+    const client = createReadbackClient({
+      baseUrl: parsed.apiUrl ?? undefined,
+      fetchImpl: options.fetchImpl
+    });
+
+    if (action === "list") {
+      const list = normalizeResourceList(
+        await client.listResources({
+          q: parsed.q,
+          type: parsed.type,
+          status: parsed.status,
+          limit: parsed.limit,
+          cursor: parsed.cursor
+        })
+      );
+
+      return formatResult({
+        result: createResult({
+          ok: true,
+          code: "catalog.list.read",
+          message: catalogListMessage(list),
+          command: "catalog list",
+          data: list
+        }),
+        exitCode: EXIT_CODES.success,
+        json: parsed.json
+      });
+    }
+
+    if (action === "get") {
+      const resource = await client.getResource(operand);
+
+      return formatResult({
+        result: createResult({
+          ok: true,
+          code: "catalog.get.read",
+          message: catalogGetMessage(resource),
+          command: "catalog get",
+          data: resource
+        }),
+        exitCode: EXIT_CODES.success,
+        json: parsed.json
+      });
+    }
+
+    const metadata = normalizeDownloadMetadata(await client.getDownloadMetadata(operand));
+
+    return formatResult({
+      result: createResult({
+        ok: true,
+        code: "catalog.download_metadata.read",
+        message: catalogDownloadMetadataMessage(metadata),
+        command: "catalog download-metadata",
+        data: metadata
+      }),
+      exitCode: EXIT_CODES.success,
+      json: parsed.json
+    });
+  } catch (error) {
+    return formatResult({
+      result: createResult({
+        ok: false,
+        code: catalogErrorCode(action, error),
+        message: catalogErrorMessage(action, error),
+        command: `catalog ${action}`,
+        data: catalogErrorData(error)
+      }),
+      exitCode: error instanceof ReadbackError && error.code === "missing-resource-id" ? EXIT_CODES.usage : EXIT_CODES.unavailable,
+      json: parsed.json
+    });
+  }
+}
+
+function catalogUsageError(action, json, message) {
+  return formatResult({
+    result: createResult({
+      ok: false,
+      code: "cli.usage_error",
+      message,
+      command: `catalog ${action}`
+    }),
+    exitCode: EXIT_CODES.usage,
+    json,
+    includeUsage: true
+  });
+}
+
+function catalogListMessage(list) {
+  const count = list.items.length;
+  const suffix = list.pageInfo.hasNextPage && list.pageInfo.nextCursor ? ` Next cursor: ${list.pageInfo.nextCursor}.` : "";
+  return `Catalog list read ${count} resource${count === 1 ? "" : "s"}.${suffix}`;
+}
+
+function catalogGetMessage(resource) {
+  const id = publicString(resource?.resourceId ?? resource?.id);
+  return id ? `Catalog resource read: ${id}.` : "Catalog resource read.";
+}
+
+function catalogDownloadMetadataMessage(metadata) {
+  const availability = metadata.availability ?? "unknown";
+  const filename = metadata.filename ? ` Filename: ${metadata.filename}.` : "";
+  return `Catalog download metadata read. Availability: ${availability}.${filename}`;
+}
+
+function catalogErrorCode(action, error) {
+  if (error instanceof ReadbackError) {
+    return `catalog.${action}.${error.code}`;
+  }
+  return `catalog.${action}.unavailable`;
+}
+
+function catalogErrorMessage(action, error) {
+  if (!(error instanceof ReadbackError)) {
+    return `Catalog ${action} request failed.`;
+  }
+  if (error.code === "unsafe-base-url") {
+    return "Catalog readback base URL must use HTTPS outside loopback development.";
+  }
+  if (error.code === "invalid-list-limit") {
+    return "Catalog list limit must be an integer from 1 to 100.";
+  }
+  if (error.code === "not-found") {
+    return "Catalog resource was not found.";
+  }
+  if (error.code === "rate-limited") {
+    return "Catalog readback endpoint is rate limited.";
+  }
+  return "Catalog readback endpoint is unavailable.";
+}
+
+function catalogErrorData(error) {
+  if (!(error instanceof ReadbackError)) {
+    return { retryAfter: null, status: null };
+  }
+  return {
+    status: error.status,
+    retryAfter: error.retryAfter
+  };
 }
 
 async function handleUploadCommand(action, operand, parsed, options) {
@@ -483,4 +722,8 @@ function createResult({ ok, code, message, command, data }) {
     boundary,
     ...(data ? { data } : {})
   };
+}
+
+function publicString(value) {
+  return typeof value === "string" && value.trim() !== "" ? value : null;
 }

@@ -531,7 +531,9 @@ export function assertReadOnlyClientSurface(client) {
 }
 
 function buildUrl(baseUrl, path, params = {}) {
-  const url = new URL(`${baseUrl.pathname}${path}`, baseUrl);
+  const basePath = baseUrl.pathname === "/" ? "" : baseUrl.pathname.replace(/\/+$/, "");
+  const endpointPath = path.startsWith("/") ? path : `/${path}`;
+  const url = new URL(`${basePath}${endpointPath}`, baseUrl);
 
   for (const [key, value] of Object.entries(params)) {
     if (value === undefined || value === null || value === "") {
@@ -554,7 +556,9 @@ function pickListParams(params) {
   for (const key of allowed) {
     if (Object.hasOwn(params, key)) {
       if (key === "limit") {
-        picked[key] = normalizeListLimit(params[key]);
+        if (params[key] !== undefined && params[key] !== null && params[key] !== "") {
+          picked[key] = normalizeListLimit(params[key]);
+        }
       } else if (params[key] !== undefined && params[key] !== null && params[key] !== "") {
         picked[key] = String(params[key]);
       }
