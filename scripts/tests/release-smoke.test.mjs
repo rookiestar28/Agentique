@@ -5,6 +5,7 @@ import {
   REGISTRY_EXPECTATIONS
 } from "../registry-readback.mjs";
 import {
+  collectParserVariantPackageSurfaceFailures,
   collectForbiddenPackedFiles,
   PACKAGE_PATHS,
   summarizePackResult
@@ -43,6 +44,31 @@ test("install smoke rejects generated and runtime artifacts from packed files", 
       "package.tgz"
     ]),
     ["node_modules/example/index.js", ".env", "package.tgz"]
+  );
+});
+
+test("install smoke covers parser variant package surface", () => {
+  assert.deepEqual(
+    collectParserVariantPackageSurfaceFailures({
+      parserVariantSchemaExists: true,
+      hasParserVariantReadbackExport: true,
+      uploaderHelpText: "agentique upload import-plan ./pkg\nagentique upload variant-plan ./pkg"
+    }),
+    []
+  );
+
+  assert.deepEqual(
+    collectParserVariantPackageSurfaceFailures({
+      parserVariantSchemaExists: false,
+      hasParserVariantReadbackExport: false,
+      uploaderHelpText: "agentique upload plan ./pkg"
+    }),
+    [
+      "schemas package missing parser-variant.schema.json",
+      "readback package missing normalizeParserVariantReadback export",
+      "uploader help missing upload import-plan command",
+      "uploader help missing upload variant-plan command"
+    ]
   );
 });
 

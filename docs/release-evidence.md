@@ -9,7 +9,7 @@ This file records public-safe release evidence for the companion repository. Do 
 - Node.js: v24.13.1
 - npm: 11.8.0 local baseline; npm 11.14.1 for earlier dotted-scope registry readback/install smoke
 - Git: 2.53.0.windows.1
-- Branch: feature/registry-trust-alignment
+- Branch: feature/parser-variant-sync
 - Public repository: `https://github.com/rookiestar28/Agentique`
 - Commit evidence: hosted CI is tracked through GitHub Actions for the latest pushed public release candidate. Latest recorded public evidence is the successful hosted Release Check for the latest pushed release candidate. Later pushes require a fresh hosted run before downstream release claims.
 
@@ -24,6 +24,7 @@ This file records public-safe release evidence for the companion repository. Do 
 | Release allowlist and public-content check | Pass | `npm run release:check` passed. |
 | Workflow posture | Pass | `npm run workflow:check` passed. |
 | Package dry run | Pass | `npm run pack:dry-run` passed schemas, validator, action, readback, and uploader package checks. |
+| Parser/variant package surface smoke | Pass | `npm run install:smoke` installs locally packed tarballs with lifecycle scripts disabled and checks parser-variant schema, readback parser/variant export, and uploader import/variant help. |
 | URL inventory check | Pass | `npm run urls:check` passed. |
 | Go/no-go check | Pass as Go | `npm run release:go-no-go` passed with recorded external evidence. |
 | Branch-local release gate refresh | Pass | Current source branch local validation passed package tests, starter validation, release checks, workflow posture, package dry-run, URL inventory, registry readback, install smoke, go/no-go, content scan, diff check, and production dependency audits. This local refresh does not replace hosted CI evidence for later pushed changes. |
@@ -74,6 +75,12 @@ Current branch-local documentation now describes registry trust metadata, creato
 Current branch-local source now includes public parser/variant schemas, schema fixtures, validator summaries, readback projection helpers, uploader import-plan and variant-plan dry-runs, and a synthetic source-only starter package. These changes are local repository evidence until pushed and reviewed through the hosted release checks.
 
 Parser/variant evidence remains limited to static metadata, local dry-runs, and read-only public projection helpers. It does not advertise platform-managed validation, hosted execution, platform download availability, runtime compatibility, approval, publication, or safety outcomes.
+
+## Parser And Variant Package Release Gate Evidence
+
+Current branch-local release tooling packs schemas, validator, action, readback, and uploader packages, then installs the local tarballs with lifecycle scripts disabled. The install smoke checks that parser/variant package surfaces survive packaging: `parser-variant.schema.json` is present in the schemas package, `normalizeParserVariantReadback()` is exported from readback, and uploader help exposes `upload import-plan` and `upload variant-plan`.
+
+Registry readback still proves the currently published `0.1.0` package pages only. Branch-local parser/variant source changes require hosted CI, owner review, a package-version release decision, registry readback for the advertised version, and clean install smoke before any new package-release claim changes.
 
 ## All-Channel Public URL Mode
 

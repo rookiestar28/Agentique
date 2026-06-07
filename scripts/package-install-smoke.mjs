@@ -29,6 +29,29 @@ export function summarizePackResult(result) {
   };
 }
 
+export function collectParserVariantPackageSurfaceFailures({
+  parserVariantSchemaExists,
+  hasParserVariantReadbackExport,
+  uploaderHelpText
+}) {
+  const failures = [];
+
+  if (!parserVariantSchemaExists) {
+    failures.push("schemas package missing parser-variant.schema.json");
+  }
+  if (!hasParserVariantReadbackExport) {
+    failures.push("readback package missing normalizeParserVariantReadback export");
+  }
+  if (!/\bupload import-plan\b/.test(uploaderHelpText ?? "")) {
+    failures.push("uploader help missing upload import-plan command");
+  }
+  if (!/\bupload variant-plan\b/.test(uploaderHelpText ?? "")) {
+    failures.push("uploader help missing upload variant-plan command");
+  }
+
+  return failures;
+}
+
 export function packPackage(packagePath, tarballDir, { npmCli = process.env.npm_execpath } = {}) {
   if (!npmCli) {
     throw new Error("npm_execpath is unavailable; run through npm run install:smoke");
@@ -93,6 +116,13 @@ export function runInstalledSmoke(consumerDir) {
     throw new Error("schemas package smoke failed");
   }
 
+  const parserVariantSchemaFile = path.join(
+    consumerDir,
+    "node_modules",
+    "@agentique.io",
+    "schemas",
+    "parser-variant.schema.json"
+  );
   const actionModule = pathToFileURL(
     path.join(consumerDir, "node_modules", "@agentique.io", "action", "src", "action.mjs")
   ).href;
@@ -114,6 +144,39 @@ export function runInstalledSmoke(consumerDir) {
     encoding: "utf8",
     stdio: ["ignore", "pipe", "pipe"]
   });
+  const uploaderHelpText = execFileSync(process.execPath, [uploaderCli, "--help"], {
+    cwd: consumerDir,
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "pipe"]
+  });
+
+  let hasParserVariantReadbackExport = false;
+  try {
+    execFileSync(
+      process.execPath,
+      [
+        "-e",
+        "import('@agentique.io/readback').then((m)=>{if(typeof m.normalizeParserVariantReadback!=='function')process.exit(1)})"
+      ],
+      {
+        cwd: consumerDir,
+        encoding: "utf8",
+        stdio: ["ignore", "pipe", "pipe"]
+      }
+    );
+    hasParserVariantReadbackExport = true;
+  } catch {
+    hasParserVariantReadbackExport = false;
+  }
+
+  const parserVariantFailures = collectParserVariantPackageSurfaceFailures({
+    parserVariantSchemaExists: existsSync(parserVariantSchemaFile),
+    hasParserVariantReadbackExport,
+    uploaderHelpText
+  });
+  if (parserVariantFailures.length > 0) {
+    throw new Error(`parser/variant package smoke failed: ${parserVariantFailures.join("; ")}`);
+  }
 
   try {
     execFileSync(process.execPath, [validatorCli], {

@@ -26,6 +26,7 @@ Use this checklist before any public release, package publish, repository link c
 - Any pending package pages are marked non-advertised in the URL inventory.
 - Registry readback passed with expected published package states.
 - Package install smoke passed from locally packed tarballs with lifecycle scripts disabled.
+- Parser/variant package surface smoke passed from locally packed tarballs: parser-variant schema file, readback parser/variant export, and uploader import-plan / variant-plan help are present.
 
 ## Package Publishing
 
@@ -35,7 +36,7 @@ Provenance and attestations help consumers trace where an artifact came from. Th
 
 The first public npm release used an owner-approved short-lived granular token fallback after local and hosted validation passed. Future releases should prefer the checked-in trusted-publishing workflow once npm trusted publisher setup is complete.
 
-Before advertising any newly published package, run `npm run registry:readback`, run `npm run install:smoke`, and record version, dist-tag, tarball contents, clean install smoke, and package CLI/import smoke evidence for the exact version being advertised.
+Before advertising any newly published package, run `npm run registry:readback`, run `npm run install:smoke`, and record version, dist-tag, tarball contents, clean install smoke, package CLI/import smoke, and parser/variant package surface evidence for the exact version being advertised.
 
 ## Launch Boundary
 
