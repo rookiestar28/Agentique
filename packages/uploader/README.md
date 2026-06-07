@@ -2,11 +2,11 @@
 
 `@agentique.io/uploader` is the public CLI package for review-only Agentique submissions.
 
-This package exposes a review-only upload lane plus source-branch public readback/download helpers. It can validate a package locally, create an authenticated review session, transfer local evidence to the server-provided upload URL, complete the session, read back review status, query public catalog metadata, and download available artifact bytes to an explicit local output path. It does not publish, approve, certify, host, moderate, install, extract, open, or execute resources.
+This package exposes a review-only upload lane plus public readback/download helpers in the current source. It can validate a package locally, create an authenticated review session, transfer local evidence to the server-provided upload URL, complete the session, read back review status, query public catalog metadata, and download available artifact bytes to an explicit local output path. It does not publish, approve, certify, host, moderate, install, extract, open, or execute resources.
 
 The package is published on npm at version `0.1.0` after owner-approved publication, registry readback, and clean install smoke. It remains review-only; authenticated review-session access and final resource publication stay on `agentique.io`.
 
-Catalog and direct-download commands in the current source branch are release-candidate evidence. Do not advertise them as a new published npm package capability until the package release gate records hosted CI, owner release approval, package-version decision, registry readback for the advertised version, clean install smoke, rollback or unpublish evidence, and owner-approved disposable direct-download evidence.
+Catalog and direct-download commands in the current source branch are prepared for the next coordinated package release. Owner approval is recorded to use the manual GitHub Actions publishing workflow, but these commands are not a new published npm package capability until the package release gate records hosted CI, publication, registry readback for the advertised version, clean install smoke, and rollback or unpublish evidence. Direct-download live availability remains a separate claim and is not advertised until owner-approved disposable byte-transfer evidence is recorded.
 
 Current boundary:
 

@@ -29,7 +29,13 @@
       "@agentique.io/readback": "0.1.0",
       "@agentique.io/uploader": "0.1.0"
     },
-    "pendingPackages": {}
+    "pendingPackages": {
+      "@agentique.io/schemas": "next coordinated package release pending GitHub Actions publication",
+      "@agentique.io/validator": "next coordinated package release pending GitHub Actions publication",
+      "@agentique.io/action": "next coordinated package release pending GitHub Actions publication",
+      "@agentique.io/readback": "next coordinated package release pending GitHub Actions publication",
+      "@agentique.io/uploader": "next coordinated package release pending GitHub Actions publication"
+    }
   },
   "uploaderPublicationDecision": {
     "decision": "go",
@@ -43,10 +49,10 @@
     "decision": "no_go",
     "releaseBlocked": true,
     "advertisePackageChanges": false,
-    "reason": "Parser/variant package changes are branch-local source evidence only. Existing published packages remain at 0.1.0, and no new parser/variant package-release claim is approved without hosted CI for the pushed candidate, owner release approval, a package-version decision, registry readback for the advertised version, clean install smoke, and rollback/unpublish evidence.",
+    "reason": "Parser/variant package changes are prepared for the next coordinated package release, and owner approval to use the manual GitHub Actions package publishing workflow is recorded. Existing published packages remain at 0.1.0, and no new parser/variant package-release claim is advertised without hosted CI for the pushed candidate, GitHub Actions publication, registry readback for the advertised version, clean install smoke, and rollback/unpublish evidence.",
     "blockers": [
       "Fresh hosted Release Check evidence for the pushed parser/variant package candidate is not recorded.",
-      "No owner-approved package-version and publish decision is recorded for parser/variant package changes.",
+      "GitHub Actions publication for the next coordinated package version is not recorded.",
       "Registry readback and clean install smoke currently prove only existing published 0.1.0 packages.",
       "Rollback or unpublish evidence for a new parser/variant package release is not recorded."
     ]
@@ -62,14 +68,14 @@
       "liveMetadataSmoke": true,
       "directByteDownloadSmoke": false,
       "hostedCiForCandidate": false,
-      "ownerPackageReleaseApproval": false,
+      "ownerPackageReleaseApproval": true,
       "newVersionRegistryReadback": false,
       "rollbackEvidenceForNewRelease": false
     },
-    "reason": "Catalog/download CLI and SDK changes are branch-local source evidence only. Existing published packages remain at 0.1.0. A GET-only live metadata smoke on 2026-06-07 reached the canonical public list, first resource detail, and first resource download-metadata endpoints with 200 JSON responses, but no new catalog/download package-release or direct-download live availability claim is approved without hosted CI for the pushed candidate, owner release approval, a package-version decision, registry readback for the advertised version, clean install smoke, rollback/unpublish evidence, and owner-approved disposable direct-download evidence.",
+    "reason": "Catalog/download CLI and SDK changes are prepared for the next coordinated package release, and owner approval to use the manual GitHub Actions package publishing workflow is recorded. Existing published packages remain at 0.1.0. A GET-only live metadata smoke on 2026-06-07 reached the canonical public list, first resource detail, and first resource download-metadata endpoints with 200 JSON responses, but no new catalog/download package-release or direct-download live availability claim is advertised without hosted CI for the pushed candidate, GitHub Actions publication, registry readback for the advertised version, clean install smoke, rollback/unpublish evidence, and owner-approved disposable direct-download evidence.",
     "blockers": [
       "Fresh hosted Release Check evidence for the pushed catalog/download package candidate is not recorded.",
-      "No owner-approved package-version and publish decision is recorded for catalog/download package changes.",
+      "GitHub Actions publication for the next coordinated package version is not recorded.",
       "Registry readback and clean install smoke currently prove only existing published 0.1.0 packages.",
       "Rollback or unpublish evidence for a new catalog/download package release is not recorded.",
       "Owner-approved disposable direct-download byte-transfer evidence is not recorded, so direct-download live availability is not advertised."

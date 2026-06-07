@@ -22,7 +22,7 @@ Use this checklist before any public release, package publish, repository link c
 - Public docs describe registry trust metadata, creator checkpoints, trust readback, generated drafts, and patch/delta output as preparation/readback contracts only.
 - Public docs describe parser/variant schemas, fixtures, starters, readback helpers, and uploader import/variant dry-runs as static local preparation or read-only projection contracts only.
 - Parser/variant docs do not claim platform download availability, hosted execution, runtime compatibility, publication, approval, or safety outcomes.
-- Public docs describe catalog list/detail/download-metadata, direct download, and SDK download helpers as branch-local readback/download preparation only until package-release and live evidence gates pass.
+- Public docs describe catalog list/detail/download-metadata, direct download, and SDK download helpers as unpublished readback/download preparation only until package-release and live evidence gates pass.
 - Catalog/download docs do not claim new package availability, live endpoint availability, hosted execution, package installation, archive extraction, runtime compatibility, publication, approval, or safety outcomes.
 - Uploader package status, local draft/patch output, and review-only submit are documented separately from platform publication and live resource availability.
 - Any pending package pages are marked non-advertised in the URL inventory.
@@ -36,7 +36,7 @@ Packages must not use long-lived package tokens when OIDC trusted publishing is 
 
 Provenance and attestations help consumers trace where an artifact came from. They do not prove that the artifact is risk-free.
 
-The first public npm release used an owner-approved short-lived granular token fallback after local and hosted validation passed. Future releases should prefer the checked-in trusted-publishing workflow once npm trusted publisher setup is complete.
+The first public npm release used an owner-approved short-lived granular token fallback after local and hosted validation passed. Owner approval is recorded to use the checked-in manual GitHub Actions package publishing workflow for the next coordinated package release, subject to npm Trusted Publisher readiness.
 
 Before advertising any newly published package, run `npm run registry:readback`, run `npm run install:smoke`, and record version, dist-tag, tarball contents, clean install smoke, package CLI/import smoke, parser/variant package surface evidence, and catalog/download package surface evidence for the exact version being advertised.
 

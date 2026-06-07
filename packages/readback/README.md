@@ -6,7 +6,7 @@ This package helps integrators consume public Agentique resource status from `ag
 
 `agentique.io` remains the source of truth for upload, scan, review, moderation, publication, distribution state, and readback. This package does not publish, edit, delete, moderate, approve, certify, install, extract, open, or execute resources.
 
-Catalog and direct-download helpers in the current source branch are release-candidate evidence. Do not advertise them as a new published npm package capability or live endpoint availability claim until the package and live evidence gates are updated.
+Catalog and direct-download helpers in the current source branch are prepared for the next coordinated package release. Owner approval is recorded to use the manual GitHub Actions publishing workflow, but these helpers are not a new published npm package capability until the package release gate records publication, registry readback, and clean install smoke. Live direct-download availability remains a separate claim and is not advertised until owner-approved disposable byte-transfer evidence is recorded.
 
 ## Install
 

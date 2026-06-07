@@ -69,31 +69,31 @@ Current command-line finding:
 - Authenticated review-session access and final resource publication remain platform and account/token gated. Package checks do not advertise live publication or platform approval.
 - Final uploader publication closeout is Go for npm package availability after owner-approved publication, hosted CI evidence, npm registry readback, and clean install smoke from npm.
 
-Current branch-local documentation now describes registry trust metadata, creator checkpoints, trust readback, local draft output, and patch/delta output. Current local release gates pass for this source branch, but a fresh hosted release check is still required before any downstream release claim is updated for later pushed changes.
+Current documentation now describes registry trust metadata, creator checkpoints, trust readback, local draft output, and patch/delta output. Current local release gates pass for this source branch, and owner approval to use the manual GitHub Actions package publishing workflow is recorded. A fresh hosted release check and successful package publication are still required before any downstream package-release claim is updated.
 
 ## Parser And Variant Branch-Local Evidence
 
-Current branch-local source now includes public parser/variant schemas, schema fixtures, validator summaries, readback projection helpers, uploader import-plan and variant-plan dry-runs, and a synthetic source-only starter package. These changes are local repository evidence until pushed and reviewed through the hosted release checks.
+Current source now includes public parser/variant schemas, schema fixtures, validator summaries, readback projection helpers, uploader import-plan and variant-plan dry-runs, and a synthetic source-only starter package. These changes are local repository evidence until pushed, reviewed through hosted release checks, published through the package workflow, and verified through registry readback.
 
 Parser/variant evidence remains limited to static metadata, local dry-runs, and read-only public projection helpers. It does not advertise platform-managed validation, hosted execution, platform download availability, runtime compatibility, approval, publication, or safety outcomes.
 
 ## Parser And Variant Package Release Gate Evidence
 
-Current branch-local release tooling packs schemas, validator, action, readback, and uploader packages, then installs the local tarballs with lifecycle scripts disabled. The install smoke checks that parser/variant package surfaces survive packaging: `parser-variant.schema.json` is present in the schemas package, `normalizeParserVariantReadback()` is exported from readback, and uploader help exposes `upload import-plan` and `upload variant-plan`.
+Current release tooling packs schemas, validator, action, readback, and uploader packages, then installs the local tarballs with lifecycle scripts disabled. The install smoke checks that parser/variant package surfaces survive packaging: `parser-variant.schema.json` is present in the schemas package, `normalizeParserVariantReadback()` is exported from readback, and uploader help exposes `upload import-plan` and `upload variant-plan`.
 
-Registry readback still proves the currently published `0.1.0` package pages only. Branch-local parser/variant source changes require hosted CI, owner review, a package-version release decision, registry readback for the advertised version, and clean install smoke before any new package-release claim changes.
+Registry readback still proves the currently published `0.1.0` package pages only. Parser/variant source changes have owner approval for the manual GitHub Actions publishing path, but still require hosted CI for the pushed candidate, successful package publication, registry readback for the advertised version, clean install smoke, and rollback or unpublish evidence before any new package-release claim changes.
 
-Parser/variant package publication is currently No-Go for a new package-release claim. The blockers are missing hosted Release Check evidence for the pushed candidate, missing owner-approved package-version and publish decision, registry/readback evidence that still covers only existing `0.1.0` packages, and missing rollback or unpublish evidence for a new parser/variant package release.
+Parser/variant package publication is currently No-Go for a new package-release claim. The blockers are missing hosted Release Check evidence for the pushed candidate, missing GitHub Actions publication evidence, registry/readback evidence that still covers only existing `0.1.0` packages, and missing rollback or unpublish evidence for a new parser/variant package release.
 
 ## Catalog And Download Branch-Local Evidence
 
-Current branch-local source now includes readback catalog list/detail/download-metadata helpers, catalog metadata normalizers, a safe direct-download utility, uploader catalog read commands, uploader direct download, and package-surface smoke coverage for installed tarballs.
+Current source now includes readback catalog list/detail/download-metadata helpers, catalog metadata normalizers, a safe direct-download utility, uploader catalog read commands, uploader direct download, and package-surface smoke coverage for installed tarballs.
 
 Catalog/download evidence remains limited to local source behavior, local tests, installed-tarball smoke, and the bounded live metadata smoke below. It does not advertise a new npm package version, prove direct-download byte-transfer availability, approve resources, certify safety, install or execute downloaded content, or replace platform review.
 
-Registry readback still proves the currently published `0.1.0` package pages only. Branch-local catalog/download source changes require hosted CI, owner review, a package-version release decision, registry readback for the advertised version, clean install smoke, rollback or unpublish evidence, and owner-approved disposable direct-download evidence before any new package-release or direct-download live availability claim changes.
+Registry readback still proves the currently published `0.1.0` package pages only. Catalog/download source changes have owner approval for the manual GitHub Actions publishing path, but still require hosted CI for the pushed candidate, successful package publication, registry readback for the advertised version, clean install smoke, rollback or unpublish evidence, and owner-approved disposable direct-download evidence before any new package-release or direct-download live availability claim changes.
 
-Catalog/download package publication and direct-download live availability claims are currently No-Go. The blockers are missing hosted Release Check evidence for the pushed candidate, missing owner-approved package-version and publish decision, registry/readback evidence that still covers only existing `0.1.0` packages, missing rollback or unpublish evidence for a new package release, and missing owner-approved disposable direct-download byte-transfer evidence.
+Catalog/download package publication and direct-download live availability claims are currently No-Go. The blockers are missing hosted Release Check evidence for the pushed candidate, missing GitHub Actions publication evidence, registry/readback evidence that still covers only existing `0.1.0` packages, missing rollback or unpublish evidence for a new package release, and missing owner-approved disposable direct-download byte-transfer evidence.
 
 ## Catalog And Download Live Metadata Evidence
 
@@ -107,11 +107,11 @@ GET-only unauthenticated live metadata smoke was refreshed on 2026-06-07.
 | First listed public resource download-metadata URL | HTTP 200 JSON with available download metadata. |
 | Direct byte-download probe | Skipped because no owner-approved disposable public resource scope was recorded for byte-transfer evidence. |
 
-This evidence supports catalog and download-metadata endpoint availability inputs for the release decision. It does not advertise source-branch package changes as published npm capabilities and does not prove direct byte-download availability.
+This evidence supports catalog and download-metadata endpoint availability inputs for the release decision. It does not advertise current source package changes as published npm capabilities and does not prove direct byte-download availability.
 
 ## Catalog And Download Closeout Evidence
 
-Current source-branch closeout evidence is complete for local preparation only:
+Current source closeout evidence is complete for local preparation only:
 
 - Readback SDK catalog and download-metadata helpers are covered by package tests.
 - The safe direct-download utility is covered by package tests with path, overwrite, redirect, size, digest, cleanup, and token-forwarding boundaries.
@@ -120,7 +120,7 @@ Current source-branch closeout evidence is complete for local preparation only:
 - Registry readback proves only the currently published `0.1.0` packages.
 - Live metadata smoke proves the public list/detail/download-metadata endpoints for the sampled public resource.
 
-Current closeout evidence does not include direct byte-download smoke, hosted CI for the pushed catalog/download candidate, owner-approved package release, registry readback for a new advertised version, or rollback/unpublish evidence for a new package release. The catalog/download scoped release decision therefore remains No-Go for a new package-release or direct-download live availability claim.
+Current closeout evidence does not include direct byte-download smoke, hosted CI for the pushed catalog/download candidate, GitHub Actions publication evidence, registry readback for a new advertised version, or rollback/unpublish evidence for a new package release. The catalog/download scoped release decision therefore remains No-Go for a new package-release or direct-download live availability claim.
 
 ## All-Channel Public URL Mode
 
@@ -181,7 +181,7 @@ Current command-line finding:
 Publication note:
 
 - The first package release used an owner-approved short-lived granular token fallback after validation.
-- Future package releases should prefer the checked-in GitHub Actions trusted-publishing workflow once npm trusted publisher setup is complete.
+- Owner approval is recorded to use the checked-in manual GitHub Actions package publishing workflow for the next coordinated package release. Publication still depends on the workflow running on `main`, npm Trusted Publisher readiness, registry readback for the advertised version, and clean install smoke.
 
 ## Public Link Smoke Evidence
 
@@ -198,10 +198,10 @@ Command-line public link smoke checks were run on 2026-06-02, and package regist
 | `https://github.com/rookiestar28/Agentique/tree/main/packages/action#usage` | Approved action usage reference |
 | `https://github.com/rookiestar28/Agentique/tree/main/packages/readback#badge-states` | Approved badge/readback documentation |
 | `https://www.agentique.io/` | HTTP 200 |
-| `https://www.agentique.io/api/public/v1/resources?limit=1` | Current HTTP 200 JSON metadata smoke for the existing readback endpoint inventory. This row is not a direct-download live availability claim for branch-local source changes. |
+| `https://www.agentique.io/api/public/v1/resources?limit=1` | Current HTTP 200 JSON metadata smoke for the existing readback endpoint inventory. This row is not a direct-download live availability claim for current source changes. |
 
 These smoke checks approve source repository, published package registry, action usage, badge/readback documentation, schema, documentation, and `agentique.io` public links for advertising. GitHub Marketplace-style promotion remains a separate future channel.
 
 ## Current Decision
 
-The source repository, published npm packages including `@agentique.io/uploader`, action usage reference, badge/readback documentation, and `agentique.io` public links remain Go for existing advertised channels. Parser/variant branch-local package changes are No-Go for a new package-release claim until hosted CI, owner release approval, package-version decision, registry readback for the advertised version, clean install smoke, and rollback or unpublish evidence are recorded. Catalog/download branch-local package changes are No-Go for a new package-release or direct-download live availability claim until the same package-release evidence plus owner-approved disposable direct-download evidence are recorded. Authenticated review-session access and final resource publication remain platform-owned and account/token gated. GitHub Marketplace-style promotion remains separate from this source/package release.
+The source repository, published npm packages including `@agentique.io/uploader`, action usage reference, badge/readback documentation, and `agentique.io` public links remain Go for existing advertised channels. Parser/variant source changes are No-Go for a new package-release claim until hosted CI, GitHub Actions publication, registry readback for the advertised version, clean install smoke, and rollback or unpublish evidence are recorded. Catalog/download source changes are No-Go for a new package-release or direct-download live availability claim until the same package-release evidence plus owner-approved disposable direct-download evidence are recorded. Authenticated review-session access and final resource publication remain platform-owned and account/token gated. GitHub Marketplace-style promotion remains separate from this source/package release.

@@ -2,7 +2,7 @@
 
 Current source repository, published package registry pages, action usage, badge/readback documentation, and platform-link publication decision: **Go** for advertised channels.
 
-Current branch-local source changes have local release-gate evidence only until they are pushed and hosted checks run. They do not publish a new package version by themselves.
+Current source changes have local release-gate evidence only until they are pushed, hosted checks run, and the package publishing workflow completes on `main`. They do not publish a new package version by themselves.
 
 The source repository is public. The public repository URL, package registry pages, action usage reference, badge/readback documentation, public documentation URL, schema URL base, `agentique.io` public URL, hosted CI evidence, branch protection evidence, and owner go/no-go approval are recorded.
 
@@ -26,34 +26,34 @@ The uploader package page is approved for advertising. Authenticated review-sess
 
 Current parser/variant package release decision: **No-Go** for a new package-release claim.
 
-Reason: parser/variant source changes are branch-local evidence only. Existing published package pages remain approved at `0.1.0`, but no new parser/variant package release is approved without hosted CI for the pushed candidate, owner release approval, a package-version decision, registry readback for the advertised version, clean install smoke, and rollback or unpublish evidence.
+Reason: parser/variant source changes are prepared for the next coordinated package release, and owner approval to use the manual GitHub Actions package publishing workflow is recorded. Existing published package pages remain approved at `0.1.0`, but no new parser/variant package release is advertised until hosted CI for the pushed candidate, GitHub Actions publication, registry readback for the advertised version, clean install smoke, and rollback or unpublish evidence are recorded.
 
 Current blockers:
 
 - Fresh hosted Release Check evidence for the pushed parser/variant package candidate is not recorded.
-- No owner-approved package-version and publish decision is recorded for parser/variant package changes.
+- GitHub Actions publication for the next coordinated package version is not recorded.
 - Registry readback and clean install smoke currently prove only existing published `0.1.0` packages.
 - Rollback or unpublish evidence for a new parser/variant package release is not recorded.
 
-Parser/variant schemas, validator findings, readback helpers, uploader dry-runs, examples, and release smoke coverage are branch-local preparation evidence. They do not publish new package contents, create platform downloads, prove runtime compatibility, approve resources, or replace platform review.
+Parser/variant schemas, validator findings, readback helpers, uploader dry-runs, examples, and release smoke coverage are unpublished preparation evidence. They do not publish new package contents, create platform downloads, prove runtime compatibility, approve resources, or replace platform review.
 
 ## Catalog And Download Package Release Decision
 
 Current catalog/download package release decision: **No-Go** for a new package-release or direct-download live availability claim.
 
-Reason: catalog/download CLI and SDK changes are branch-local source evidence only. Existing published package pages remain approved at `0.1.0`. A GET-only live metadata smoke on 2026-06-07 reached the canonical public list, first resource detail, and first resource download-metadata endpoints with 200 JSON responses. No new catalog/download package release or direct-download live availability claim is approved without hosted CI for the pushed candidate, owner release approval, a package-version decision, registry readback for the advertised version, clean install smoke, rollback or unpublish evidence, and owner-approved disposable direct-download evidence.
+Reason: catalog/download CLI and SDK changes are prepared for the next coordinated package release, and owner approval to use the manual GitHub Actions package publishing workflow is recorded. Existing published package pages remain approved at `0.1.0`. A GET-only live metadata smoke on 2026-06-07 reached the canonical public list, first resource detail, and first resource download-metadata endpoints with 200 JSON responses. No new catalog/download package release or direct-download live availability claim is advertised without hosted CI for the pushed candidate, GitHub Actions publication, registry readback for the advertised version, clean install smoke, rollback or unpublish evidence, and owner-approved disposable direct-download evidence.
 
 Current blockers:
 
 - Fresh hosted Release Check evidence for the pushed catalog/download package candidate is not recorded.
-- No owner-approved package-version and publish decision is recorded for catalog/download package changes.
+- GitHub Actions publication for the next coordinated package version is not recorded.
 - Registry readback and clean install smoke currently prove only existing published `0.1.0` packages.
 - Rollback or unpublish evidence for a new catalog/download package release is not recorded.
 - Owner-approved disposable direct-download byte-transfer evidence is not recorded, so direct-download live availability is not advertised.
 
-Catalog list/detail/download-metadata commands, direct download command, readback catalog normalizers, direct download utility, live metadata smoke, and release smoke coverage are branch-local preparation evidence. They do not publish new package contents, prove direct-download live availability, approve resources, certify safety, install or execute downloaded content, or replace platform review.
+Catalog list/detail/download-metadata commands, direct download command, readback catalog normalizers, direct download utility, live metadata smoke, and release smoke coverage are unpublished preparation evidence. They do not publish new package contents, prove direct-download live availability, approve resources, certify safety, install or execute downloaded content, or replace platform review.
 
-Closeout evidence: source-branch validation, installed-tarball smoke, registry readback for the currently published `0.1.0` packages, and live metadata smoke are recorded. Direct byte-download smoke, hosted CI for the pushed catalog/download candidate, owner-approved package release, registry readback for a new advertised version, and rollback or unpublish evidence for a new release are not recorded.
+Closeout evidence: source validation, installed-tarball smoke, registry readback for the currently published `0.1.0` packages, live metadata smoke, and owner approval to use the manual GitHub Actions publishing workflow are recorded. Direct byte-download smoke, hosted CI for the pushed catalog/download candidate, GitHub Actions publication, registry readback for a new advertised version, and rollback or unpublish evidence for a new release are not recorded.
 
 Current public-safe evidence is recorded in [release-evidence.md](release-evidence.md).
 
@@ -69,9 +69,9 @@ Current public-safe evidence is recorded in [release-evidence.md](release-eviden
 - Surfacing contract fixture matrix is covered by release checks.
 - Readback helper docs describe context bundle and selection projections as read-only public projections.
 - Hosted Release Check evidence is recorded for the latest pushed public release candidate; later branch changes require a fresh hosted run before downstream release claims.
-- Current branch-local release gate refresh passed package tests, starter validation, release checks, workflow posture, package dry-run, URL inventory, registry readback, install smoke, go/no-go, content scan, diff check, and production dependency audits.
-- Parser/variant package surface smoke passes from locally packed tarballs, but this remains branch-local evidence until a new package release is approved and published.
-- Catalog/download package surface smoke passes from locally packed tarballs, and the live metadata smoke passed for public list/detail/download-metadata endpoints, but this remains branch-local evidence until a new package release and direct-download live availability claim are approved.
+- Current source release gate refresh passed package tests, starter validation, release checks, workflow posture, package dry-run, URL inventory, registry readback, install smoke, go/no-go, content scan, diff check, and production dependency audits.
+- Parser/variant package surface smoke passes from locally packed tarballs, but this remains unpublished evidence until a new package release is published and verified.
+- Catalog/download package surface smoke passes from locally packed tarballs, and the live metadata smoke passed for public list/detail/download-metadata endpoints, but this remains unpublished evidence until a new package release is published and verified. Direct-download live availability remains separate and unadvertised until owner-approved disposable byte-transfer evidence is recorded.
 - Public `main` branch protection is enabled.
 - Final public URLs are approved.
 - `agentique.io` public links are approved.

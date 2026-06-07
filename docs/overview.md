@@ -17,10 +17,10 @@ Local validation is not platform approval. Local validation is not safety certif
 3. Choose a distribution mode that matches the content.
 4. Run local static checks when available.
 5. Add parser/variant metadata only when it is static, source-only, and backed by no-execution evidence.
-6. Use uploader plan, draft, or patch commands for local review-only preparation when useful; use source-branch import-plan and variant-plan dry-runs only as parser/variant package-release candidate evidence until a new version is approved and published.
+6. Use uploader plan, draft, or patch commands for local review-only preparation when useful; use source import-plan and variant-plan dry-runs only as unpublished parser/variant package-release evidence until a new version is published and verified.
 7. Enter the platform-owned upload flow on `agentique.io`, or review an uploader session when explicitly configured with platform API access and checkpoint-ready package metadata.
 8. Wait for platform scan, review, consent, moderation, publication, and readback.
 
 ## Public Boundaries
 
-Companion docs and tools do not publish, edit, delete, moderate, approve, certify, host, or execute resources. Parser/variant metadata and uploader dry-runs are local preparation evidence only. Source-branch parser/variant package changes are No-Go for a new package-release claim until hosted, owner, registry, install-smoke, and rollback evidence is recorded. The uploader package is review-only; authenticated review-session access and final resource publication remain platform-owned and account/token gated. Public issue threads are for docs and tooling questions, not unsafe reports, raw imported content, credentials, or private account matters.
+Companion docs and tools do not publish, edit, delete, moderate, approve, certify, host, or execute resources. Parser/variant metadata and uploader dry-runs are local preparation evidence only. Parser/variant package changes are No-Go for a new package-release claim until hosted CI, GitHub Actions publication, registry readback, install-smoke, and rollback evidence are recorded. The uploader package is review-only; authenticated review-session access and final resource publication remain platform-owned and account/token gated. Public issue threads are for docs and tooling questions, not unsafe reports, raw imported content, credentials, or private account matters.
