@@ -53,9 +53,9 @@ npm install @agentique.io/schemas @agentique.io/validator @agentique.io/readback
 
 Published packages currently include `@agentique.io/schemas`, `@agentique.io/validator`, `@agentique.io/action`, `@agentique.io/readback`, and `@agentique.io/uploader` at version `0.1.0`.
 
-Parser/variant package surfaces in the current source branch are prepared for the next coordinated npm package release. They are not part of a new advertised package release until the scoped release decision in [docs/release-go-no-go.md](docs/release-go-no-go.md) records pushed hosted CI, GitHub Actions publication, registry readback for the advertised version, clean install smoke, and rollback or unpublish evidence.
+Parser/variant package surfaces in the current source branch are prepared for the next coordinated npm package release target, `0.2.0`. They are not part of a new advertised package release until the scoped release decision in [docs/release-go-no-go.md](docs/release-go-no-go.md) records pushed hosted CI, GitHub Actions publication, registry readback for `0.2.0`, clean install smoke, and rollback or unpublish evidence.
 
-Catalog/download CLI and SDK surfaces in the current source branch are also prepared for the next coordinated npm package release. They are not a new advertised npm package capability until the scoped release decision records the same package-release evidence. Direct-download live availability remains a separate claim and is not advertised until owner-approved disposable byte-transfer evidence is recorded.
+Catalog/download CLI and SDK surfaces in the current source branch are also prepared for the next coordinated npm package release target, `0.2.0`. They are not a new advertised npm package capability until the scoped release decision records the same package-release evidence. Direct-download live availability remains a separate claim and is not advertised until owner-approved disposable byte-transfer evidence is recorded.
 
 Use the validator package for local static checks:
 
@@ -154,9 +154,9 @@ The source repository, npm packages, action usage reference, badge/readback docu
 
 Current source repository, package registry, action usage, badge/readback documentation, and platform-link publication decision for existing advertised channels: **Go**.
 
-Parser/variant package changes in the current source branch are **No-Go** for a new package-release claim until hosted CI for the pushed candidate, GitHub Actions publication, registry readback for the advertised version, clean install smoke, and rollback or unpublish evidence are recorded. Owner approval to use the manual GitHub Actions package publishing workflow is recorded. Existing published package pages remain approved at version `0.1.0`.
+Parser/variant package changes in the current source branch are **No-Go** for a new package-release claim until hosted CI for the pushed candidate, GitHub Actions publication, registry readback for `0.2.0`, clean install smoke, and rollback or unpublish evidence are recorded. Owner approval to use the manual GitHub Actions package publishing workflow is recorded. Existing published package pages remain approved at version `0.1.0`.
 
-Catalog/download package changes in the current source branch are **No-Go** for a new package-release or direct-download live availability claim. Current metadata endpoint evidence is recorded, and owner approval to use the manual GitHub Actions package publishing workflow is recorded. No-Go remains until hosted CI for the pushed candidate, GitHub Actions publication, registry readback for the advertised version, clean install smoke, rollback or unpublish evidence, and owner-approved disposable direct-download evidence are recorded.
+Catalog/download package changes in the current source branch are **No-Go** for a new package-release or direct-download live availability claim. Current metadata endpoint evidence is recorded, and owner approval to use the manual GitHub Actions package publishing workflow is recorded. No-Go remains until hosted CI for the pushed candidate, GitHub Actions publication, registry readback for `0.2.0`, clean install smoke, rollback or unpublish evidence, and owner-approved disposable direct-download evidence are recorded.
 
 Public-safe evidence currently recorded:
 
@@ -289,7 +289,7 @@ See [packages/validator/README.md](packages/validator/README.md).
 
 The uploader package is a published review-only CLI implementation. It is useful for local integration review because it can report redacted auth status, generate validator-backed upload plans, and exercise review-session submit/status flows when configured with platform API access.
 
-The current source branch also includes parser import and variant dry-runs, public catalog reads, download-metadata reads, and direct artifact byte download for local review. Owner approval to use the manual GitHub Actions package publishing workflow is recorded, but these parser/variant and catalog/download surfaces are not a new published package claim until the package release gate records pushed hosted CI, GitHub Actions publication, registry readback for the advertised version, clean install smoke, and rollback or unpublish evidence. Direct-download live availability remains unadvertised until owner-approved disposable byte-transfer evidence is recorded.
+The current source branch also includes parser import and variant dry-runs, public catalog reads, download-metadata reads, and direct artifact byte download for local review. Owner approval to use the manual GitHub Actions package publishing workflow is recorded, but these parser/variant and catalog/download surfaces are not a new published package claim until the package release gate records pushed hosted CI, GitHub Actions publication, registry readback for `0.2.0`, clean install smoke, and rollback or unpublish evidence. Direct-download live availability remains unadvertised until owner-approved disposable byte-transfer evidence is recorded.
 
 Install from npm:
 
@@ -470,8 +470,9 @@ Package-level audits:
 npm --prefix packages/validator audit --omit=dev
 npm --prefix packages/action audit --omit=dev
 npm --prefix packages/readback audit --omit=dev
-npm --prefix packages/uploader audit --omit=dev
 ```
+
+For prepublish candidates where `@agentique.io/uploader` depends on unpublished companion package versions, package-local uploader audit is a post-publish registry gate. The publish workflow verifies companion dependency versions before publishing uploader and then runs registry readback plus registry install smoke after the full package set is published.
 
 Release status and follow-up boundaries are documented in [docs/release-go-no-go.md](docs/release-go-no-go.md). Package release expectations are documented in [docs/package-release-provenance.md](docs/package-release-provenance.md).
 

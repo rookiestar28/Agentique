@@ -4,8 +4,8 @@ import {
   collectReleaseDecisionFailures
 } from "../check-release-go-no-go.mjs";
 import {
+  buildRegistryExpectations,
   evaluateRegistryReadback,
-  REGISTRY_EXPECTATIONS
 } from "../registry-readback.mjs";
 import {
   collectCatalogDownloadPackageSurfaceFailures,
@@ -16,14 +16,26 @@ import {
 } from "../package-install-smoke.mjs";
 
 test("registry readback policy accepts published companion packages", () => {
-  const uploader = REGISTRY_EXPECTATIONS.find((item) => item.name === "@agentique.io/uploader");
-  const validator = REGISTRY_EXPECTATIONS.find((item) => item.name === "@agentique.io/validator");
+  const expectations = buildRegistryExpectations({ mode: "published", targetVersion: "0.2.0" });
+  const uploader = expectations.find((item) => item.name === "@agentique.io/uploader");
+  const validator = expectations.find((item) => item.name === "@agentique.io/validator");
 
-  assert.equal(evaluateRegistryReadback({ status: "published", version: "0.1.0" }, validator), null);
-  assert.equal(evaluateRegistryReadback({ status: "published", version: "0.1.0" }, uploader), null);
+  assert.equal(evaluateRegistryReadback({ status: "published", version: "0.2.0" }, validator), null);
+  assert.equal(evaluateRegistryReadback({ status: "published", version: "0.2.0" }, uploader), null);
   assert.match(
     evaluateRegistryReadback({ status: "not_found", version: null }, uploader),
     /expected published/
+  );
+});
+
+test("registry readback policy accepts prepublish target absence", () => {
+  const expectations = buildRegistryExpectations({ mode: "prepublish", targetVersion: "0.2.0" });
+  const uploader = expectations.find((item) => item.name === "@agentique.io/uploader");
+
+  assert.equal(evaluateRegistryReadback({ status: "not_found", version: null }, uploader), null);
+  assert.match(
+    evaluateRegistryReadback({ status: "published", version: "0.2.0" }, uploader),
+    /expected pending not-found/
   );
 });
 
@@ -163,14 +175,14 @@ test("install smoke covers catalog and direct download package surface", () => {
 test("pack result summary is stable and hides tarball internals", () => {
   const summary = summarizePackResult({
     name: "@agentique.io/uploader",
-    version: "0.1.0",
-    filename: "agentique.io-uploader-0.1.0.tgz",
+    version: "0.2.0",
+    filename: "agentique.io-uploader-0.2.0.tgz",
     files: [{ path: "package.json" }, { path: "src/cli.mjs" }]
   });
 
   assert.equal(summary.name, "@agentique.io/uploader");
-  assert.equal(summary.version, "0.1.0");
-  assert.equal(summary.filename, "agentique.io-uploader-0.1.0.tgz");
+  assert.equal(summary.version, "0.2.0");
+  assert.equal(summary.filename, "agentique.io-uploader-0.2.0.tgz");
   assert.deepEqual(summary.files, ["package.json", "src/cli.mjs"]);
   assert.deepEqual(summary.forbidden, []);
 });
