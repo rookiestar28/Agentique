@@ -56,6 +56,16 @@
     "releaseBlocked": true,
     "advertisePackageChanges": false,
     "advertiseLiveAvailability": false,
+    "closeoutEvidence": {
+      "sourceBranchValidation": true,
+      "installedTarballSmoke": true,
+      "liveMetadataSmoke": true,
+      "directByteDownloadSmoke": false,
+      "hostedCiForCandidate": false,
+      "ownerPackageReleaseApproval": false,
+      "newVersionRegistryReadback": false,
+      "rollbackEvidenceForNewRelease": false
+    },
     "reason": "Catalog/download CLI and SDK changes are branch-local source evidence only. Existing published packages remain at 0.1.0. A GET-only live metadata smoke on 2026-06-07 reached the canonical public list, first resource detail, and first resource download-metadata endpoints with 200 JSON responses, but no new catalog/download package-release or direct-download live availability claim is approved without hosted CI for the pushed candidate, owner release approval, a package-version decision, registry readback for the advertised version, clean install smoke, rollback/unpublish evidence, and owner-approved disposable direct-download evidence.",
     "blockers": [
       "Fresh hosted Release Check evidence for the pushed catalog/download package candidate is not recorded.",

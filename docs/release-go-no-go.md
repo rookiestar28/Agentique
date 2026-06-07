@@ -53,6 +53,8 @@ Current blockers:
 
 Catalog list/detail/download-metadata commands, direct download command, readback catalog normalizers, direct download utility, live metadata smoke, and release smoke coverage are branch-local preparation evidence. They do not publish new package contents, prove direct-download live availability, approve resources, certify safety, install or execute downloaded content, or replace platform review.
 
+Closeout evidence: source-branch validation, installed-tarball smoke, registry readback for the currently published `0.1.0` packages, and live metadata smoke are recorded. Direct byte-download smoke, hosted CI for the pushed catalog/download candidate, owner-approved package release, registry readback for a new advertised version, and rollback or unpublish evidence for a new release are not recorded.
+
 Current public-safe evidence is recorded in [release-evidence.md](release-evidence.md).
 
 ## Local Evidence

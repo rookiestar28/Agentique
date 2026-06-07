@@ -109,6 +109,19 @@ GET-only unauthenticated live metadata smoke was refreshed on 2026-06-07.
 
 This evidence supports catalog and download-metadata endpoint availability inputs for the release decision. It does not advertise source-branch package changes as published npm capabilities and does not prove direct byte-download availability.
 
+## Catalog And Download Closeout Evidence
+
+Current source-branch closeout evidence is complete for local preparation only:
+
+- Readback SDK catalog and download-metadata helpers are covered by package tests.
+- The safe direct-download utility is covered by package tests with path, overwrite, redirect, size, digest, cleanup, and token-forwarding boundaries.
+- Uploader catalog and direct-download commands are covered by package tests.
+- Installed-tarball smoke covers readback catalog/download exports and uploader catalog/direct-download help surfaces.
+- Registry readback proves only the currently published `0.1.0` packages.
+- Live metadata smoke proves the public list/detail/download-metadata endpoints for the sampled public resource.
+
+Current closeout evidence does not include direct byte-download smoke, hosted CI for the pushed catalog/download candidate, owner-approved package release, registry readback for a new advertised version, or rollback/unpublish evidence for a new package release. The catalog/download scoped release decision therefore remains No-Go for a new package-release or direct-download live availability claim.
+
 ## All-Channel Public URL Mode
 
 Approved advertised URL checks pass for source, published packages, action usage, badge/readback documentation, schema, docs, and platform links:
