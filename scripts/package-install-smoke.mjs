@@ -52,6 +52,39 @@ export function collectParserVariantPackageSurfaceFailures({
   return failures;
 }
 
+export function collectCatalogDownloadPackageSurfaceFailures({
+  hasDownloadResourceArtifactExport,
+  hasNormalizeResourceListExport,
+  hasNormalizeDownloadMetadataExport,
+  uploaderHelpText
+}) {
+  const failures = [];
+
+  if (!hasDownloadResourceArtifactExport) {
+    failures.push("readback package missing downloadResourceArtifact export");
+  }
+  if (!hasNormalizeResourceListExport) {
+    failures.push("readback package missing normalizeResourceList export");
+  }
+  if (!hasNormalizeDownloadMetadataExport) {
+    failures.push("readback package missing normalizeDownloadMetadata export");
+  }
+  if (!/\bcatalog list\b/.test(uploaderHelpText ?? "")) {
+    failures.push("uploader help missing catalog list command");
+  }
+  if (!/\bcatalog get\b/.test(uploaderHelpText ?? "")) {
+    failures.push("uploader help missing catalog get command");
+  }
+  if (!/\bcatalog download-metadata\b/.test(uploaderHelpText ?? "")) {
+    failures.push("uploader help missing catalog download-metadata command");
+  }
+  if (!/\bdownload <resource-id> --output\b/.test(uploaderHelpText ?? "")) {
+    failures.push("uploader help missing direct download command");
+  }
+
+  return failures;
+}
+
 export function packPackage(packagePath, tarballDir, { npmCli = process.env.npm_execpath } = {}) {
   if (!npmCli) {
     throw new Error("npm_execpath is unavailable; run through npm run install:smoke");
@@ -128,12 +161,11 @@ export function runInstalledSmoke(consumerDir) {
   ).href;
   const uploaderCli = path.join(consumerDir, "node_modules", "@agentique.io", "uploader", "src", "cli.mjs");
   const validatorCli = path.join(consumerDir, "node_modules", "@agentique.io", "validator", "src", "cli.mjs");
+  const readbackExports = readInstalledReadbackExportStatus(consumerDir);
 
-  execFileSync(process.execPath, ["-e", "import('@agentique.io/readback').then((m)=>{if(!m.createReadbackClient)process.exit(1)})"], {
-    cwd: consumerDir,
-    encoding: "utf8",
-    stdio: ["ignore", "pipe", "pipe"]
-  });
+  if (!readbackExports.createReadbackClient) {
+    throw new Error("readback package smoke failed");
+  }
   execFileSync(process.execPath, ["-e", `import(${JSON.stringify(actionModule)}).then((m)=>{if(!m.runAction)process.exit(1)})`], {
     cwd: consumerDir,
     encoding: "utf8",
@@ -150,32 +182,23 @@ export function runInstalledSmoke(consumerDir) {
     stdio: ["ignore", "pipe", "pipe"]
   });
 
-  let hasParserVariantReadbackExport = false;
-  try {
-    execFileSync(
-      process.execPath,
-      [
-        "-e",
-        "import('@agentique.io/readback').then((m)=>{if(typeof m.normalizeParserVariantReadback!=='function')process.exit(1)})"
-      ],
-      {
-        cwd: consumerDir,
-        encoding: "utf8",
-        stdio: ["ignore", "pipe", "pipe"]
-      }
-    );
-    hasParserVariantReadbackExport = true;
-  } catch {
-    hasParserVariantReadbackExport = false;
-  }
-
   const parserVariantFailures = collectParserVariantPackageSurfaceFailures({
     parserVariantSchemaExists: existsSync(parserVariantSchemaFile),
-    hasParserVariantReadbackExport,
+    hasParserVariantReadbackExport: readbackExports.normalizeParserVariantReadback,
     uploaderHelpText
   });
   if (parserVariantFailures.length > 0) {
     throw new Error(`parser/variant package smoke failed: ${parserVariantFailures.join("; ")}`);
+  }
+
+  const catalogDownloadFailures = collectCatalogDownloadPackageSurfaceFailures({
+    hasDownloadResourceArtifactExport: readbackExports.downloadResourceArtifact,
+    hasNormalizeResourceListExport: readbackExports.normalizeResourceList,
+    hasNormalizeDownloadMetadataExport: readbackExports.normalizeDownloadMetadata,
+    uploaderHelpText
+  });
+  if (catalogDownloadFailures.length > 0) {
+    throw new Error(`catalog/download package smoke failed: ${catalogDownloadFailures.join("; ")}`);
   }
 
   try {
@@ -189,6 +212,37 @@ export function runInstalledSmoke(consumerDir) {
     if (error.status !== 2 || !/agentique-validator validate/.test(error.stderr ?? "")) {
       throw error;
     }
+  }
+}
+
+function readInstalledReadbackExportStatus(consumerDir) {
+  try {
+    const output = execFileSync(
+      process.execPath,
+      [
+        "-e",
+        [
+          "import('@agentique.io/readback').then((m)=>{",
+          "const names=['createReadbackClient','normalizeParserVariantReadback','downloadResourceArtifact','normalizeResourceList','normalizeDownloadMetadata'];",
+          "console.log(JSON.stringify(Object.fromEntries(names.map((name)=>[name, typeof m[name] === 'function']))));",
+          "})"
+        ].join("")
+      ],
+      {
+        cwd: consumerDir,
+        encoding: "utf8",
+        stdio: ["ignore", "pipe", "pipe"]
+      }
+    );
+    return JSON.parse(output);
+  } catch {
+    return {
+      createReadbackClient: false,
+      normalizeParserVariantReadback: false,
+      downloadResourceArtifact: false,
+      normalizeResourceList: false,
+      normalizeDownloadMetadata: false
+    };
   }
 }
 

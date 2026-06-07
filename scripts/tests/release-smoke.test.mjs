@@ -8,6 +8,7 @@ import {
   REGISTRY_EXPECTATIONS
 } from "../registry-readback.mjs";
 import {
+  collectCatalogDownloadPackageSurfaceFailures,
   collectParserVariantPackageSurfaceFailures,
   collectForbiddenPackedFiles,
   PACKAGE_PATHS,
@@ -103,6 +104,41 @@ test("install smoke covers parser variant package surface", () => {
       "readback package missing normalizeParserVariantReadback export",
       "uploader help missing upload import-plan command",
       "uploader help missing upload variant-plan command"
+    ]
+  );
+});
+
+test("install smoke covers catalog and direct download package surface", () => {
+  assert.deepEqual(
+    collectCatalogDownloadPackageSurfaceFailures({
+      hasDownloadResourceArtifactExport: true,
+      hasNormalizeResourceListExport: true,
+      hasNormalizeDownloadMetadataExport: true,
+      uploaderHelpText: [
+        "agentique catalog list",
+        "agentique catalog get",
+        "agentique catalog download-metadata",
+        "agentique download <resource-id> --output <file-or-dir>"
+      ].join("\n")
+    }),
+    []
+  );
+
+  assert.deepEqual(
+    collectCatalogDownloadPackageSurfaceFailures({
+      hasDownloadResourceArtifactExport: false,
+      hasNormalizeResourceListExport: false,
+      hasNormalizeDownloadMetadataExport: false,
+      uploaderHelpText: "agentique upload plan ./pkg"
+    }),
+    [
+      "readback package missing downloadResourceArtifact export",
+      "readback package missing normalizeResourceList export",
+      "readback package missing normalizeDownloadMetadata export",
+      "uploader help missing catalog list command",
+      "uploader help missing catalog get command",
+      "uploader help missing catalog download-metadata command",
+      "uploader help missing direct download command"
     ]
   );
 });
