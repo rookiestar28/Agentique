@@ -2,7 +2,9 @@ export {
   ReadbackError,
   assertReadOnlyClientSurface,
   createReadbackClient,
+  normalizeDownloadMetadata,
   normalizeParserVariantReadback,
+  normalizeResourceList,
   normalizeTrustReadback,
   normalizeBaseUrl,
   normalizePublicReadback

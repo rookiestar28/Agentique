@@ -89,6 +89,21 @@ export function createReadbackClient(options = {}) {
       });
     }
 
+    if (response.status === 404) {
+      throw new ReadbackError("Readback resource was not found.", {
+        code: "not-found",
+        status: 404
+      });
+    }
+
+    if (response.status >= 500) {
+      throw new ReadbackError("Readback endpoint is unavailable.", {
+        code: "unavailable",
+        status: response.status,
+        retryAfter: response.headers?.get?.("retry-after") ?? null
+      });
+    }
+
     if (!response.ok) {
       throw new ReadbackError("Readback request failed.", {
         code: "http-error",
@@ -181,6 +196,61 @@ export function normalizePublicReadback(value) {
   }
 
   return Object.freeze(normalized);
+}
+
+export function normalizeResourceList(value) {
+  const normalized = normalizePublicReadback(value);
+  if (Array.isArray(normalized)) {
+    return Object.freeze({
+      items: Object.freeze(normalized.filter(isRecord).map(projectResourceListItem)),
+      pageInfo: emptyPageInfo(),
+      observedAt: null
+    });
+  }
+
+  if (!isRecord(normalized)) {
+    return emptyResourceList();
+  }
+
+  const sourceItems = Array.isArray(normalized.items)
+    ? normalized.items
+    : Array.isArray(normalized.resources)
+      ? normalized.resources
+      : [];
+
+  return Object.freeze({
+    items: Object.freeze(sourceItems.filter(isRecord).map(projectResourceListItem)),
+    pageInfo: projectPageInfo(normalized.pageInfo),
+    observedAt: stringOrNull(normalized.observedAt ?? normalized.updatedAt)
+  });
+}
+
+export function normalizeDownloadMetadata(value) {
+  const normalized = normalizePublicReadback(value);
+  if (!isRecord(normalized)) {
+    return emptyDownloadMetadata();
+  }
+
+  const download = isRecord(normalized.download) ? normalized.download : {};
+  const digestValue = firstString(download.digest, normalized.digest, download.sha256, normalized.sha256);
+  const digest = projectDigest(digestValue);
+
+  return Object.freeze({
+    resourceId: stringOrNull(normalized.resourceId ?? normalized.id),
+    platformId: stringOrNull(download.platformId ?? normalized.platformId),
+    artifactKind: stringOrNull(download.artifactKind ?? normalized.artifactKind),
+    availability: normalizePublicState(download.availability ?? normalized.availability ?? normalized.status ?? normalized.state),
+    url: stringOrNull(download.url ?? normalized.downloadUrl ?? normalized.url),
+    filename: stringOrNull(download.filename ?? download.fileName ?? normalized.filename ?? normalized.fileName),
+    mediaType: stringOrNull(download.mediaType ?? normalized.mediaType ?? download.contentType ?? normalized.contentType),
+    sizeBytes: numberOrNull(download.sizeBytes ?? download.size ?? normalized.sizeBytes ?? normalized.size ?? normalized.contentLength),
+    digest,
+    digestPresent: typeof digestValue === "string",
+    digestValid: typeof digestValue !== "string" || digest !== null,
+    reasons: arrayOfStrings(download.reasons ?? normalized.reasons),
+    observedAt: stringOrNull(download.observedAt ?? normalized.observedAt ?? normalized.updatedAt),
+    expiresAt: stringOrNull(download.expiresAt ?? normalized.expiresAt)
+  });
 }
 
 export function normalizeTrustReadback(value) {
@@ -312,6 +382,94 @@ function emptyParserVariantSummary() {
   });
 }
 
+function emptyResourceList() {
+  return Object.freeze({
+    items: Object.freeze([]),
+    pageInfo: emptyPageInfo(),
+    observedAt: null
+  });
+}
+
+function emptyPageInfo() {
+  return Object.freeze({
+    page: null,
+    pageSize: null,
+    total: null,
+    cursor: null,
+    nextCursor: null,
+    hasNextPage: false
+  });
+}
+
+function emptyDownloadMetadata() {
+  return Object.freeze({
+    resourceId: null,
+    platformId: null,
+    artifactKind: null,
+    availability: "unavailable",
+    url: null,
+    filename: null,
+    mediaType: null,
+    sizeBytes: null,
+    digest: null,
+    digestPresent: false,
+    digestValid: true,
+    reasons: Object.freeze([]),
+    observedAt: null,
+    expiresAt: null
+  });
+}
+
+function projectResourceListItem(item) {
+  return Object.freeze({
+    resourceId: stringOrNull(item.resourceId ?? item.id),
+    slug: stringOrNull(item.slug),
+    title: stringOrNull(item.title ?? item.name),
+    summary: stringOrNull(item.summary ?? item.description),
+    type: stringOrNull(item.type ?? item.resourceType),
+    status: normalizePublicState(item.status ?? item.state ?? item.publicationState),
+    platformUrl: stringOrNull(item.platformUrl ?? item.resourceUrl ?? item.url),
+    downloadAvailability: normalizePublicState(item.downloadAvailability ?? item.download?.availability),
+    updatedAt: stringOrNull(item.updatedAt ?? item.observedAt)
+  });
+}
+
+function projectPageInfo(value) {
+  if (!isRecord(value)) {
+    return emptyPageInfo();
+  }
+
+  return Object.freeze({
+    page: numberOrNull(value.page),
+    pageSize: numberOrNull(value.pageSize ?? value.limit),
+    total: numberOrNull(value.total),
+    cursor: stringOrNull(value.cursor),
+    nextCursor: stringOrNull(value.nextCursor ?? value.endCursor),
+    hasNextPage: value.hasNextPage === true
+  });
+}
+
+function projectDigest(value) {
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const trimmed = value.trim();
+  const prefixed = /^([A-Za-z0-9-]+):([A-Fa-f0-9]+)$/.exec(trimmed);
+  if (!prefixed) {
+    return null;
+  }
+
+  return Object.freeze({
+    algorithm: prefixed[1].toLowerCase(),
+    value: prefixed[2].toLowerCase()
+  });
+}
+
+function firstString(...values) {
+  return values.find((value) => typeof value === "string");
+}
+
 function isPrivateProjectionKey(key) {
   const normalized = key.replace(/[-_\s]/g, "").toLowerCase();
   return (
@@ -386,16 +544,36 @@ function buildUrl(baseUrl, path, params = {}) {
 }
 
 function pickListParams(params) {
+  if (!isRecord(params)) {
+    throw new ReadbackError("List resources params must be an object.", { code: "invalid-list-params" });
+  }
+
   const allowed = ["q", "type", "cursor", "limit", "status"];
   const picked = {};
 
   for (const key of allowed) {
     if (Object.hasOwn(params, key)) {
-      picked[key] = params[key];
+      if (key === "limit") {
+        picked[key] = normalizeListLimit(params[key]);
+      } else if (params[key] !== undefined && params[key] !== null && params[key] !== "") {
+        picked[key] = String(params[key]);
+      }
     }
   }
 
   return picked;
+}
+
+function normalizeListLimit(value) {
+  const numeric = typeof value === "number" ? value : typeof value === "string" && value.trim() !== "" ? Number(value) : NaN;
+
+  if (!Number.isInteger(numeric) || numeric < 1 || numeric > 100) {
+    throw new ReadbackError("List resources limit must be an integer from 1 to 100.", {
+      code: "invalid-list-limit"
+    });
+  }
+
+  return numeric;
 }
 
 function pickContextBundleParams(params) {

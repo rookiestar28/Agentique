@@ -7,8 +7,10 @@ import {
   createBadgeState,
   createReadbackClient,
   listBadgeStates,
+  normalizeDownloadMetadata,
   normalizeParserVariantReadback,
   normalizePublicReadback,
+  normalizeResourceList,
   normalizeTrustReadback
 } from "../src/index.mjs";
 
@@ -75,6 +77,38 @@ describe("read-only client", () => {
 
     assert.equal(calls[0].options.method, "GET");
     assert.equal(calls[0].url, "https://agentique.example/base/api/public/v1/resources?q=agent&limit=10");
+  });
+
+  it("uses the full resource list query allowlist and validates limits before network access", async () => {
+    const calls = [];
+    const client = createReadbackClient({
+      baseUrl: "https://agentique.example/base/",
+      fetchImpl: async (url, options) => {
+        calls.push({ url: String(url), options });
+        return jsonResponse({ items: [] });
+      }
+    });
+
+    await client.listResources({
+      q: "assistant",
+      type: "skill",
+      cursor: "next-page",
+      limit: "25",
+      status: "published",
+      token: "ignored"
+    });
+
+    assert.equal(calls[0].options.method, "GET");
+    assert.equal(
+      calls[0].url,
+      "https://agentique.example/base/api/public/v1/resources?q=assistant&type=skill&cursor=next-page&limit=25&status=published"
+    );
+
+    assert.throws(
+      () => client.listResources({ limit: 0 }),
+      (error) => error instanceof ReadbackError && error.code === "invalid-list-limit"
+    );
+    assert.equal(calls.length, 1);
   });
 
   it("uses versioned public resource paths for every method", async () => {
@@ -248,6 +282,30 @@ describe("read-only client", () => {
       (error) => error instanceof ReadbackError && error.code === "rate-limited" && error.retryAfter === "30"
     );
 
+    const notFound = createReadbackClient({
+      baseUrl: "https://agentique.example",
+      fetchImpl: async () => jsonResponse({}, { ok: false, status: 404 })
+    });
+
+    await assert.rejects(
+      () => notFound.getDownloadMetadata("missing-agent"),
+      (error) => error instanceof ReadbackError && error.code === "not-found" && error.status === 404
+    );
+
+    const serverUnavailable = createReadbackClient({
+      baseUrl: "https://agentique.example",
+      fetchImpl: async () => jsonResponse({}, { ok: false, status: 503, headers: { "retry-after": "60" } })
+    });
+
+    await assert.rejects(
+      () => serverUnavailable.listResources(),
+      (error) =>
+        error instanceof ReadbackError &&
+        error.code === "unavailable" &&
+        error.status === 503 &&
+        error.retryAfter === "60"
+    );
+
     const unavailable = createReadbackClient({
       baseUrl: "https://agentique.example",
       fetchImpl: async () => {
@@ -367,6 +425,124 @@ describe("badge states", () => {
 });
 
 describe("normalizer", () => {
+  it("normalizes resource list payloads into a stable catalog summary", () => {
+    assert.deepEqual(
+      normalizeResourceList({
+        items: [
+          {
+            id: "agent-1",
+            slug: "agent-one",
+            title: "Agent One",
+            description: "Visible summary.",
+            type: "skill",
+            state: "published",
+            resourceUrl: "https://agentique.io/resources/agent-one",
+            download: {
+              availability: "source-only"
+            },
+            storageKey: "hidden",
+            updatedAt: "2026-06-07T01:00:00.000Z"
+          }
+        ],
+        pageInfo: {
+          page: 1,
+          pageSize: 1,
+          total: 60,
+          cursor: "cursor-1",
+          nextCursor: "cursor-2",
+          hasNextPage: true
+        },
+        privateReviewNotes: "hidden",
+        observedAt: "2026-06-07T01:01:00.000Z"
+      }),
+      {
+        items: [
+          {
+            resourceId: "agent-1",
+            slug: "agent-one",
+            title: "Agent One",
+            summary: "Visible summary.",
+            type: "skill",
+            status: "published",
+            platformUrl: "https://agentique.io/resources/agent-one",
+            downloadAvailability: "source-only",
+            updatedAt: "2026-06-07T01:00:00.000Z"
+          }
+        ],
+        pageInfo: {
+          page: 1,
+          pageSize: 1,
+          total: 60,
+          cursor: "cursor-1",
+          nextCursor: "cursor-2",
+          hasNextPage: true
+        },
+        observedAt: "2026-06-07T01:01:00.000Z"
+      }
+    );
+  });
+
+  it("normalizes download metadata without leaking private storage fields", () => {
+    const normalized = normalizeDownloadMetadata({
+      resourceId: "agent-1",
+      platformId: "codex",
+      artifactKind: "skill",
+      download: {
+        availability: "available",
+        url: "https://agentique.io/downloads/agent-1.zip",
+        filename: "agent-1.zip",
+        mediaType: "application/zip",
+        sizeBytes: 42,
+        digest: `sha256:${"a".repeat(64)}`,
+        reasons: ["published"],
+        objectPath: "hidden",
+        observedAt: "2026-06-07T01:02:00.000Z",
+        expiresAt: "2026-06-07T02:02:00.000Z"
+      },
+      privateUrl: "hidden"
+    });
+
+    assert.deepEqual(normalized, {
+      resourceId: "agent-1",
+      platformId: "codex",
+      artifactKind: "skill",
+      availability: "available",
+      url: "https://agentique.io/downloads/agent-1.zip",
+      filename: "agent-1.zip",
+      mediaType: "application/zip",
+      sizeBytes: 42,
+      digest: {
+        algorithm: "sha256",
+        value: "a".repeat(64)
+      },
+      digestPresent: true,
+      digestValid: true,
+      reasons: ["published"],
+      observedAt: "2026-06-07T01:02:00.000Z",
+      expiresAt: "2026-06-07T02:02:00.000Z"
+    });
+    assert.equal(JSON.stringify(normalized).includes("hidden"), false);
+  });
+
+  it("normalizes unavailable and malformed download metadata as fail-closed summaries", () => {
+    assert.deepEqual(normalizeDownloadMetadata({ download: { availability: "unavailable", digest: "bad-digest" } }), {
+      resourceId: null,
+      platformId: null,
+      artifactKind: null,
+      availability: "unavailable",
+      url: null,
+      filename: null,
+      mediaType: null,
+      sizeBytes: null,
+      digest: null,
+      digestPresent: true,
+      digestValid: false,
+      reasons: [],
+      observedAt: null,
+      expiresAt: null
+    });
+  });
+
   it("normalizes public trust readback fields into a stable summary", () => {
     assert.deepEqual(
       normalizeTrustReadback({
