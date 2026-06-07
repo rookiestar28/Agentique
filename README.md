@@ -368,6 +368,7 @@ Schemas are stored in `schemas/` and can be used by local tooling or external va
 - `skill-metadata.schema.json`
 - `workflow-metadata.schema.json`
 - `distribution-mode.schema.json`
+- `parser-variant.schema.json`
 - `public-readback.schema.json`
 - `registry-trust.schema.json`
 - `surfacing-metadata.schema.json`

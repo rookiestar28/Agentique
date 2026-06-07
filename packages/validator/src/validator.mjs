@@ -9,6 +9,7 @@ const schemaFiles = [
   "context-bundle.schema.json",
   "output-contract.schema.json",
   "package-manifest.schema.json",
+  "parser-variant.schema.json",
   "permission-risk.schema.json",
   "public-readback.schema.json",
   "registry-trust.schema.json",

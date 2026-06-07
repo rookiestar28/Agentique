@@ -233,6 +233,270 @@
       }
     }
   },
+  "parser-variant.schema.json": {
+    "validCases": {
+      "parsed-available": {
+        "contractVersion": "1.0",
+        "parserEvidence": {
+          "sourceEcosystem": "mcp",
+          "sourceFormat": "json",
+          "parserId": "agentique-mcp-parser",
+          "parserVersion": "1.0.0",
+          "inputDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "outputDigest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "parseStatus": "parsed",
+          "parseConfidence": "high",
+          "sanitizerStatus": "passed",
+          "noExecution": true,
+          "metadataOnly": true,
+          "observedAt": "2026-06-07T00:00:00.000Z"
+        },
+        "resourceGraphSummary": {
+          "sanitized": true,
+          "nodeCount": 4,
+          "edgeCount": 3,
+          "capabilityCount": 2,
+          "sourceFileCount": 1,
+          "entrypointCount": 1,
+          "summaryDigest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "redaction": {
+            "secrets": true,
+            "privatePaths": true,
+            "rawSource": true
+          }
+        },
+        "compatibility": {
+          "status": "compatible",
+          "reasons": [
+            "static-contract"
+          ]
+        },
+        "platformVariants": [
+          {
+            "platformId": "mcp",
+            "artifactKind": "metadata",
+            "state": "available",
+            "validationState": "passed",
+            "managedBy": "creator",
+            "variantDigest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+            "download": {
+              "availability": "source-only",
+              "digest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+            },
+            "reasons": [
+              "source-only"
+            ],
+            "observedAt": "2026-06-07T00:01:00.000Z"
+          }
+        ]
+      },
+      "blocked-source": {
+        "contractVersion": "1.0",
+        "parserEvidence": {
+          "sourceEcosystem": "generic",
+          "sourceFormat": "directory",
+          "parserId": "agentique-static-detector",
+          "parserVersion": "1.0.0",
+          "inputDigest": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "parseStatus": "blocked",
+          "parseConfidence": "unknown",
+          "sanitizerStatus": "blocked",
+          "noExecution": true,
+          "observedAt": "2026-06-07T00:02:00.000Z",
+          "issues": [
+            {
+              "code": "unsafe-source-shape",
+              "severity": "error",
+              "message": "Source requires manual review before parser metadata can be exposed."
+            }
+          ]
+        },
+        "resourceGraphSummary": {
+          "sanitized": true,
+          "nodeCount": 0,
+          "edgeCount": 0,
+          "capabilityCount": 0,
+          "sourceFileCount": 0,
+          "summaryDigest": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        },
+        "compatibility": {
+          "status": "blocked",
+          "reasons": [
+            "manual-review"
+          ]
+        },
+        "platformVariants": [
+          {
+            "platformId": "source-package",
+            "artifactKind": "source-package",
+            "state": "blocked",
+            "validationState": "blocked",
+            "download": {
+              "availability": "blocked"
+            },
+            "reasons": [
+              "manual-review"
+            ]
+          }
+        ]
+      },
+      "unsupported-stale-variant": {
+        "contractVersion": "1.0",
+        "parserEvidence": {
+          "sourceEcosystem": "langgraph",
+          "sourceFormat": "python",
+          "parserId": "agentique-code-first-detector",
+          "parserVersion": "1.0.0",
+          "inputDigest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+          "parseStatus": "unsupported",
+          "parseConfidence": "low",
+          "sanitizerStatus": "redacted",
+          "noExecution": true,
+          "metadataOnly": true,
+          "observedAt": "2026-06-07T00:03:00.000Z"
+        },
+        "resourceGraphSummary": {
+          "sanitized": true,
+          "nodeCount": 1,
+          "edgeCount": 0,
+          "capabilityCount": 0,
+          "sourceFileCount": 1,
+          "summaryDigest": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
+        },
+        "compatibility": {
+          "status": "unsupported",
+          "reasons": [
+            "code-first-static-only"
+          ]
+        },
+        "platformVariants": [
+          {
+            "platformId": "langgraph",
+            "artifactKind": "graph",
+            "state": "unsupported",
+            "validationState": "not-run",
+            "download": {
+              "availability": "unavailable"
+            },
+            "reasons": [
+              "code-first-static-only"
+            ]
+          },
+          {
+            "platformId": "codex-skill",
+            "artifactKind": "skill",
+            "state": "stale",
+            "validationState": "stale",
+            "download": {
+              "availability": "unavailable"
+            },
+            "reasons": [
+              "source-changed"
+            ],
+            "observedAt": "2026-06-07T00:04:00.000Z"
+          }
+        ]
+      }
+    },
+    "invalid": {
+      "missing-required": {
+        "contractVersion": "1.0"
+      },
+      "extra-property": {
+        "contractVersion": "1.0",
+        "parserEvidence": {
+          "sourceEcosystem": "mcp",
+          "sourceFormat": "json",
+          "parserId": "agentique-mcp-parser",
+          "parserVersion": "1.0.0",
+          "inputDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "parseStatus": "parsed",
+          "parseConfidence": "high",
+          "sanitizerStatus": "passed",
+          "noExecution": true,
+          "observedAt": "2026-06-07T00:00:00.000Z"
+        },
+        "resourceGraphSummary": {
+          "sanitized": true,
+          "nodeCount": 1,
+          "edgeCount": 0,
+          "capabilityCount": 0,
+          "sourceFileCount": 1,
+          "summaryDigest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+        },
+        "compatibility": {
+          "status": "compatible"
+        },
+        "platformVariants": [],
+        "approved": true
+      },
+      "boundary": {
+        "contractVersion": "2.0",
+        "parserEvidence": {
+          "sourceEcosystem": "unknown-platform",
+          "sourceFormat": "binary",
+          "parserId": "x",
+          "parserVersion": "*",
+          "inputDigest": "sha256:not-a-digest",
+          "parseStatus": "approved",
+          "parseConfidence": "certain",
+          "sanitizerStatus": "safe",
+          "noExecution": false,
+          "observedAt": "not-a-date"
+        },
+        "resourceGraphSummary": {
+          "sanitized": false,
+          "nodeCount": -1,
+          "edgeCount": 999999,
+          "capabilityCount": 999999,
+          "sourceFileCount": 999999,
+          "summaryDigest": "sha256:not-a-digest"
+        },
+        "compatibility": {
+          "status": "approved"
+        },
+        "platformVariants": [
+          {
+            "platformId": "unknown",
+            "artifactKind": "runtime",
+            "state": "approved",
+            "validationState": "passed",
+            "download": {
+              "availability": "available",
+              "url": "http://example.com/download"
+            }
+          }
+        ]
+      },
+      "no-execution": {
+        "contractVersion": "1.0",
+        "parserEvidence": {
+          "sourceEcosystem": "mcp",
+          "sourceFormat": "json",
+          "parserId": "agentique-mcp-parser",
+          "parserVersion": "1.0.0",
+          "inputDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "parseStatus": "parsed",
+          "parseConfidence": "high",
+          "sanitizerStatus": "passed",
+          "noExecution": false,
+          "observedAt": "2026-06-07T00:00:00.000Z"
+        },
+        "resourceGraphSummary": {
+          "sanitized": true,
+          "nodeCount": 1,
+          "edgeCount": 0,
+          "capabilityCount": 0,
+          "sourceFileCount": 1,
+          "summaryDigest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+        },
+        "compatibility": {
+          "status": "compatible"
+        },
+        "platformVariants": []
+      }
+    }
+  },
   "permission-risk.schema.json": {
     "valid": {
       "readOnly": true,
@@ -274,7 +538,8 @@
     }
   },
   "public-readback.schema.json": {
-    "valid": {
+    "validCases": {
+      "legacy-compatible": {
       "resourceId": "example-resource",
       "state": "published",
       "updatedAt": "2026-05-31T00:00:00.000Z",
@@ -323,6 +588,59 @@
         }
       ],
       "reportActionState": "available"
+      },
+      "parser-variant": {
+        "resourceId": "example-resource",
+        "state": "review_required",
+        "updatedAt": "2026-06-07T00:05:00.000Z",
+        "platformUrl": "https://agentique.io/resources/example-resource",
+        "message": "Parser metadata is available for public readback review.",
+        "parserVariant": {
+          "contractVersion": "1.0",
+          "observedAt": "2026-06-07T00:05:00.000Z",
+          "parserEvidence": {
+            "sourceEcosystem": "claude-code",
+            "sourceFormat": "markdown",
+            "parserId": "agentique-skill-parser",
+            "parserVersion": "1.0.0",
+            "inputDigest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+            "parseStatus": "partial",
+            "parseConfidence": "medium",
+            "sanitizerStatus": "redacted",
+            "noExecution": true,
+            "metadataOnly": true,
+            "observedAt": "2026-06-07T00:05:00.000Z"
+          },
+          "resourceGraphSummary": {
+            "sanitized": true,
+            "nodeCount": 2,
+            "edgeCount": 1,
+            "capabilityCount": 1,
+            "sourceFileCount": 1,
+            "summaryDigest": "sha256:4444444444444444444444444444444444444444444444444444444444444444"
+          },
+          "compatibility": {
+            "status": "partial",
+            "reasons": [
+              "metadata-only"
+            ]
+          },
+          "platformVariants": [
+            {
+              "platformId": "claude-code-skill",
+              "artifactKind": "skill",
+              "state": "review-required",
+              "validationState": "not-run",
+              "download": {
+                "availability": "source-only"
+              },
+              "reasons": [
+                "review-required"
+              ]
+            }
+          ]
+        }
+      }
     },
     "invalid": {
       "missing-required": {
@@ -703,6 +1021,95 @@
               }
             ]
           }
+        }
+      },
+      "parser-variant": {
+        "formatVersion": "1.0",
+        "name": "parser-variant-resource",
+        "summary": "A public fixture resource manifest with parser metadata.",
+        "source": {
+          "type": "git",
+          "url": "https://github.com/agentique/parser-variant-resource"
+        },
+        "distribution": {
+          "mode": "package_download"
+        },
+        "package": {
+          "formatVersion": "1.0",
+          "files": [
+            "README.md"
+          ],
+          "hashes": {
+            "README.md": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+          }
+        },
+        "permissionRisk": {
+          "readOnly": true,
+          "destructive": false,
+          "idempotent": true,
+          "openWorld": false,
+          "externalNetwork": false,
+          "credentialed": false,
+          "approvalRequired": false,
+          "dataSensitivity": "public",
+          "capabilities": [
+            "read-public-content"
+          ],
+          "reviewNotes": "Reads public package content without credential access."
+        },
+        "parserVariant": {
+          "contractVersion": "1.0",
+          "parserEvidence": {
+            "sourceEcosystem": "dify",
+            "sourceFormat": "yaml",
+            "parserId": "agentique-dify-parser",
+            "parserVersion": "1.0.0",
+            "inputDigest": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
+            "outputDigest": "sha256:6666666666666666666666666666666666666666666666666666666666666666",
+            "parseStatus": "parsed",
+            "parseConfidence": "high",
+            "sanitizerStatus": "passed",
+            "noExecution": true,
+            "metadataOnly": true,
+            "observedAt": "2026-06-07T00:06:00.000Z"
+          },
+          "resourceGraphSummary": {
+            "sanitized": true,
+            "nodeCount": 3,
+            "edgeCount": 2,
+            "capabilityCount": 1,
+            "sourceFileCount": 1,
+            "summaryDigest": "sha256:7777777777777777777777777777777777777777777777777777777777777777",
+            "redaction": {
+              "secrets": true,
+              "privatePaths": true,
+              "rawSource": true
+            }
+          },
+          "compatibility": {
+            "status": "compatible",
+            "reasons": [
+              "static-contract"
+            ]
+          },
+          "platformVariants": [
+            {
+              "platformId": "dify",
+              "artifactKind": "workflow",
+              "state": "available",
+              "validationState": "passed",
+              "managedBy": "creator",
+              "variantDigest": "sha256:8888888888888888888888888888888888888888888888888888888888888888",
+              "download": {
+                "availability": "source-only",
+                "digest": "sha256:8888888888888888888888888888888888888888888888888888888888888888"
+              },
+              "reasons": [
+                "source-only"
+              ],
+              "observedAt": "2026-06-07T00:07:00.000Z"
+            }
+          ]
         }
       }
     }
