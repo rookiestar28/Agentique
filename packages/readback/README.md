@@ -6,7 +6,7 @@ This package helps integrators consume public Agentique resource status from `ag
 
 `agentique.io` remains the source of truth for upload, scan, review, moderation, publication, distribution state, and readback. This package does not publish, edit, delete, moderate, approve, certify, install, extract, open, or execute resources.
 
-Catalog and direct-download helpers are included in the 0.2.0 package source. The helpers remain read-only or explicit-output only. Owner-approved disposable byte-transfer evidence is recorded for a metadata-only public resource, but this evidence does not certify content safety, approve arbitrary resources, or guarantee every public resource is downloadable.
+Catalog and direct-download helpers are included in the published 0.2.0 package for the behavior released there. The current source branch is part of a coordinated 0.2.1 patch candidate for canonical public catalog envelopes and ticket-backed byte transfer. That patch is not yet published on npm. The helpers remain read-only or explicit-output only. Owner-approved disposable byte-transfer evidence is recorded for a public catalog resource, but this evidence does not certify content safety, approve arbitrary resources, or guarantee every public resource is downloadable.
 
 ## Install
 
