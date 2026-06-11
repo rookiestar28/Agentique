@@ -128,6 +128,20 @@ Source closeout evidence is complete for local preparation only:
 
 Current closeout evidence includes local tests, installed-tarball smoke, full registry readback for existing `0.2.0` packages, pending-state registry readback for the `0.2.1` patch candidates, and owner-approved disposable byte-transfer smoke. Catalog/download and agent-native patch publication remains blocked until hosted CI, owner release approval, trusted publishing, registry readback for the patch versions, clean install smoke for the patch versions, rollback/unpublish evidence, and branch cleanup are recorded.
 
+## Agent-Native Patch-Candidate Closeout Evidence
+
+Source closeout evidence is complete for local preparation only:
+
+- Agent-native schema contracts are included in the schemas package dry-run.
+- Validator tests cover agent-native metadata summaries and finding families.
+- Readback package tests cover agent-native projection helpers and badge states.
+- Uploader package tests cover the local `agent-native-plan` dry-run command.
+- Installed-tarball smoke covers `agent-native.schema.json`, `normalizeAgentNativeReadback()`, and uploader `agent-native-plan` help.
+- Registry readback proves schemas, validator, action, readback, and uploader at existing published version `0.2.0`, and verifies the coordinated `0.2.1` patch candidate package set is not yet published.
+- Release go/no-go records agent-native patch publication as scoped No-Go with explicit blockers.
+
+Current closeout evidence includes local tests, starter validation, release checks, installed-tarball smoke, package dry-run, URL inventory, full registry readback for existing `0.2.0` packages, and pending-state registry readback for the `0.2.1` patch candidates. Agent-native patch publication remains blocked until hosted CI, owner release approval, Trusted Publishing, registry readback for the patch versions, clean install smoke for the patch versions, rollback evidence, and branch cleanup are recorded.
+
 ## All-Channel Public URL Mode
 
 Approved advertised URL checks pass for source, published packages, action usage, badge/readback documentation, schema, docs, and platform links:

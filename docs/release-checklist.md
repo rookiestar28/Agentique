@@ -38,7 +38,7 @@ Provenance and attestations help consumers trace where an artifact came from. Th
 
 The first public npm release used an owner-approved short-lived granular token fallback after local and hosted validation passed. The coordinated `0.2.0` package release used the checked-in manual GitHub Actions trusted-publishing workflow and passed registry readback plus clean install smoke for the full package set.
 
-Before advertising any newly published package, run `npm run registry:readback`, run `npm run install:smoke`, and record version, dist-tag, tarball contents, clean install smoke, package CLI/import smoke, parser/variant package surface evidence, and catalog/download package surface evidence for the exact version being advertised.
+Before advertising any newly published package, run `npm run registry:readback`, run `npm run install:smoke`, and record version, dist-tag, tarball contents, clean install smoke, package CLI/import smoke, parser/variant package surface evidence, agent-native package surface evidence, and catalog/download package surface evidence for the exact version being advertised.
 
 ## Launch Boundary
 

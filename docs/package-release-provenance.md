@@ -18,7 +18,7 @@ The coordinated package release `0.2.0` is published for schemas, validator, act
 
 - Coordinated patch target: `0.2.1` for schemas, validator, action, readback, and uploader.
 - Publish status: No-Go until hosted Release Check, owner package-release approval, trusted publishing, registry readback for the patch versions, clean install smoke for the patch versions, rollback/unpublish evidence, and branch cleanup are recorded.
-- Scope: canonical public catalog envelope compatibility, ticket-backed download metadata projection, and explicit-output CLI byte transfer through the declared unauthenticated POST ticket path.
+- Scope: canonical public catalog envelope compatibility, ticket-backed download metadata projection, explicit-output CLI byte transfer through the declared unauthenticated POST ticket path, and agent-native schema/validator/readback/uploader dry-run source surfaces.
 
 ## Required Pre-Publish Checks
 

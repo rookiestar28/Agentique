@@ -98,5 +98,42 @@
       "Rollback and branch-cleanup evidence for the patch release is not yet recorded."
     ]
   },
+  "agentNativePublicationDecision": {
+    "decision": "no_go",
+    "releaseBlocked": true,
+    "advertisePackageChanges": false,
+    "advertiseResolverAvailability": false,
+    "advertiseDirectInstall": false,
+    "advertiseRuntimeSupport": false,
+    "closeoutEvidence": {
+      "sourceBranchValidation": true,
+      "installedTarballSmoke": true,
+      "agentNativePackageSurfaceSmoke": true,
+      "registryPendingReadback": true,
+      "hostedCiForCandidate": false,
+      "ownerPackageReleaseApproval": false,
+      "trustedPublishingForCandidate": false,
+      "newVersionRegistryReadback": false,
+      "newVersionInstallSmoke": false,
+      "rollbackEvidenceForNewRelease": false,
+      "branchCleanup": false
+    },
+    "targetPackages": {
+      "@agentique.io/schemas": "0.2.1",
+      "@agentique.io/validator": "0.2.1",
+      "@agentique.io/action": "0.2.1",
+      "@agentique.io/readback": "0.2.1",
+      "@agentique.io/uploader": "0.2.1"
+    },
+    "reason": "Agent-native schema, validator, readback, badge, uploader dry-run, and starter surfaces are source-revision patch-candidate changes after the published 0.2.0 package set. Local validation, installed-tarball smoke, and pending-state registry readback passed, but publishing or advertising package availability is blocked until hosted Release Check passes for the candidate, owner package-release approval is recorded, Trusted Publishing completes, registry readback verifies the new versions, clean install smoke passes for the new versions, rollback evidence is recorded, and branch cleanup is complete.",
+    "blockers": [
+      "Hosted Release Check for the agent-native patch candidate is not yet recorded.",
+      "Owner approval to publish the agent-native patch candidate is not yet recorded.",
+      "Trusted Publishing has not published the agent-native patch candidate.",
+      "Registry readback for the agent-native patch versions is not yet available.",
+      "Clean install smoke for the agent-native patch versions is not yet available.",
+      "Rollback and branch-cleanup evidence for the agent-native patch release is not yet recorded."
+    ]
+  },
   "blockers": []
 }
