@@ -38,9 +38,9 @@ Parser/variant schemas, validator findings, readback helpers, uploader dry-runs,
 
 ## Catalog And Download Package Release Decision
 
-Current catalog/download package release decision: **No-Go** for a new patch package-release claim.
+Current catalog/download and agent-native package release decision: **No-Go** for a new patch package-release claim.
 
-Existing catalog/download surfaces that were already published in the coordinated `0.2.0` package set remain advertised only within the evidence recorded for that release. The canonical-host live envelope compatibility and unauthenticated POST ticket byte-transfer path are source-revision changes in a coordinated `0.2.1` patch candidate. The behavior changes are concentrated in `@agentique.io/readback` and `@agentique.io/uploader`; the patch package set is not yet published on npm.
+Existing catalog/download surfaces that were already published in the coordinated `0.2.0` package set remain advertised only within the evidence recorded for that release. The canonical-host live envelope compatibility, unauthenticated POST ticket byte-transfer path, and agent-native schema/validator/readback/uploader dry-run surfaces are source-revision changes in a coordinated `0.2.1` patch candidate. The behavior changes are concentrated in `@agentique.io/schemas`, `@agentique.io/validator`, `@agentique.io/readback`, and `@agentique.io/uploader`; the patch package set is not yet published on npm.
 
 Reason: local source validation, installed-tarball smoke, live metadata checks, and owner-approved disposable byte-transfer evidence passed for this source revision, but a new npm availability claim requires hosted Release Check evidence for the patch candidate, owner approval to publish, trusted publishing completion, registry readback for the patch versions, clean install smoke for the patch versions, rollback/unpublish evidence, and branch cleanup.
 
@@ -53,7 +53,7 @@ Current blockers:
 - Clean install smoke for the patch versions is not yet available.
 - Rollback and branch-cleanup evidence for the patch release is not yet recorded.
 
-Catalog list/detail/download-metadata commands, download command behavior, readback catalog normalizers, ticket-flow byte transfer, live metadata smoke, disposable byte-transfer smoke, and release smoke coverage are package and local-preparation evidence for the patch candidate. They do not approve resources, certify safety, install or execute downloaded content, guarantee every public resource is downloadable, or replace platform review.
+Catalog list/detail/download-metadata commands, download command behavior, readback catalog normalizers, ticket-flow byte transfer, agent-native schemas, validator findings, readback projection helpers, uploader dry-runs, live metadata smoke, disposable byte-transfer smoke, and release smoke coverage are package and local-preparation evidence for the patch candidate. They do not approve resources, certify safety, install or execute downloaded content, provide resolver availability, guarantee every public resource is downloadable, or replace platform review.
 
 Closeout evidence for the patch candidate: source validation, installed-tarball smoke, live metadata checks, and owner-approved disposable byte-transfer smoke are recorded locally. New package-release evidence remains blocked until the patch release gates above pass.
 
