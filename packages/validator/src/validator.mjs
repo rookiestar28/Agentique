@@ -5,6 +5,7 @@ import Ajv from "ajv/dist/2020.js";
 import addFormats from "ajv-formats";
 
 const schemaFiles = [
+  "agent-native.schema.json",
   "distribution-mode.schema.json",
   "context-bundle.schema.json",
   "output-contract.schema.json",

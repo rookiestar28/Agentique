@@ -17,6 +17,7 @@ const fixturesDir = path.join(repoDir, "tests", "fixtures");
 const schemasDir = path.resolve(packageDir, "schemas");
 const execFileAsync = promisify(execFile);
 const schemaFiles = [
+  "agent-native.schema.json",
   "distribution-mode.schema.json",
   "context-bundle.schema.json",
   "output-contract.schema.json",
@@ -779,7 +780,7 @@ test("schema loader errors include failing schema filename", async () => {
         packageDir: path.join(fixturesDir, "valid-package"),
         schemasDir: tempSchemasDir
       }),
-    /Unable to load schema distribution-mode\.schema\.json/
+    /Unable to load schema agent-native\.schema\.json/
   );
 });
 
@@ -798,7 +799,7 @@ test("CLI reports clear missing schemas-dir errors", async () => {
       ]),
     (error) => {
       assert.equal(error.code, 2);
-      assert.match(error.stderr, /CLI error: Unable to load schema distribution-mode\.schema\.json/);
+      assert.match(error.stderr, /CLI error: Unable to load schema agent-native\.schema\.json/);
       return true;
     }
   );

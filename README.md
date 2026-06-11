@@ -420,6 +420,7 @@ Schemas are stored in `schemas/` and can be used by local tooling or external va
 - `skill-metadata.schema.json`
 - `workflow-metadata.schema.json`
 - `distribution-mode.schema.json`
+- `agent-native.schema.json`
 - `parser-variant.schema.json`
 - `public-readback.schema.json`
 - `registry-trust.schema.json`
@@ -432,6 +433,8 @@ Schemas are stored in `schemas/` and can be used by local tooling or external va
 The validator CLI uses these schemas through `--schemas-dir schemas`.
 
 `parser-variant.schema.json` defines public parser evidence, sanitized resource graph summaries, compatibility reasons, and platform variant states. Creator manifests may describe source-only variant metadata, but they must not claim platform-managed validation, platform download availability, publication, approval, or runtime compatibility. This schema is included in the coordinated `0.2.0` package release and remains present in the `0.2.1` patch candidate.
+
+`agent-native.schema.json` defines public preparation metadata and readback projection shapes for namespace coordinates, non-certifying provenance evidence labels, install-target guidance, private-boundary summaries, and resolver-result summaries. Creator manifests may declare preparation hints, but platform-managed latest pointers, resolver results, private availability, and download-backed install states remain public readback fields owned by `agentique.io`.
 
 ## Contract Evaluation Fixtures
 
